@@ -2,11 +2,6 @@
 /// Headers //////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-#include <stdlib.h>
-#include <iostream>
-#include <QBuffer>
-#include <QXmlStreamWriter>
-#include <QtGui/QMessageBox>
 #include "ServerPanelMainWindow.h"
 #include "ui_ServerPanelMainWindow.h"
 
@@ -71,32 +66,26 @@ void ServerPanelMainWindow::TrySignIn () {
         // Show the message box
         QMessageBox::information(this, "Error!", sErrorText);
     }
-    // Set a string to write the XML to
-    QString sXml;
-    // Setup the XmlStreamWriter
-    QXmlStreamWriter xswData(&sXml);
-    // Turn auto formatting on
-    xswData.setAutoFormatting(true);
-    // Start the document
-    xswData.writeStartDocument();
-    // Start the data element
-    xswData.writeStartElement("oData");
-    // Add the Username open tag
-    xswData.writeStartElement("sUsername");
+    // Initialize the cipher
+    QCA::Initializer          cCrypto    = QCA::Initializer();
+    // Generate a key
+    QCA::SymmetricKey         sKey       = QCA::SymmetricKey(2048);
+    // Create the initialization vector
+    QCA::InitializationVector vCrypto    = QCA::InitializationVector(2048);
+    // Generate a cipher
+    QCA::Cipher               cCipher    = QCA::Cipher(QString("aes256"), QCA::Cipher::CBC, QCA::Cipher::DefaultPadding, QCA::Encode, sKey, vCrypto);
+    // Create the data array
+    QCA::SecureArray          cData      = this->mUserInterface->txtPassword->text().toAscii();
+    // Encrypt the data
+    QCA::SecureArray          cEncrypted = cCipher.process(cData);
+    // Create a map to store the request in
+    QVariantMap mapJson;
     // Add the username
-    xswData.writeCharacters( this->mUserInterface->txtUsername->text());
-    // Close the username element
-    xswData.writeEndElement();
-    // Add the password open tag
-    xswData.writeStartElement("sPassword");
+    mapJson.insert("sUsername", this->mUserInterface->txtUsername->text());
     // Add the password
-    xswData.writeCharacters(this->mUserInterface->txtPassword->text());
-    // Close the password element
-    xswData.writeEndElement();
-    // Close the data element
-    xswData.writeEndElement();
-    // Close the document
-    xswData.writeEndDocument();
+    mapJson.insert("sPassword", cEncrypted.toByteArray());
+    // Now serialize the JSON
+    QByteArray sJson = QtJson::Json::serialize(mapJson);
     // Show a message box with the XML
-    QMessageBox::information(this, "XML", sXml);
+    QMessageBox::information(this, "JSON", sJson);
 }

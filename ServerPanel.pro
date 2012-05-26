@@ -14,10 +14,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         ServerPanelMainWindow.cpp \
-    ServerPanelAuthenticatedWindow.cpp
+    ServerPanelAuthenticatedWindow.cpp \
+    ServerPaneRpc.cpp \
+    Json.cpp
 
 HEADERS  += ServerPanelMainWindow.h \
-    ServerPanelAuthenticatedWindow.h
+    ServerPanelAuthenticatedWindow.h \
+    ServerPanelRpc.h \
+    Json.h
 
 FORMS    += ServerPanelMainWindow.ui \
     ServerPanelAuthenticatedWindow.ui
+
+LIBS += -L$$quote(qca-2.0.3/lib) -lqca
