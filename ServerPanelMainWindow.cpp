@@ -66,26 +66,8 @@ void ServerPanelMainWindow::TrySignIn () {
         // Show the message box
         QMessageBox::information(this, "Error!", sErrorText);
     }
-    // Initialize the cipher
-    QCA::Initializer          cCrypto    = QCA::Initializer();
-    // Generate a key
-    QCA::SymmetricKey         sKey       = QCA::SymmetricKey(2048);
-    // Create the initialization vector
-    QCA::InitializationVector vCrypto    = QCA::InitializationVector(2048);
-    // Generate a cipher
-    QCA::Cipher               cCipher    = QCA::Cipher(QString("aes256"), QCA::Cipher::CBC, QCA::Cipher::DefaultPadding, QCA::Encode, sKey, vCrypto);
-    // Create the data array
-    QCA::SecureArray          cData      = this->mUserInterface->txtPassword->text().toAscii();
-    // Encrypt the data
-    QCA::SecureArray          cEncrypted = cCipher.process(cData);
-    // Create a map to store the request in
-    QVariantMap mapJson;
-    // Add the username
-    mapJson.insert("sUsername", this->mUserInterface->txtUsername->text());
-    // Add the password
-    mapJson.insert("sPassword", cEncrypted.toByteArray());
-    // Now serialize the JSON
-    QByteArray sJson = QtJson::Json::serialize(mapJson);
-    // Show a message box with the XML
-    QMessageBox::information(this, "JSON", sJson);
+    // Make a request
+    ServerPanelRpc::Instance()->GetRequestData("/api/v2/json/user/show/bolvarak");
+    // Display a message box
+    QMessageBox::information(this, "JSON", ServerPanelRpc::Instance()->GetEncodedResponse());
 }

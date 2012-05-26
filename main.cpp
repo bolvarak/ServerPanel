@@ -3,6 +3,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <QApplication>
+#include "ServerPanelRpc.h"
 #include "ServerPanelMainWindow.h"
 #include "ServerPanelAuthenticatedWindow.h"
 
@@ -16,7 +17,7 @@ int main(int iArguments, char *aArguments[]) {
     // Show the login window
     ServerPanelMainWindow::Instance()->show();
     // Show the authenticated window
-    ServerPanelAuthenticatedWindow::Instance()->show();
+    // ServerPanelAuthenticatedWindow::Instance()->show();
     // We're done.
     return appMain.exec();
 }
