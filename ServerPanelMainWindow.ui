@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ServerPanelMainWindow</class>
+ <widget class="QWidget" name="ServerPanelMainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>ServerPanel - Login</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../Downloads/bolvarak-hubofsocial.com-63ed285abee5/static/images/icons/maxo/apps/application-x-remote-connection.png</normaloff>../../Downloads/bolvarak-hubofsocial.com-63ed285abee5/static/images/icons/maxo/apps/application-x-remote-connection.png</iconset>
+  </property>
+  <widget class="QCommandLinkButton" name="btnSignIn">
+   <property name="geometry">
+    <rect>
+     <x>271</x>
+     <y>250</y>
+     <width>100</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Sign-In</string>
+   </property>
+   <property name="shortcut">
+    <string>Return</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtUsername">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>80</y>
+     <width>341</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Monospace</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtPassword">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>180</y>
+     <width>341</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Monospace</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="echoMode">
+    <enum>QLineEdit::Password</enum>
+   </property>
+  </widget>
+  <widget class="Line" name="hlnUsername">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>70</y>
+     <width>341</width>
+     <height>3</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="Line" name="hlnPassword">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>160</y>
+     <width>341</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="Line" name="line">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>240</y>
+     <width>341</width>
+     <height>3</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lblUsername">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>35</y>
+     <width>321</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Monospace</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Username</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lblPassword">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>140</y>
+     <width>321</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Monospace</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Password</string>
+   </property>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
