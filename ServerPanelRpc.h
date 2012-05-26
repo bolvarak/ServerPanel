@@ -32,8 +32,8 @@ public :
     // Destructor
     ~ServerPanelRpc();
     // Methods
-    QVariantMap DecodeJson         (QByteArray sJson);
-    QByteArray  EncodeJson         (QVariantMap mapJson);
+    QVariantMap DecodeJson         (QString sJson);
+    QString     EncodeJson         (QVariantMap mapJson);
     void        GetRequestData     (QString sResource);
     void        SendRequestData    (QString sResource, QVariantMap mapJson);
     // Getters
@@ -47,10 +47,9 @@ protected :
     static ServerPanelRpc* mInstance;        // Singleton Instance
     QHttp*                 mNetwork;         // Network Access Manager
     QVariantMap            mDecodedResponse; // JSON Decoded Response
-    QByteArray             mEncodedResponse; // JSON Encoded Response
+    QString                mEncodedResponse; // JSON Encoded Response
 // Slots
 protected slots :
     void ProcessResponseData(bool bError);
 };
-
 #endif

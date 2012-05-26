@@ -66,8 +66,4 @@ void ServerPanelMainWindow::TrySignIn () {
         // Show the message box
         QMessageBox::information(this, "Error!", sErrorText);
     }
-    // Make a request
-    ServerPanelRpc::Instance()->GetRequestData("/api/v2/json/user/show/bolvarak");
-    // Display a message box
-    QMessageBox::information(this, "JSON", ServerPanelRpc::Instance()->GetEncodedResponse());
 }

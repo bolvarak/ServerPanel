@@ -74,13 +74,11 @@ ServerPanelRpc::~ServerPanelRpc() {
  * @param QByteArray sJson
  * @return QVariantMap mapJson
  */
-QVariantMap ServerPanelRpc::DecodeJson(QByteArray sJson) {
-    // Convert the QByteArray to QString
-    QString sJsonString(sJson);
+QVariantMap ServerPanelRpc::DecodeJson(QString sJson) {
     // Define a boolean
     bool bSuccess;
     // Process the JSON
-    QVariantMap mapJson = QtJson::Json::parse(sJsonString, bSuccess).toMap();
+    QVariantMap mapJson = QtJson::Json::parse(sJson, bSuccess).toMap();
     // Make sure everything went okay
     if (!bSuccess) {
         // Send a fatal message to the stream
@@ -100,7 +98,7 @@ QVariantMap ServerPanelRpc::DecodeJson(QByteArray sJson) {
  * @param QVariantMap mapJson
  * @return QByteArray sJson
  */
-QByteArray ServerPanelRpc::EncodeJson(QVariantMap mapJson) {
+QString ServerPanelRpc::EncodeJson(QVariantMap mapJson) {
     // Define a boolean
     bool bSuccess;
     // Serialize the JSON
@@ -112,8 +110,12 @@ QByteArray ServerPanelRpc::EncodeJson(QVariantMap mapJson) {
         // Terminate
         exit(1);
     }
+    // Create a string
+    QString sJsonString;
+    // Add the JSON to the string
+    sJsonString.append(sJson);
     // Return the JSON
-    return sJson;
+    return sJsonString;
 }
 
 /**
@@ -161,7 +163,7 @@ void ServerPanelRpc::GetRequestData(QString sResource) {
  */
 void ServerPanelRpc::SendRequestData(QString sResource, QVariantMap mapJson) {
     // Serialize the JSON
-    QByteArray sJson = this->EncodeJson(mapJson);
+    QString sJson = this->EncodeJson(mapJson);
     // Create a new URI object
     QUrl cUrl;
     // Set the host
@@ -184,7 +186,7 @@ void ServerPanelRpc::SendRequestData(QString sResource, QVariantMap mapJson) {
     // Set the query delimiters
     cUrl.setQueryDelimiters(',', ';');
     // Add a query parameter
-    cUrl.addQueryItem("oJson", QString(sJson));
+    cUrl.addQueryItem("oJson", sJson);
     // Set the network host
     this->mNetwork->setHost(RPC_ENDPOINT_HOST);
     // Make the request
@@ -208,16 +210,20 @@ void ServerPanelRpc::SendRequestData(QString sResource, QVariantMap mapJson) {
 void ServerPanelRpc::ProcessResponseData(bool bError) {
     // Make sure there is no error
     if (!bError) {
-        // Log the Resposne
-        qDebug(this->mNetwork->readAll());
+        // Create a string to hold the JSON in
+        QString sJson;
+        // Add the response to the JSON string
+        sJson.append(this->mNetwork->readAll());
         // Set the encoded JSON into the system
-        this->mEncodedResponse = this->mNetwork->readAll();
+        this->mEncodedResponse = sJson;
         // Set the decoded response into the system
-        this->mDecodedResponse = this->DecodeJson(this->mNetwork->readAll());
+        this->mDecodedResponse = this->DecodeJson(sJson);
     } else {
         // Log the error message
         qDebug(this->mNetwork->errorString().toLatin1());
     }
+    // We're done
+    return;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
