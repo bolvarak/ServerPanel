@@ -13,6 +13,10 @@
 
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
+#include <QtCore/QTextStream>
+#include <QtCore/QDateTime>
+#include <QtCore/QStringList>
+#include "Qt3Support/Qt3Support"
 #include "ServerPanelRpc.h"
 
 ///////////////////////////////////////////////////////////////////////////////

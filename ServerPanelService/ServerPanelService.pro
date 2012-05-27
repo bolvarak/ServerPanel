@@ -4,9 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core
-
-QT       -= gui
+QT       -= gui core network
 
 TARGET = ServerPanelService
 CONFIG   += console
@@ -18,9 +16,11 @@ TEMPLATE = app
 SOURCES += main.cpp \
     ServerPanelServer.cpp \
     Json.cpp \
-    ServerPanelRpc.cpp
+    ServerPanelRpc.cpp \
+    ServerPanelService.cpp
 
 HEADERS += \
     ServerPanelServer.h \
     Json.h \
-    ServerPanelRpc.h
+    ServerPanelRpc.h \
+    ServerPanelService.h
