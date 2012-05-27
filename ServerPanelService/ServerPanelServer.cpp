@@ -28,92 +28,86 @@ ServerPanelServer* ServerPanelServer::Instance() {
 /// Constructor //////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-ServerPanelServer::ServerPanelServer(QObject* cParent) : QTcpServer(cParent), mDisabled(false) {
-    // Set the address and port to listen on
-    listen(QHostAddress::Any, RPC_PORT);
-}
+ServerPanelServer::ServerPanelServer(QObject* cParent) : QThread(cParent) {}
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Public Methods ///////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-void ServerPanelServer::incomingConnection(int iSocket) {
-    // Check to see if the server has been paused
-    if (this->mDisabled) {
+void ServerPanelServer::run() {
+    // Create the socket
+    QTcpSocket* qtsSocket = new QTcpSocket(this);
+    // Setup the client read event handler
+    connect(qtsSocket, SIGNAL(readyRead()), this, SLOT(HandleClient()));
+    // Setup the client disconnect handler
+    // connect(qtsSocket, SIGNAL(disconnected()), this, SLOT(DisconnectClient()));
+    // Setup the completed event handler
+    connect(this, SIGNAL(finished()), this, SLOT(deleteLater()));
+    // Try to set the socket descriptor
+    if (!qtsSocket->setSocketDescriptor(this->mSocket)) {
+        // Throw an error
+        emit this->Error(qtsSocket->error());
         // We're done
         return;
     }
-    // Create the socket
-    QTcpSocket* cSocket = new QTcpSocket(this);
-    // Setup the event handler to read the client data
-    connect(cSocket, SIGNAL(readyRead()), this, SLOT(ReadClient()));
-    // Setup the event handler to close the connection
-    connect(cSocket, SIGNAL(disconnected()), this, SLOT(DiscardClient()));
-    // Set the socket descriptor
-    cSocket->setSocketDescriptor(iSocket);
+    // Read all the data from the client
+    qDebug(qtsSocket->readAll());
+    // Create a buffer
+    QByteArray qbaBuffer;
+    // Send the response code
+    qbaBuffer.append("HTTP/1.1 200 OK\r\n");
+    qbaBuffer.append("Content-Type: application/json; charset=\"utf-8\"\r\n");
+    // Newline
+     qbaBuffer.append("\r\n");
+    // Send some JSON
+    qbaBuffer.append("{\n");
+    qbaBuffer.append("\t\"sServerStatus\":\"Good!\",\n");
+    qbaBuffer.append("\t\"sServerTime\":\"");
+    qbaBuffer.append(QDateTime::currentDateTime().toString().toLatin1());
+    qbaBuffer.append("\"\n}\n");
+    // Write the data
+    qtsSocket->write(qbaBuffer);
+    // Disconnect from host
+    qtsSocket->disconnectFromHost();
+    // Check to see if the socket is in an unconnected state
+    if (qtsSocket->state() != QTcpSocket::UnconnectedState) {
+        // Wait for the client to disconnect
+        qtsSocket->waitForDisconnected();
+    }
 }
 
-void ServerPanelServer::Pause() {
-    // Pause the server
-    this->mDisabled = true;
-}
+///////////////////////////////////////////////////////////////////////////////
+/// Signals //////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
-void ServerPanelServer::Resume() {
-    // Resume server operations
-    this->mDisabled = false;
-}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Slots ////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-void ServerPanelServer::ReadClient() {
-    // Check to see if the server has been paused
-    if (this->mDisabled) {
-        // We're done
-        return;
-    }
+void ServerPanelServer::DisconnectClient() {
     // Open the socket
-    QTcpSocket* cSocket = (QTcpSocket*) sender();
-    // Check to see if we have access to the socket
-    if (cSocket->readLine()) {
-        // Grab the headers
-        QStringList qslHeaders = QString(cSocket->readLine().split(QRegExp("[ \r\n][ \r\n]*")));
-        // Determine the request method
-        if (qslHeaders[0] == "GET") {         // GET
-            // Create a stream to write to the socket
-            QTextStream cClientStream(cSocket);
-            // Tell the stream to autodetect unicode
-            cClientStream.autoDetectUnicode(true);
-            // Send the response code
-            cClientStream << "HTTP/1.1 200 OK\r\n";
-            // Send the content type
-            cClientStream << "Content-Type: application/json; charset=\"utf-8\"\r\n";
-            // Newline
-            cClientStream << "\r\n";
-            // Send the JSON response
-            cClientStream << "{\n\t\"sServerStatus\":\"Good!\", \n";
-            cClientStream << "\t\"sServerTime\":\"";
-            cClientStream << QDateTime::currentDateTime().toString();
-            cClientStream << "\"\n}\n";
-        } else if (qslHeaders[0] == "POST") { // POST
-
-        } else {                              // Unknown | Unsupported
-
-        }
-    }
-    // Close the socket
-    cSocket->close();
-    // Check the state of the socket
-    if (cSocket->state() == QTcpSocket::UnconnectedState) {
-        // Delete the socket from memory
-        delete cSocket;
-    }
+    QTcpSocket* qtsSocket = (QTcpSocket*) sender();
+    // Schedule the socket for deletion
+    qtsSocket->deleteLater();
 }
 
-void ServerPanelServer::DiscardClient() {
+void ServerPanelServer::HandleClient() {
     // Open the socket
-    QTcpSocket* cSocket = (QTcpSocket*) sender();
-    // Schedule the socket for deletion
-    cSocket->deleteLater();
+    QTcpSocket* qtsSocket = (QTcpSocket*) sender();
+    qDebug("Reading CLient");
+    // Log the headers
+    qDebug(qtsSocket->readAll());
+    // Close the socket
+    qtsSocket->close();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// Setters //////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+void ServerPanelServer::SetSocketDescriptor(int iSocket) {
+    // Set the socket descriptor into the system
+    this->mSocket = iSocket;
 }

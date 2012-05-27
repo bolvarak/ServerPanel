@@ -1,10 +1,12 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2012-05-26T21:14:23
+# Project created by QtCreator 2012-05-27T14:46:20
 #
 #-------------------------------------------------
 
-QT       -= gui core network
+QT       += core network
+
+QT       -= gui
 
 TARGET = ServerPanelService
 CONFIG   += console
@@ -14,13 +16,13 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    ServerPanelServer.cpp \
     Json.cpp \
     ServerPanelRpc.cpp \
+    ServerPanelServer.cpp \
     ServerPanelService.cpp
 
 HEADERS += \
-    ServerPanelServer.h \
     Json.h \
     ServerPanelRpc.h \
+    ServerPanelServer.h \
     ServerPanelService.h

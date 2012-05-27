@@ -5,45 +5,43 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #define SERVERPANELSERVER_H
-#define RPC_PORT 1597
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Headers //////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-#include <QtNetwork/QTcpServer>
+#include <QThread>
 #include <QtNetwork/QTcpSocket>
-#include <QtCore/QTextStream>
-#include <QtCore/QDateTime>
-#include <QtCore/QStringList>
-#include "Qt3Support/Qt3Support"
 #include "ServerPanelRpc.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 /// ServerPanelServer Definition /////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-class ServerPanelServer : public QTcpServer {
+class ServerPanelServer : public QThread {
     // Make sure this is seen as a QObject
     Q_OBJECT
 // Public
 public:
     // Singleton
     static ServerPanelServer* Instance();
+    // Constructor
+    ServerPanelServer                 (QObject* cParent = 0);
     // Methods
-    void incomingConnection(int iSocket);
-    void Pause             ();
-    void Resume            ();
+    void run                          ();
+    // Setters
+    void SetSocketDescriptor          (int iSocket);
 // Protected
 protected :
     // Properties
-    bool                      mDisabled; // Socket Status
     static ServerPanelServer* mInstance; // Singleton Instance
-    // Constructor
-    ServerPanelServer(QObject* cParent);
+    int                       mSocket;   // Socket Descriptor
+// Signals
+signals :
+    void Error(QTcpSocket::SocketError qtsError);
 // Slots
 protected slots :
-    void DiscardClient();
-    void ReadClient   ();
+    void DisconnectClient();
+    void HandleClient();
 };
 #endif

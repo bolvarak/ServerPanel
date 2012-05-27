@@ -10,30 +10,26 @@
 /// Headers //////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-#include <QApplication>
-#include "ServerPanelServer.h"
+#include <QtNetwork/QTcpServer>
 
 ///////////////////////////////////////////////////////////////////////////////
 /// ServerPanelService Definition ////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-class ServerPanelService : public QApplication {
+class ServerPanelService : public QTcpServer {
     // Make sure this is seen as a QObject
     Q_OBJECT
 // Public
 public:
     // Singleton
-    static ServerPanelService* Instance(int iArguments, char** aArguments);
+    static ServerPanelService* Instance();
 // Protected
 protected :
     // Properties
-    ServerPanelServer*         mDaemon;   // This is our server daemon
     static ServerPanelService* mInstance; // Singleton Instance
     // Constructor
-    ServerPanelService(int iArguments, char** aArguments);
+    ServerPanelService(QObject* cParent = 0);
     // Methods
-    void Pause        ();
-    void Resume       ();
-    void Start        ();
+    void incomingConnection(int iSocket);
 };
 #endif

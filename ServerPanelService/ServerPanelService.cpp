@@ -3,6 +3,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "ServerPanelService.h"
+#include "ServerPanelServer.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Globals //////////////////////////////////////////////////////////////////
@@ -14,11 +15,11 @@ ServerPanelService* ServerPanelService::mInstance = NULL;
 /// Singleton ////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-ServerPanelService* ServerPanelService::Instance(int iArguments, char **aArguments) {
+ServerPanelService* ServerPanelService::Instance() {
     // Check for an existing instance
     if (!mInstance) {
         // Create a new instance
-        mInstance = new ServerPanelService(iArguments, aArguments);
+        mInstance = new ServerPanelService();
     }
     // Return the instance
     return mInstance;
@@ -28,35 +29,15 @@ ServerPanelService* ServerPanelService::Instance(int iArguments, char **aArgumen
 /// Constructor //////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-ServerPanelService::ServerPanelService(int iArguments, char **aArguments) : QtService<QCoreApplication>(iArguments, aArguments, "") {
-    // Set the service descripts
-    setServiceDescription("ServerPanel RPC Service");
-    // Set the service flags
-    setServiceFlags(QtServiceBase::CanBeSuspended);
-}
+ServerPanelService::ServerPanelService(QObject* cParent) : QTcpServer(cParent) {}
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Protected Methods ////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-void ServerPanelService::Pause() {
-    // Pause the service
-    this->mDaemon->Pause();
-}
-
-void ServerPanelService::Resume() {
-    // Resume the service
-    this->mDaemon->Resume();
-}
-
-void ServerPanelService::Start() {
-    // Create the application
-    QCoreApplication* cApplication = application();
-    // Setup the daemon
-    this->mDaemon = new ServerPanelServer(cApplication);
-    // Check to see if the daemon is running
-    if (!this->mDaemon->isListening()) {
-        // Kill the application
-        cApplication->quit();
-    }
+void ServerPanelService::incomingConnection(int iSocket) {
+    // Create a thread
+    ServerPanelServer::Instance()->SetSocketDescriptor(iSocket);
+    // Run the socket
+    ServerPanelServer::Instance()->run();
 }
