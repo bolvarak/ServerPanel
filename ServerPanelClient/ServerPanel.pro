@@ -15,7 +15,7 @@ TEMPLATE = app
 SOURCES += main.cpp\
     ServerPanelMainWindow.cpp \
     ServerPanelAuthenticatedWindow.cpp \
-    ServerPaneRpc.cpp \
+    ServerPanelRpc.cpp \
     Json.cpp
 
 HEADERS  += ServerPanelMainWindow.h \
