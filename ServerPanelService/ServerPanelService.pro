@@ -16,7 +16,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    ServerPanelServer.cpp
+    ServerPanelServer.cpp \
+    Json.cpp \
+    ServerPanelRpc.cpp
 
 HEADERS += \
-    ServerPanelServer.h
+    ServerPanelServer.h \
+    Json.h \
+    ServerPanelRpc.h
