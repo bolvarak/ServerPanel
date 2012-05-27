@@ -40,7 +40,7 @@ void ServerPanelServer::run() {
     // Setup the client read event handler
     connect(qtsSocket, SIGNAL(readyRead()), this, SLOT(HandleClient()));
     // Setup the client disconnect handler
-    // connect(qtsSocket, SIGNAL(disconnected()), this, SLOT(DisconnectClient()));
+    connect(qtsSocket, SIGNAL(disconnected()), this, SLOT(DisconnectClient()));
     // Setup the completed event handler
     connect(this, SIGNAL(finished()), this, SLOT(deleteLater()));
     // Try to set the socket descriptor
@@ -50,30 +50,8 @@ void ServerPanelServer::run() {
         // We're done
         return;
     }
-    // Read all the data from the client
-    qDebug(qtsSocket->readAll());
-    // Create a buffer
-    QByteArray qbaBuffer;
-    // Send the response code
-    qbaBuffer.append("HTTP/1.1 200 OK\r\n");
-    qbaBuffer.append("Content-Type: application/json; charset=\"utf-8\"\r\n");
-    // Newline
-     qbaBuffer.append("\r\n");
-    // Send some JSON
-    qbaBuffer.append("{\n");
-    qbaBuffer.append("\t\"sServerStatus\":\"Good!\",\n");
-    qbaBuffer.append("\t\"sServerTime\":\"");
-    qbaBuffer.append(QDateTime::currentDateTime().toString().toLatin1());
-    qbaBuffer.append("\"\n}\n");
-    // Write the data
-    qtsSocket->write(qbaBuffer);
-    // Disconnect from host
-    qtsSocket->disconnectFromHost();
-    // Check to see if the socket is in an unconnected state
-    if (qtsSocket->state() != QTcpSocket::UnconnectedState) {
-        // Wait for the client to disconnect
-        qtsSocket->waitForDisconnected();
-    }
+    // Close the socket
+    qtsSocket->close();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -96,11 +74,45 @@ void ServerPanelServer::DisconnectClient() {
 void ServerPanelServer::HandleClient() {
     // Open the socket
     QTcpSocket* qtsSocket = (QTcpSocket*) sender();
-    qDebug("Reading CLient");
-    // Log the headers
-    qDebug(qtsSocket->readAll());
+    // Check to see if we can read from the client
+    if (qtsSocket->canReadLine()) {
+        // Grab the line
+        QString     sLine      = qtsSocket->readLine();
+        // Grab the headers
+        QStringList qslHeaders = sLine.split(QRegExp("[ \r\n][ \t\n]*"));
+        // Loop through the headers and log them
+        for (int iHeader = 0; iHeader < (int) qslHeaders.size(); iHeader++) {
+            // Log the header
+            qDebug(qslHeaders[iHeader].toLatin1());
+        }
+        // Create a buffer
+        QByteArray qbaBuffer;
+        // Send the response code
+        qbaBuffer.append("HTTP/1.1 200 OK\r\n");
+        qbaBuffer.append("Content-Type: application/json; charset=\"utf-8\"\r\n");
+        // Newline
+         qbaBuffer.append("\r\n");
+        // Send some JSON
+        qbaBuffer.append("{\n");
+        qbaBuffer.append("\t\"sServerStatus\":\"Good!\",\n");
+        qbaBuffer.append("\t\"sServerTime\":\"");
+        qbaBuffer.append(QDateTime::currentDateTime().toString().toLatin1());
+        qbaBuffer.append("\"\n}\n");
+        // Write the data
+        qtsSocket->write(qbaBuffer);
+        // Close the socket
+        qtsSocket->close();
+    }
     // Close the socket
-    qtsSocket->close();
+    qtsSocket->disconnectFromHost();
+    // Check the state of the socket
+    if (qtsSocket->state() != QTcpSocket::UnconnectedState) {
+        // Wait for the client to disconnect
+        qtsSocket->waitForDisconnected();
+    } else {
+        // Delete the socket
+        delete qtsSocket;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
