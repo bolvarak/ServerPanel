@@ -9,22 +9,17 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "ServerPanelService.h"
-#include <stdlib.h>
-#include <iostream>
+#include <QtGui/QApplication>
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Main() ///////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-int main () {
-    // Start the service
-    if (!ServerPanelService::Instance()->listen(QHostAddress::Any, RPC_LISTEN_PORT)) {
-        // Send a fatal message
-        qFatal("Could not bind the socket to localhost:1597!");
-    }
-    while (ServerPanelService::Instance()->isListening()) {
-        ServerPanelService::Instance()->waitForNewConnection();
-    }
-    // We're done
-    return 1;
+int main (int iArguments, char** aArguments) {
+    // Setup the application
+    QApplication qanApplication(iArguments, aArguments);
+    // Instantiate the server
+    ServerPanelService::Instance();
+    // Return the applications execution status
+    qanApplication.exec();
 }

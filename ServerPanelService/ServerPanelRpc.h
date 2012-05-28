@@ -15,7 +15,7 @@
 #include <QObject>
 #include <QtNetwork/QHttp>
 #include <QUrl>
-#include <QtCrypto/QtCrypto>
+// #include <QtCrypto/QtCrypto>
 #include "Json.h"
 
 ///////////////////////////////////////////////////////////////////////////////

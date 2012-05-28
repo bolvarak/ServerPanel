@@ -4,25 +4,21 @@
 #
 #-------------------------------------------------
 
-QT       += core network
-
-QT       -= gui
-
-TARGET = ServerPanelService
-CONFIG   += console
-CONFIG   -= app_bundle
-
-TEMPLATE = app
-
-
-SOURCES += main.cpp \
+QT          += gui core network sql
+TARGET       = ServerPanelService
+CONFIG      += console app_bundle
+TEMPLATE     = app
+SOURCES     += main.cpp \
     Json.cpp \
     ServerPanelRpc.cpp \
-    ServerPanelServer.cpp \
-    ServerPanelService.cpp
+    ServerPanelService.cpp \
+    ServerPanel.cpp
 
-HEADERS += \
+HEADERS     += \
     Json.h \
     ServerPanelRpc.h \
-    ServerPanelServer.h \
-    ServerPanelService.h
+    ServerPanelService.h \
+    ServerPanel.h
+
+OTHER_FILES += \
+    ServerPanel
