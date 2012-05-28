@@ -31,22 +31,27 @@ ServerPanel* ServerPanel::Instance() {
 /////////////////////////////////////////////////////////////////////////////
 
 ServerPanel::ServerPanel(QObject* cParent) : QObject(cParent) {
+    // Load the configuration
+    this->mConfig = new QSettings("/Users/tbrown/Documents/ServerPanel/ServerPanelService/ServerPanel.ini", QSettings::IniFormat);
     // Setup the databae
-    this->mDbc = QSqlDatabase::addDatabase("QPSQL");
+    this->mDbc    = QSqlDatabase::addDatabase(this->mConfig->value("databaseSettings/driver").toString());
     // Set the host
-    this->mDbc.setHostName(SERVERPANEL_DATABASE_HOST);
+    this->mDbc.setHostName(this->mConfig->value("databaseSettings/host").toString());
     // Set the port
-    this->mDbc.setPort(SERVERPANEL_DATABASE_PORT);
+    this->mDbc.setPort(this->mConfig->value("databaseSettings/port").toInt());
     // Set the database
-    this->mDbc.setDatabaseName(SERVERPANEL_DATABASE_NAME);
+    this->mDbc.setDatabaseName(this->mConfig->value("databaseSettings/db").toString());
     // Set the username
-    this->mDbc.setUserName(SERVERPANEL_DATABASE_USER);
+    this->mDbc.setUserName(this->mConfig->value("databaseSettings/user").toString());
     // Set the password
-    this->mDbc.setPassword(SERVERPANEL_DATABASE_PASS);
+    this->mDbc.setPassword(this->mConfig->value("databaseSettings/pass").toString());
+    // We're done with the database configuration
     // Try to open the database
     if (!this->mDbc.open()) {
-        // Notify the socket
-        std::cout << this->mDbc.lastError().text().toStdString() << std::endl;
+        // Setup the error placeholder
+        QByteArray qbaError;
+        // Add the error
+        qbaError.append(this->mDbc.lastError().text());
     }
 }
 
@@ -76,7 +81,7 @@ QVariantMap ServerPanel::AuthenticateUser(QString sUsername, QString sPassword) 
     // Setup the query
     QSqlQuery qsqAccount(this->mDbc);
     // Prepare the query
-    qsqAccount.prepare("SELECT * FROM accounts WHERE \"sUsername\" = ? AND \"sPassword\" = ?;");
+    qsqAccount.prepare(this->mConfig->value("sqlQueries/accountAuthentication").toString());
     // Bind the values
     qsqAccount.bindValue(0, sUsername); // Username
     qsqAccount.bindValue(1, sPassword); // Password
@@ -151,6 +156,12 @@ QByteArray ServerPanel::EncodeResponse(QVariantMap qvmResponse) {
   * @return QByteArray sResponse
   */
 QByteArray ServerPanel::HandleRequest(QString sRequest) {
+    // Create a byte array of the request
+    QByteArray qbaRequest;
+    // Add the request
+    qbaRequest.append(sRequest);
+    // Log the request
+    this->LogMessage(qbaRequest);
     // Decode the request
     QVariantMap qvmRequest = this->DecodeRequest(sRequest);
     // Make sure there is a method
@@ -158,14 +169,33 @@ QByteArray ServerPanel::HandleRequest(QString sRequest) {
         // Set the method
         QString sMethod = qvmRequest[SERVERPANEL_METHOD_NOTATION_KEY].toString();
         // Determine the method to execute
-        if (sMethod.contains("AuthenticateUser", Qt::CaseSensitive)) { // User authentication
-            // Run the method, encode the results and return the response
-            return this->EncodeResponse(                        // Call to EncodeResponse
+        if (sMethod.contains("AuthenticateUser", Qt::CaseInsensitive)) { // User authentication
+            // Grab the response
+            QByteArray qbaResponse = this->EncodeResponse(      // Call to EncodeResponse
                         this->AuthenticateUser(                 // Call to AuthenticateUser
                             qvmRequest["sUsername"].toString(), // Username
                             qvmRequest["sPassword"].toString()  // Password
                         )
                    );                                           // The response is sent
+            // Log the response
+            this->LogMessage(qbaResponse);
+            // Send the response
+            return qbaResponse;
+        } else if (sMethod.contains("Ping", Qt::CaseInsensitive)) {      // Ping test
+            // Create a map with the time stamps
+            QVariantMap qvmPing;
+            // Add the human readable time stamp
+            qvmPing.insert("sTimestamp", QDateTime::currentDateTime());
+            // Add the UTC timestamp
+            qvmPing.insert("sUtcTimestamp", QDateTime::currentDateTimeUtc());
+            // Add the seconds since epoch
+            qvmPing.insert("sEpochTimestamp", QDateTime::currentMSecsSinceEpoch());
+            // Grab the response
+            QByteArray qbaResponse = this->EncodeResponse(qvmPing);
+            // Log the response
+            this->LogMessage(qbaResponse);
+            // Send the encoded timestamps
+            return qbaResponse;
         }
     } else {
         // Create a map
@@ -178,7 +208,35 @@ QByteArray ServerPanel::HandleRequest(QString sRequest) {
         qvmResponse.insert("sError", sError);
         // Add the timestamp
         qvmResponse.insert("sTimestamp", QDateTime::currentDateTime());
-        // Encode and return the response
-        return this->EncodeResponse(qvmResponse).append("\n");
+        // Grab the response
+        QByteArray qbaResponse = this->EncodeResponse(qvmResponse);
+        // Log the response
+        this->LogMessage(qbaResponse);
+        // Send the response
+        return qbaResponse;
     }
+}
+
+/**
+  * @paragraph This method simply logs messages to the log file, generally errors, requests and responses
+  * @brief ServerPanel::LogMessage
+  * @param QByteArray sMessage
+  * @return void
+  */
+void ServerPanel::LogMessage(QByteArray qbaMessage) {
+    // Load the log file
+    QFile qfsLogFile(this->mConfig->value("systemPaths/logFile").toString());
+    // Make sure we can open the file
+    if (!qfsLogFile.open(QIODevice::Append | QIODevice::Text)) {
+        // Send the error to the socket
+        std::cout << "Cannot open log file for writing." << std::endl;
+        // We're done
+        return;
+    }
+    // Create a stream for the file
+    QTextStream qtsOutput(&qfsLogFile);
+    // Stream the message
+    qtsOutput << QDateTime::currentDateTime().toString() << " : " << qbaMessage;
+    // Close the log file
+    qfsLogFile.close();
 }

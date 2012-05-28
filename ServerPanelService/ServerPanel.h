@@ -19,6 +19,8 @@
 #include <QObject>
 #include <QtSql>
 #include <QVariantMap>
+#include <QSettings>
+#include <QFile>
 #include <Json.h>
 #include <stdlib.h>
 #include <iostream>
@@ -41,6 +43,7 @@ public:
 // Protected
 protected :
     // Properties
+    QSettings*           mConfig;   // System Configuration
     QSqlDatabase         mDbc;      // Database Connection
     static ServerPanel*  mInstance; // Singleton Instane
     // Constructor
@@ -49,5 +52,6 @@ protected :
     QVariantMap AuthenticateUser(QString sUsername, QString sPassword);
     QVariantMap DecodeRequest   (QString sRequest);
     QByteArray  EncodeResponse  (QVariantMap qvmResponse);
+    void        LogMessage      (QByteArray qbaMessage);
 };
 #endif
