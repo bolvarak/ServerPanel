@@ -5,11 +5,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #define SERVERPANEL_H
-#define SERVERPANEL_DATABASE_HOST       "199.189.87.7"
-#define SERVERPANEL_DATABASE_PORT       5432
-#define SERVERPANEL_DATABASE_NAME       "serverpanel"
-#define SERVERPANEL_DATABASE_USER       "serverpanel"
-#define SERVERPANEL_DATABASE_PASS       "changeMe123"
 #define SERVERPANEL_METHOD_NOTATION_KEY "sMethod"
 
 ///////////////////////////////////////////////////////////////////////////////

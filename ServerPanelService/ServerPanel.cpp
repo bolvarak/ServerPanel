@@ -100,11 +100,19 @@ QVariantMap ServerPanel::AuthenticateUser(QString sUsername, QString sPassword) 
             // Grab the record
             QSqlRecord qsrAccount = qsqAccount.record();
             // Assign the data to the map
-            qvmReturn.insert("iAccountId",    qsqAccount.value(qsrAccount.indexOf("iAccountId")).toInt());       // Account ID
-            qvmReturn.insert("sUsername",     qsqAccount.value(qsrAccount.indexOf("sUsername")).toString());     // Username
-            qvmReturn.insert("sFirstName",    qsqAccount.value(qsrAccount.indexOf("sFirstName")).toString());    // First Name
-            qvmReturn.insert("sLastName",     qsqAccount.value(qsrAccount.indexOf("sLastName")).toString());     // Last Name
-            qvmReturn.insert("sEmailAddress", qsqAccount.value(qsrAccount.indexOf("sEmailAddress")).toString()); // Email Address
+            qvmReturn.insert("iAccountId",          qsqAccount.value(qsrAccount.indexOf("iAccountId")).toInt());             // Account ID
+            qvmReturn.insert("sUsername",           qsqAccount.value(qsrAccount.indexOf("sUsername")).toString());           // Username
+            qvmReturn.insert("sEmailAddress",       qsqAccount.value(qsrAccount.indexOf("sEmailAddress")).toString());       // Email Address
+            qvmReturn.insert("sFirstName",          qsqAccount.value(qsrAccount.indexOf("sFirstName")).toString());          // First Name
+            qvmReturn.insert("sLastName",           qsqAccount.value(qsrAccount.indexOf("sLastName")).toString());           // Last Name
+            qvmReturn.insert("sPhoneNumber",        qsqAccount.value(qsrAccount.indexOf("sPhoneNumber")).toString());        // Phone Number
+            qvmReturn.insert("sStreetAddress",      qsqAccount.value(qsrAccount.indexOf("sStreetAddress")).toString());      // Street Address
+            qvmReturn.insert("sStreetAddressExtra", qsqAccount.value(qsrAccount.indexOf("sStreetAddressExtra")).toString()); // Street Address Extra
+            qvmReturn.insert("sCity",               qsqAccount.value(qsrAccount.indexOf("sCity")).toString());               // City
+            qvmReturn.insert("sState",              qsqAccount.value(qsrAccount.indexOf("sState")).toString());              // State
+            qvmReturn.insert("sPostalCode",         qsqAccount.value(qsrAccount.indexOf("sPostalCode")).toString());         // Zip Code
+            qvmReturn.insert("bEnabled",            qsqAccount.value(qsrAccount.indexOf("bEnabled")).toBool());              // Account Enabled
+            qvmReturn.insert("iAccountLevel",       qsqAccount.value(qsrAccount.indexOf("iAccountLevel")).toInt());          // Account Privilege Level
         }
     } else {
         // Clear the map
