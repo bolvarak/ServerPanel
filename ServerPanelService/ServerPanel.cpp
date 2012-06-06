@@ -32,7 +32,7 @@ ServerPanel* ServerPanel::Instance() {
 
 ServerPanel::ServerPanel(QObject* cParent) : QObject(cParent) {
     // Load the configuration
-    this->mConfig = new QSettings("/Users/tbrown/Documents/ServerPanel/ServerPanelService/ServerPanel.ini", QSettings::IniFormat);
+    this->mConfig = new QSettings("/home/tbrown/Documents/ServerPanel/ServerPanelService/ServerPanel.ini", QSettings::IniFormat);
     // Setup the databae
     this->mDbc    = QSqlDatabase::addDatabase(this->mConfig->value("databaseSettings/driver").toString());
     // Set the host
@@ -67,6 +67,22 @@ ServerPanel::~ServerPanel() {
 ///////////////////////////////////////////////////////////////////////////////
 /// Protected Methods ////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
+
+QBool ServerPanel::AddDnsRecord(int iAccountId, int iDomainId, QString sHostName, QString sAddress, QString sDirection, QString sType, int iPriority, QBool bEnabled) {
+
+}
+
+QBool ServerPanel::AddDomain(int iAccountId, QString sDomain, QBool bEnabled) {
+
+}
+
+QBool ServerPanel::AddMailBox(QString sUsername, QString sPassword, QString sName, QString sStorageDirectory, QString sStorageNode, QString sMailDirectory, int iQuota, int iBytes, QString sDomain, QString sTransport, QString sDepartment, QString sRank, QString sEmployeeId, QBool bEnableSmtp, QBool bEnableSecureSmtp, QBool bEnablePop3, QBool bEnableSecurePop3, QBool bEnableImap, QBool bEnableSecureImap, QBool bEnableDelivery, QBool bEnableSieveManagement, QBool bEnableSecureSieveManagement, QBool bEnableInternalDelivery, QString sDisclaimer, QBool bActive, QString sLocalPartition) {
+
+}
+
+QBool ServerPanel::AddMailDomain(int iDomainId, QString sDescription, QString sDisclaimer, int iMaxQuota, int iQuota, QString sTransport, QBool bBackupMx, int iDefaultUserQuota, QString sDefaultPasswordScheme, int iMinimumPasswordLength, int iMaximumPasswordLength, QBool bActive) {
+
+}
 
 /**
   * @paragraph This method runs the query and logic for authenticating a user
