@@ -68,29 +68,123 @@ ServerPanel::~ServerPanel() {
 /// Protected Methods ////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-QBool ServerPanel::AddDnsRecord(int iAccountId, int iDomainId, QString sHostName, QString sAddress, QString sDirection, QString sType, int iPriority, QBool bEnabled) {
-
-}
-
-QBool ServerPanel::AddDomain(int iAccountId, QString sDomain, QBool bEnabled) {
-
-}
-
-QBool ServerPanel::AddMailBox(QString sUsername, QString sPassword, QString sName, QString sStorageDirectory, QString sStorageNode, QString sMailDirectory, int iQuota, int iBytes, QString sDomain, QString sTransport, QString sDepartment, QString sRank, QString sEmployeeId, QBool bEnableSmtp, QBool bEnableSecureSmtp, QBool bEnablePop3, QBool bEnableSecurePop3, QBool bEnableImap, QBool bEnableSecureImap, QBool bEnableDelivery, QBool bEnableSieveManagement, QBool bEnableSecureSieveManagement, QBool bEnableInternalDelivery, QString sDisclaimer, QBool bActive, QString sLocalPartition) {
-
-}
-
-QBool ServerPanel::AddMailDomain(int iDomainId, QString sDescription, QString sDisclaimer, int iMaxQuota, int iQuota, QString sTransport, QBool bBackupMx, int iDefaultUserQuota, QString sDefaultPasswordScheme, int iMinimumPasswordLength, int iMaximumPasswordLength, QBool bActive) {
+/**
+ * @paragraph This method adds a new account to the system
+ * @brief ServerPanel::AddAccount
+ * @param QString sUsername
+ * @param QString sPassword
+ * @param QString sEmailAddress
+ * @param QString sFirstName
+ * @param QString sLastName
+ * @param QString sPhoneNumber
+ * @param QString sHomeDirectory
+ * @param QString sStreetAddress
+ * @param QString sStreetAddressExtra
+ * @param QString sCity
+ * @param QString sState
+ * @param QString sPostalCode
+ * @param QString sCountry
+ * @param int iAccountLevel
+ * @param QBool bEnabled
+ * @return QVariantMap
+ */
+QVariantMap ServerPanel::AddAccount(QString sUsername, QString sPassword, QString sEmailAddress, QString sFirstName, QString sLastName, QString sPhoneNumber, QString sHomeDirectory, QString sStreetAddress, QString sStreetAddressExtra, QString sCity, QString sState, QString sPostalCode, QString sCountry, int iAccountLevel, QBool bEnabled) {
 
 }
 
 /**
-  * @paragraph This method runs the query and logic for authenticating a user
-  * @brief ServerPanel::AuthenticateUser
-  * @param QString sUsername
-  * @param QString sPassword
-  * @return QVariantMap qvmReturn
-  */
+ * @paragraph This method adds a DNS record for a domain into the system
+ * @brief ServerPanel::AddDnsRecord
+ * @param int iAccountId
+ * @param int iDomainId
+ * @param QString sHostName
+ * @param QString sAddress
+ * @param QString sDirection
+ * @param QString sType
+ * @param int iPriority
+ * @param QBool bEnabled
+ * @return QVariantMap
+ */
+QVariantMap ServerPanel::AddDnsRecord(int iAccountId, int iDomainId, QString sHostName, QString sAddress, QString sDirection, QString sType, int iPriority, QBool bEnabled) {
+
+}
+
+/**
+ * @paragraph This method adds a DNS zone into the system
+ * @brief ServerPanel::AddDomain
+ * @param int iAccountId
+ * @param QString sDomain
+ * @param QBool bEnabled
+ * @return QVariantMap
+ */
+QVariantMap ServerPanel::AddDomain(int iAccountId, QString sDomain, QBool bEnabled) {
+
+}
+
+/**
+ * @paragraph This method adds a new mailbox into the system
+ * @brief ServerPanel::AddMailBox
+ * @param QString sUsername
+ * @param QString sPassword
+ * @param QString sName
+ * @param QString sStorageDirectory
+ * @param QString sStorageNode
+ * @param QString sMailDirectory
+ * @param int iQuota
+ * @param int iBytes
+ * @param QString sDomain
+ * @param QString sTransport
+ * @param QString sDepartment
+ * @param QString sRank
+ * @param QString sEmployeeId
+ * @param QBool bEnableSmtp
+ * @param QBool bEnableSecureSmtp
+ * @param QBool bEnablePop3
+ * @param QBool bEnableSecurePop3
+ * @param QBool bEnableImap
+ * @param QBool bEnableSecureImap
+ * @param QBool bEnableDelivery
+ * @param QBool bEnableSieveManagement
+ * @param QBool bEnableSecureSieveManagement
+ * @param QBool bEnableInternalDelivery
+ * @param QString sDisclaimer
+ * @param QBool bActive
+ * @param QString sLocalPartition
+ * @return QVariantMap
+ */
+QVariantMap ServerPanel::AddMailBox(QString sUsername, QString sPassword, QString sName, QString sStorageDirectory, QString sStorageNode, QString sMailDirectory, int iQuota, int iBytes, QString sDomain, QString sTransport, QString sDepartment, QString sRank, QString sEmployeeId, QBool bEnableSmtp, QBool bEnableSecureSmtp, QBool bEnablePop3, QBool bEnableSecurePop3, QBool bEnableImap, QBool bEnableSecureImap, QBool bEnableDelivery, QBool bEnableSieveManagement, QBool bEnableSecureSieveManagement, QBool bEnableInternalDelivery, QString sDisclaimer, QBool bActive, QString sLocalPartition) {
+
+}
+
+/**
+ * @paragraph This method enables mailboxes on a domain
+ * @brief ServerPanel::AddMailDomain
+ * @param int iAccountId
+ * @param int iDomainId
+ * @param QString sDescription
+ * @param QString sDisclaimer
+ * @param int iMaxQuota
+ * @param int iQuota
+ * @param QString sTransport
+ * @param QBool bBackupMx
+ * @param int iDefaultUserQuota
+ * @param QString sDefaultPasswordScheme
+ * @param int iMinimumPasswordLength
+ * @param int iMaximumPasswordLength
+ * @param QBool bActive
+ * @return QVariantMap
+ */
+QVariantMap ServerPanel::AddMailDomain(int iAccountId, int iDomainId, QString sDescription, QString sDisclaimer, int iMaxQuota, int iQuota, QString sTransport, QBool bBackupMx, int iDefaultUserQuota, QString sDefaultPasswordScheme, int iMinimumPasswordLength, int iMaximumPasswordLength, QBool bActive) {
+
+}
+
+/**
+ * @paragraph This method runs the query and logic for authenticating a user
+ * @brief ServerPanel::AuthenticateUser
+ * @param QString sUsername
+ * @param QString sPassword
+ * @return QVariantMap qvmReturn
+ */
 QVariantMap ServerPanel::AuthenticateUser(QString sUsername, QString sPassword) {
     // Set the return map
     QVariantMap qvmReturn;
@@ -141,11 +235,11 @@ QVariantMap ServerPanel::AuthenticateUser(QString sUsername, QString sPassword) 
 }
 
 /**
-  * @paragraph This method decodes a JSON request made to the system
-  * @brief ServerPanel::DecodeRequest
-  * @param QString sRequest
-  * @return QVarianMap qvmResuest
-  */
+ * @paragraph This method decodes a JSON request made to the system
+ * @brief ServerPanel::DecodeRequest
+ * @param QString sRequest
+ * @return QVarianMap qvmResuest
+ */
 QVariantMap ServerPanel::DecodeRequest(QString sRequest) {
     // Setup a boolean identifier
     bool bDecoded;
@@ -163,22 +257,22 @@ QVariantMap ServerPanel::DecodeRequest(QString sRequest) {
 }
 
 /**
-  * @paragraph This method encodes a QVariantMap into a JSON string to be sent across the network
-  * @brief ServerPanel::EncodeResponse
-  * @param QVariantMap qvmResponse
-  * @return QByteArray
-  */
+ * @paragraph This method encodes a QVariantMap into a JSON string to be sent across the network
+ * @brief ServerPanel::EncodeResponse
+ * @param QVariantMap qvmResponse
+ * @return QByteArray
+ */
 QByteArray ServerPanel::EncodeResponse(QVariantMap qvmResponse) {
     // Encode the map and return it
     return QtJson::Json::serialize(qvmResponse);
 }
 
 /**
-  * @paragraph This method is the work horse of the system.  It takes the request JSON, decodes it and determines what method in the system should be executed.
-  * @brief ServerPanel::HandleRequest
-  * @param QString sRequest
-  * @return QByteArray sResponse
-  */
+ * @paragraph This method is the work horse of the system.  It takes the request JSON, decodes it and determines what method in the system should be executed.
+ * @brief ServerPanel::HandleRequest
+ * @param QString sRequest
+ * @return QByteArray sResponse
+ */
 QByteArray ServerPanel::HandleRequest(QString sRequest) {
     // Create a byte array of the request
     QByteArray qbaRequest;
@@ -242,11 +336,11 @@ QByteArray ServerPanel::HandleRequest(QString sRequest) {
 }
 
 /**
-  * @paragraph This method simply logs messages to the log file, generally errors, requests and responses
-  * @brief ServerPanel::LogMessage
-  * @param QByteArray sMessage
-  * @return void
-  */
+ * @paragraph This method simply logs messages to the log file, generally errors, requests and responses
+ * @brief ServerPanel::LogMessage
+ * @param QByteArray sMessage
+ * @return void
+ */
 void ServerPanel::LogMessage(QByteArray qbaMessage) {
     // Load the log file
     QFile qfsLogFile(this->mConfig->value("systemPaths/logFile").toString());

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by Qt Creator 2.4.1, 2012-06-06T11:11:48. -->
+<!-- Written by Qt Creator 2.4.1, 2012-06-06T16:44:27. -->
 <qtcreator>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
@@ -14,7 +14,7 @@
    <valuemap type="QVariantMap" key="EditorConfiguration.CodeStyle.0">
     <value type="QString" key="language">Cpp</value>
     <valuemap type="QVariantMap" key="value">
-     <value type="QString" key="CurrentPreferences">CppGlobal</value>
+     <value type="QString" key="CurrentPreferences">qt</value>
     </valuemap>
    </valuemap>
    <valuemap type="QVariantMap" key="EditorConfiguration.CodeStyle.1">
@@ -28,13 +28,13 @@
    <value type="bool" key="EditorConfiguration.ConstrainTooltips">false</value>
    <value type="int" key="EditorConfiguration.IndentSize">4</value>
    <value type="bool" key="EditorConfiguration.MouseNavigation">true</value>
-   <value type="int" key="EditorConfiguration.PaddingMode">1</value>
+   <value type="int" key="EditorConfiguration.PaddingMode">2</value>
    <value type="bool" key="EditorConfiguration.ScrollWheelZooming">true</value>
    <value type="int" key="EditorConfiguration.SmartBackspaceBehavior">0</value>
-   <value type="bool" key="EditorConfiguration.SpacesForTabs">true</value>
+   <value type="bool" key="EditorConfiguration.SpacesForTabs">false</value>
    <value type="int" key="EditorConfiguration.TabKeyBehavior">0</value>
    <value type="int" key="EditorConfiguration.TabSize">8</value>
-   <value type="bool" key="EditorConfiguration.UseGlobal">true</value>
+   <value type="bool" key="EditorConfiguration.UseGlobal">false</value>
    <value type="int" key="EditorConfiguration.Utf8BomBehavior">1</value>
    <value type="bool" key="EditorConfiguration.addFinalNewLine">true</value>
    <value type="bool" key="EditorConfiguration.cleanIndentation">true</value>

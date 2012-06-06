@@ -44,7 +44,24 @@ protected :
     // Constructor
     ServerPanel(QObject* cParent = 0);
     // Methods
-    QBool       AddDnsRecord    (
+    QVariantMap     AddAccount      (
+            QString sUsername,
+            QString sPassword,
+            QString sEmailAddress,
+            QString sFirstName,
+            QString sLastName,
+            QString sPhoneNumber,
+            QString sHomeDirectory,
+            QString sStreetAddress      = NULL,
+            QString sStreetAddressExtra = NULL,
+            QString sCity               = NULL,
+            QString sState              = NULL,
+            QString sPostalCode         = NULL,
+            QString sCountry            = "USA",
+            int iAccountLevel           = 3,
+            QBool bEnabled              = true
+    );
+    QVariantMap     AddDnsRecord    (
             int     iAccountId,
             int     iDomainId,
             QString sHostName,
@@ -54,12 +71,12 @@ protected :
             int     iPriority  = NULL,
             QBool   bEnabled   = true
     );
-    QBool       AddDomain       (
+    QVariantMap     AddDomain       (
             int iAccountId,
             QString sDomain,
             QBool bEnabled = true
     );
-    QBool       AddMailBox      (
+    QVariantMap     AddMailBox      (
             QString sUsername,
             QString sPassword,
             QString sName                        = NULL,
@@ -87,7 +104,8 @@ protected :
             QBool   bActive                      = true,
             QString sLocalPartition              = NULL
     );
-    QBool       AddMailDomain   (
+    QVariantMap     AddMailDomain   (
+            int     iAccountId,
             int     iDomainId,
             QString sDescription           = NULL,
             QString sDisclaimer            = NULL,
@@ -102,7 +120,7 @@ protected :
             QBool   bActive                = true
     );
     QVariantMap AuthenticateUser(QString sUsername, QString sPassword);
-    QBool       CreateAccount   (
+    QVariantMap CreateAccount   (
             QString sUsername,
             QString sPassword,
             QString sEmailAddress,

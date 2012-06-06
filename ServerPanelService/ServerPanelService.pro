@@ -21,6 +21,6 @@ HEADERS     += \
     ServerPanel.h
 
 OTHER_FILES += \
-    ServerPanel \
     ServerPanel.ini \
-    Access.log
+    Access.log \
+    ServerPanel.ini
