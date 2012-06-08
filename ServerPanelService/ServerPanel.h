@@ -16,6 +16,7 @@
 #include <QVariantMap>
 #include <QSettings>
 #include <QFile>
+#include <QProcess>
 #include <Json.h>
 #include <stdlib.h>
 #include <iostream>
@@ -139,6 +140,7 @@ protected :
     );
     QVariantMap DecodeRequest   (QString sRequest);
     QByteArray  EncodeResponse  (QVariantMap qvmResponse);
+    QBool       ExecuteSystemCmd(QString sProgram, QStringList qslArguments);
     void        LogMessage      (QByteArray qbaMessage);
 };
 #endif

@@ -89,7 +89,87 @@ ServerPanel::~ServerPanel() {
  * @return QVariantMap
  */
 QVariantMap ServerPanel::AddAccount(QString sUsername, QString sPassword, QString sEmailAddress, QString sFirstName, QString sLastName, QString sPhoneNumber, QString sHomeDirectory, QString sStreetAddress, QString sStreetAddressExtra, QString sCity, QString sState, QString sPostalCode, QString sCountry, int iAccountLevel, QBool bEnabled) {
-
+    // Set the return map
+    QVariantMap qvmReturn;
+    // First we need to check the username
+    QSqlQuery qsqUsername(this->mDbc);
+    // Prepare the username query
+    qsqUsername.prepare(this->mConfig->value("sqlQueries/checkForExistingUsername").toString());
+    // Add the username to the query
+    qsqUsername.bindValue(0, sUsername);
+    // Try to execute the query
+    if (!qsqUsername.exec()) {
+        // Set the error text
+        qvmReturn.insert("sError",   qsqUsername.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // Check for rows
+    if (qsqUsername.size()) {
+        // We have a username, let's notify the caller
+        qvmReturn.insert("sError",   "The username you chose already exists in the system.");
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // We're done with the username query, so close it
+    qsqUsername.finish();
+    // Now we will setup a new query to create the account
+    QSqlQuery qsqAccount(this->mDbc);
+    // Prepare the statement
+    qsqAccount.prepare(this->mConfig->value("sqlQueries/addAccount"));
+    // Add the values
+    qsqAccount.bindValue(0,  sUsername);           // Username
+    qsqAccount.bindValue(1,  sPassword);           // Password
+    qsqAccount.bindValue(2,  sEmailAddress);       // Email Address
+    qsqAccount.bindValue(3,  sFirstName);          // First Name
+    qsqAccount.bindValue(4,  sLastName);           // Last Name
+    qsqAccount.bindValue(5,  sPhoneNumber);        // Phone Number
+    qsqAccount.bindValue(6,  sHomeDirectory);      // User Home Directory
+    qsqAccount.bindValue(7,  sStreetAddress);      // Street Address
+    qsqAccount.bindValue(8,  sStreetAddressExtra); // Street Address 2
+    qsqAccount.bindValue(9,  sCity);               // City
+    qsqAccount.bindValue(10, sState);              // State
+    qsqAccount.bindValue(11, sPostalCode);         // Zip Code
+    qsqAccount.bindValue(12, sCountry);            // Country
+    qsqAccount.bindValue(13, iAccountLevel);       // Account Level
+    qsqAccount.bindValue(14, bEnabled);            // Enable Account
+    // Try to execute the query
+    if (!qsqAccount.exec()) {
+        // Set the error string
+        qvmReturn.insert("sError",   qsqAccount.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // Create the argument string to add the system user
+    QStringList qslArguments;
+    // Add the arguments
+    qslArguments.append(QString("-d /home/").append(sUsername)); // Home Directory
+    qslArguments.append("-m");                                   // Create Home Directory
+    qslArguments.append(QString("-p ").append(sPassword));       // Password
+    qslArguments.append(QString("-s /bin/bash"));                // Shell
+    qslArguments.append("-U");                                   // Create User's Group
+    qslArguments.append(sUsername);                              // Login
+    // Try to add the user and group
+    if (!ExecuteSystemCmd("useradd", qslArguments)) {
+        // Set the error string
+        qvmReturn.insert("sError",   "Unable to add the system account for this user.");
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // The account has been created, set the message
+    qvmReturn.insert("sMessage", "System account has been successfully added.");
+    // Set the success status
+    qvmReturn.insert("bSuccess", true);
+    // Return the map
+    return qvmReturn;
 }
 
 /**
@@ -198,8 +278,9 @@ QVariantMap ServerPanel::AuthenticateUser(QString sUsername, QString sPassword) 
     // Try to execute the query
     if (!qsqAccount.exec()) {
         // Setup the error
-        qvmReturn.insert("sError", qsqAccount.lastError().text());
-        qvmReturn.insert("sQuery", qsqAccount.lastQuery());
+        qvmReturn.insert("sError",   qsqAccount.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
         // Return the map
         return qvmReturn;
     }
@@ -228,7 +309,9 @@ QVariantMap ServerPanel::AuthenticateUser(QString sUsername, QString sPassword) 
         // Clear the map
         qvmReturn.clear();
         // Set the error
-        qvmReturn.insert("sError", "I was unable to find your account, please check your username and password and try again.");
+        qvmReturn.insert("sError",   "I was unable to find your account, please check your username and password and try again.");
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
     }
     // Return the map
     return qvmReturn;
@@ -250,7 +333,9 @@ QVariantMap ServerPanel::DecodeRequest(QString sRequest) {
         // Reset the request
         qvmRequest.clear();
         // Set the error into the map
-        qvmRequest.insert("sError", "Your request was not able to be decoded, please check your request and ensure that it is valid.");
+        qvmRequest.insert("sError",   "Your request was not able to be decoded, please check your request and ensure that it is valid.");
+        // Set the success status
+        qvmRequest.insert("bSuccess", false);
     }
     // Return the request map
     return qvmRequest;
@@ -265,6 +350,16 @@ QVariantMap ServerPanel::DecodeRequest(QString sRequest) {
 QByteArray ServerPanel::EncodeResponse(QVariantMap qvmResponse) {
     // Encode the map and return it
     return QtJson::Json::serialize(qvmResponse);
+}
+
+QBool ServerPanel::ExecuteSystemCmd(QString sProgram, QStringList qslArguments) {
+    // Try to execute the command
+    if (QProcess::execute(sProgram, qslArguments) == QProcess::NormalExit) {
+        // Everything's good, we're done
+        return QBool(true);
+    }
+    // The execution failed
+    return QBool(false);
 }
 
 /**
