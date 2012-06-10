@@ -62,6 +62,8 @@ ServerPanel::ServerPanel(QObject* cParent) : QObject(cParent) {
 ServerPanel::~ServerPanel() {
     // Close the database
     this->mDbc.close();
+    // Close the configuration file
+    delete this->mConfig;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -186,7 +188,63 @@ QVariantMap ServerPanel::AddAccount(QString sUsername, QString sPassword, QStrin
  * @return QVariantMap
  */
 QVariantMap ServerPanel::AddDnsRecord(int iAccountId, int iDomainId, QString sHostName, QString sAddress, QString sDirection, QString sType, int iPriority, QBool bEnabled) {
-
+    // Set the return map
+    QVariantMap qvmReturn;
+    // Setup the SQL query to check for the DNS record
+    QSqlQuery qsqDnsRecord(this->mDbc);
+    // Prepare the SQL
+    qsqDnsRecord.prepare(this->mConfig->value("sqlQueries/checkForExistingDnsRecord"));
+    // Add the values'
+    qsqDnsRecord.bindValue(0, iDomainId); // Domain Identifer
+    qsqDnsRecord.bindValue(1, sHostName); // Host name
+    // Try to execute the query
+    if (!qsqDnsRecord.exec()) {
+        // Set the error message
+        qvmReturn.insert("sError",   qsqDnsRecord.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // Check for results
+    if (qsqDnsRecord.size()) {
+        // Set the error
+        qvmReturn.insert("sError",   "The DNS record you are trying to add already exists in the system.");
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // We're done with the check query, close it
+    qsqDnsRecord.finish();
+    // Now we'll create a new query to insert the new DNS record
+    QSqlQuery qsqNewDnsRecord(this->mDbc);
+    // Prepare the sql
+    qsqNewDnsRecord.prepare(this->mConfig->value("sqlQueries/addDnsRecord"));
+    // Bind the values
+    qsqNewDnsRecord.bindValue(0, iAccountId); // Account ID of associated account
+    qsqNewDnsRecord.bindValue(1, iDomainId);  // Domain ID of associated domain
+    qsqNewDnsRecord.bindValue(2, sHostName);  // New host name
+    qsqNewDnsRecord.bindValue(3, sAddress);   // IP Address
+    qsqNewDnsRecord.bindValue(4, sDirection); // Direction of the record (IN/OUT)
+    qsqNewDnsRecord.bindValue(5, sType);      // Type of the record (A, AAAA, NS, MX, etc)
+    qsqNewDnsRecord.bindValue(6, iPriority);  // MX priority
+    qsqNewDnsRecord.bindValue(7, bEnabled);   // Active status
+    // Try to execute the query
+    if (!qsqNewDnsRecord.exec()) {
+        // Set the error
+        qvmReturn.insert("sError",   qsqNewDnsRecord.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // All is well, set the message
+    qvmReturn.insert("sMessage", "New DNS record added successfully.");
+    // Set the success status
+    qvmReturn.insert("bSuccess", true);
+    // Return the map
+    return qvmReturn;
 }
 
 /**
@@ -198,7 +256,57 @@ QVariantMap ServerPanel::AddDnsRecord(int iAccountId, int iDomainId, QString sHo
  * @return QVariantMap
  */
 QVariantMap ServerPanel::AddDomain(int iAccountId, QString sDomain, QBool bEnabled) {
-
+    // Set the return map placeholder
+    QVariantMap qvmReturn;
+    // Setup a query to check for the domain
+    QSqlQuery qsqDomain(this->mDbc);
+    // Prepare the SQL statement
+    qsqDomain.prepare(this->mConfig->value("sqlQueries/checkForExistingDomain"));
+    // Bind the values
+    qsqDomain.bindValue(0, sDomain); // Domain Name
+    // Try to execute the query
+    if (!qsqDomain.exec()) {
+        // Set the error
+        qvmReturn.insert("sError",   qsqDomain.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // Check for results
+    if (qsqDomain.size()) {
+        // Set the error message
+        qvmReturn.insert("sError",   "The domain already exists in the system.");
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // We're done with that query, close it
+    qsqDomain.finish();
+    // Create a new query to add the new domain
+    QSqlQuery qsqNewDomain(this->mDbc);
+    // Prepare the SQL statement
+    qsqNewDomain.prepare(this->mConfig->value("sqlQueries/addNewDomain"));
+    // Bind the values
+    qsqNewDomain.bindValue(0, iAccountId); // Associated account identifier
+    qsqNewDomain.bindValue(1, sDomain);    // Domain name
+    qsqNewDomain.bindValue(2, bEnabled);   // Active status
+    // Try to execute the query
+    if (!qsqNewDomain.exec()) {
+        // Set  the error message
+        qvmReturn.insert("sError",   qsqNewDomain.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // All is well, set the message
+    qvmReturn.insert("sMessage", "New domain added successfully.");
+    // Set the success status
+    qvmReturn.insert("bSuccess", true);
+    // Return the map
+    return qvmReturn;
 }
 
 /**
@@ -233,7 +341,81 @@ QVariantMap ServerPanel::AddDomain(int iAccountId, QString sDomain, QBool bEnabl
  * @return QVariantMap
  */
 QVariantMap ServerPanel::AddMailBox(QString sUsername, QString sPassword, QString sName, QString sStorageDirectory, QString sStorageNode, QString sMailDirectory, int iQuota, int iBytes, QString sDomain, QString sTransport, QString sDepartment, QString sRank, QString sEmployeeId, QBool bEnableSmtp, QBool bEnableSecureSmtp, QBool bEnablePop3, QBool bEnableSecurePop3, QBool bEnableImap, QBool bEnableSecureImap, QBool bEnableDelivery, QBool bEnableSieveManagement, QBool bEnableSecureSieveManagement, QBool bEnableInternalDelivery, QString sDisclaimer, QBool bActive, QString sLocalPartition) {
-
+    // Set the return map placeholder
+    QVariantMap qvmReturn;
+    // Setup a query to check for the mailbox
+    QSqlQuery qsqMailBox(this->mDbc);
+    // Prepare the SQL statement
+    qsqMailBox.prepare(this->mConfig->value("sqlQueries/checkForExistingMailBox"));
+    // Bind the values
+    qsqMailBox.bindValue(0, sDomain);   // Associated mail domain
+    qsqMailBox.bindValue(1, sUsername); // Email Address
+    // Try to execute the query
+    if (!qsqMailBox.exec()) {
+        // Set the error message
+        qvmReturn.insert("sError",   qsqMailBox.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // Check for results
+    if (qsqMailBox.size()) {
+        // Set the error message
+        qvmReturn.insert("sError",   "A mailbox with that username and domain already exists in the system.");
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // We're done with that query, so close it
+    qsqMailBox.finish();
+    // Create a new query to add the new mailbox
+    QSqlQuery qsqNewMailBox(this->mDbc);
+    // Prepare the SQL statement
+    qsqNewMailBox.prepare(this->mConfig->value("sqlQueries/addNewMailBox"));
+    // Bind the values
+    qsqNewMailBox.bindValue(0,  sUsername);                    // Email address
+    qsqNewMailBox.bindValue(1,  sPassword);                    // Mailbox password
+    qsqNewMailBox.bindValue(2,  sName);                        // User's name
+    qsqNewMailBox.bindValue(3,  sStorageDirectory);            // Storage node parent directory
+    qsqNewMailBox.bindValue(4,  sStorageNode);                 // Storage subdirectory
+    qsqNewMailBox.bindValue(5,  sMailDirectory);               // Maildir
+    qsqNewMailBox.bindValue(6,  iQuota);                       // Mailbox quota
+    qsqNewMailBox.bindValue(7,  iBytes);                       // Bytes of quota used
+    qsqNewMailBox.bindValue(8,  sDomain);                      // Associated mail domain identifer
+    qsqNewMailBox.bindValue(9,  sTransport);                   // Transprt application
+    qsqNewMailBox.bindValue(10, sDepartment);                  // Department identifier
+    qsqNewMailBox.bindValue(11, sRank);                        // Priority rank
+    qsqNewMailBox.bindValue(12, sEmployeeId);                  // Employee identifier
+    qsqNewMailBox.bindValue(13, bEnableSmtp);                  // Enable SMTP login and delivery
+    qsqNewMailBox.bindValue(14, bEnableSecureSmtp);            // Enable secure SMTP login and delivery
+    qsqNewMailBox.bindValue(15, bEnablePop3);                  // Enable POP3 login
+    qsqNewMailBox.bindValue(16, bEnableSecurePop3);            // Enable secure POP3 login
+    qsqNewMailBox.bindValue(17, bEnableImap);                  // Enable IMAP login
+    qsqNewMailBox.bindValue(18, bEnableSecureImap);            // Enable secure IMAP login
+    qsqNewMailBox.bindValue(19, bEnableDelivery);              // Enable mail delivery
+    qsqNewMailBox.bindValue(20, bEnableSieveManagement);       // Allow Sieve management
+    qsqNewMailBox.bindValue(21, bEnableSecureSieveManagement); // Allow secure Sieve management
+    qsqNewMailBox.bindValue(22, bEnableInternalDelivery);      // Allow internal system delivery
+    qsqNewMailBox.bindValue(23, sDisclaimer);                  // Disclaimer text
+    qsqNewMailBox.bindValue(24, bActive);                      // Active status
+    qsqNewMailBox.bindValue(25, sLocalPartition);              // Local storage partition
+    // Try to execute the query
+    if (!qsqNewMailBox.exec()) {
+        // Set the error
+        qvmReturn.insert("sError",   qsqNewMailBox.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // All is well, set the message
+    qvmReturn.insert("sMessage", "New mailbox has been successfully added.");
+    // Set the success status
+    qvmReturn.insert("bSuccess", true);
+    // Return the map
+    return qvmReturn;
 }
 
 /**
@@ -255,7 +437,67 @@ QVariantMap ServerPanel::AddMailBox(QString sUsername, QString sPassword, QStrin
  * @return QVariantMap
  */
 QVariantMap ServerPanel::AddMailDomain(int iAccountId, int iDomainId, QString sDescription, QString sDisclaimer, int iMaxQuota, int iQuota, QString sTransport, QBool bBackupMx, int iDefaultUserQuota, QString sDefaultPasswordScheme, int iMinimumPasswordLength, int iMaximumPasswordLength, QBool bActive) {
-
+    // Set the return map
+    QVariantMap qvmReturn;
+    // Setup a SQL query to check for the mail domain
+    QSqlQuery qsqMailDomain(this->mDbc);
+    // Prepare the SQL statement
+    qsqMailDomain.prepare(this->mConfig->value("sqlQueries/checkForExistingMailDomain"));
+    // Bind the values
+    qsqMailDomain.bindValue(0, iDomainId); // Associated domain identifier
+    // Try to execute the query
+    if (!qsqMailDomain.exec()) {
+        // Set the error message
+        qvmReturn.insert("sError",   qsqMailDomain.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // Check for results
+    if (qsqMailDomain.size()) {
+        // Set the error message
+        qvmReturn.insert("sError",   "Mail accounts have already been enabled on this domain.");
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // We're done with the check query, close it
+    qsqMailDomain.finish();
+    // Create a new query to add the new mail domain
+    QSqlQuery qsqNewMailDomain(this->mDbc);
+    // Prepare the SQL statement
+    qsqNewMailDomain.prepare(this->mConfig->value("sqlQueries/addNewMailDomain"));
+    // Bind the values
+    qsqNewMailDomain.bindValue(0,  iAccountId);             // Associated account identifier
+    qsqNewMailDomain.bindValue(1,  iDomainId);              // Associated domain identifier
+    qsqNewMailDomain.bindValue(2,  sDescription);           // Mail domain description
+    qsqNewMailDomain.bindValue(3,  sDisclaimer);            // Disclaimer notice
+    qsqNewMailDomain.bindValue(4,  iMaxQuota);              // Max domain quota
+    qsqNewMailDomain.bindValue(5,  iQuota);                 // Domain quota
+    qsqNewMailDomain.bindValue(6,  sTransport);             // Transport application
+    qsqNewMailDomain.bindValue(7,  bBackupMx);              // Is this a backup mail domain
+    qsqNewMailDomain.bindValue(8,  iDefaultUserQuota);      // Default mailbox quota
+    qsqNewMailDomain.bindValue(9,  sDefaultPasswordScheme); // Default password scheme (MD5)
+    qsqNewMailDomain.bindValue(10, iMinimumPasswordLength); // Min password length
+    qsqNewMailDomain.bindValue(11, iMaximumPasswordLength); // Max password length
+    qsqNewMailDomain.bindValue(12, bEnabled);               // Active status
+    // Try to execute the query
+    if (!qsqNewMailDomain.exec()) {
+        // Set the error message
+        qvmReturn.insert("sError",   qsqNewMailDomain.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // All is well, set the message
+    qvmReturn.insert("sMessage", "Mail sending has been successfully activated on this domain.");
+    // Set the success status
+    qvmReturn.insert("bSuccess", true);
+    // Return the map
+    return qvmReturn;
 }
 
 /**
