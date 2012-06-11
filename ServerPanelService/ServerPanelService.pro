@@ -18,7 +18,8 @@ HEADERS     += \
     Json.h \
     ServerPanelRpc.h \
     ServerPanelService.h \
-    ServerPanel.h
+    ServerPanel.h \
+    ServerPanelStructures.h
 
 OTHER_FILES += \
     ServerPanel.ini \
