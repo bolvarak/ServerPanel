@@ -121,7 +121,7 @@ struct SpDnsRecord {
         // Create a map placeholder
         QVariantMap qvmProperties;
         // Set the properties
-        qvnProperties.insert("iRecordId",  this->iRecordId);
+        qvmProperties.insert("iRecordId",  this->iRecordId);
         qvmProperties.insert("iAccountId", this->iAccountId);
         qvmProperties.insert("iDomainId",  this->iDomainId);
         qvmProperties.insert("sHostName",  this->sHostName);

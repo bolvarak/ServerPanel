@@ -80,19 +80,21 @@ ServerPanel::~ServerPanel() {
 QVariantMap ServerPanel::AuthenticateUser(QString sUsername, QString sPassword) {
     // Set the return map
     QVariantMap qvmReturn;
-    // Setup the query
-    QSqlQuery qsqAccount(this->mDbc);
-    // Prepare the query
-    qsqAccount.prepare(this->mConfig->value("sqlQueries/accountAuthentication").toString());
-    // Bind the values
-    qsqAccount.bindValue(0, sUsername); // Username
-    qsqAccount.bindValue(1, sPassword); // Password
+    // Setup the account object
+    SpAccount spAccount;
+    // Set the username
+    spAccount.sUsername = sUsername;
+    // Set the password
+    spAccount.sPassword = sPassword;
+    // Grab the query object
+    QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, this->mConfig->value("sqlQueries/accountAuthentication").toString());
     // Try to execute the query
     if (!qsqAccount.exec()) {
         // Setup the error
         qvmReturn.insert("sError",   qsqAccount.lastError().text());
         // Set the success status
         qvmReturn.insert("bSuccess", false);
+        std::cout << qsqAccount.lastQuery().toStdString() << std::endl;
         // Return the map
         return qvmReturn;
     }
@@ -103,28 +105,30 @@ QVariantMap ServerPanel::AuthenticateUser(QString sUsername, QString sPassword) 
             // Grab the record
             QSqlRecord qsrAccount = qsqAccount.record();
             // Assign the data to the map
-            qvmReturn.insert("iAccountId",          qsqAccount.value(qsrAccount.indexOf("iAccountId")).toInt());             // Account ID
-            qvmReturn.insert("sUsername",           qsqAccount.value(qsrAccount.indexOf("sUsername")).toString());           // Username
-            qvmReturn.insert("sEmailAddress",       qsqAccount.value(qsrAccount.indexOf("sEmailAddress")).toString());       // Email Address
-            qvmReturn.insert("sFirstName",          qsqAccount.value(qsrAccount.indexOf("sFirstName")).toString());          // First Name
-            qvmReturn.insert("sLastName",           qsqAccount.value(qsrAccount.indexOf("sLastName")).toString());           // Last Name
-            qvmReturn.insert("sPhoneNumber",        qsqAccount.value(qsrAccount.indexOf("sPhoneNumber")).toString());        // Phone Number
-            qvmReturn.insert("sStreetAddress",      qsqAccount.value(qsrAccount.indexOf("sStreetAddress")).toString());      // Street Address
-            qvmReturn.insert("sStreetAddressExtra", qsqAccount.value(qsrAccount.indexOf("sStreetAddressExtra")).toString()); // Street Address Extra
-            qvmReturn.insert("sCity",               qsqAccount.value(qsrAccount.indexOf("sCity")).toString());               // City
-            qvmReturn.insert("sState",              qsqAccount.value(qsrAccount.indexOf("sState")).toString());              // State
-            qvmReturn.insert("sPostalCode",         qsqAccount.value(qsrAccount.indexOf("sPostalCode")).toString());         // Zip Code
-            qvmReturn.insert("bEnabled",            qsqAccount.value(qsrAccount.indexOf("bEnabled")).toBool());              // Account Enabled
-            qvmReturn.insert("iAccountLevel",       qsqAccount.value(qsrAccount.indexOf("iAccountLevel")).toInt());          // Account Privilege Level
+            spAccount.iAccountId          = qsqAccount.value(qsrAccount.indexOf("iAccountId")).toInt();             // Account ID
+            spAccount.sEmailAddress       = qsqAccount.value(qsrAccount.indexOf("sEmailAddress")).toString();       // Email Address
+            spAccount.sFirstName          = qsqAccount.value(qsrAccount.indexOf("sFirstName")).toString();          // First Name
+            spAccount.sLastName           = qsqAccount.value(qsrAccount.indexOf("sLastName")).toString();           // Last Name
+            spAccount.sPhoneNumber        = qsqAccount.value(qsrAccount.indexOf("sPhoneNumber")).toString();        // Phone Number
+            spAccount.sStreetAddress      = qsqAccount.value(qsrAccount.indexOf("sStreetAddress")).toString();      // Street Address
+            spAccount.sStreetAddressExtra = qsqAccount.value(qsrAccount.indexOf("sStreetAddressExtra")).toString(); // Street Address Extra
+            spAccount.sCity               = qsqAccount.value(qsrAccount.indexOf("sCity")).toString();               // City
+            spAccount.sState              = qsqAccount.value(qsrAccount.indexOf("sState")).toString();              // State
+            spAccount.sPostalCode         = qsqAccount.value(qsrAccount.indexOf("sPostalCode")).toString();         // Zip Code
+            spAccount.bEnabled            = qsqAccount.value(qsrAccount.indexOf("bEnabled")).toBool();              // Account Enabled
+            spAccount.iAccountLevel       = qsqAccount.value(qsrAccount.indexOf("iAccountLevel")).toInt();          // Account Privilege Level
+            // Reset the password
+            spAccount.sPassword.clear();
         }
-    } else {
-        // Clear the map
-        qvmReturn.clear();
-        // Set the error
-        qvmReturn.insert("sError",   "I was unable to find your account, please check your username and password and try again.");
-        // Set the success status
-        qvmReturn.insert("bSuccess", false);
+        // Return the account map
+        return spAccount.toMap();
     }
+    // Clear the map
+    qvmReturn.clear();
+    // Set the error
+    qvmReturn.insert("sError",   "I was unable to find your account, please check your username and password and try again.");
+    // Set the success status
+    qvmReturn.insert("bSuccess", false);
     // Return the map
     return qvmReturn;
 }
@@ -222,24 +226,23 @@ QByteArray ServerPanel::HandleRequest(QString sRequest) {
             // Send the encoded timestamps
             return qbaResponse;
         }
-    } else {
-        // Create a map
-        QVariantMap qvmResponse;
-        // Set the error
-        QString sError = "No \"";
-        sError.append(SERVERPANEL_METHOD_NOTATION_KEY);
-        sError.append("\" was present in your request.");
-        // Add the error
-        qvmResponse.insert("sError", sError);
-        // Add the timestamp
-        qvmResponse.insert("sTimestamp", QDateTime::currentDateTime());
-        // Grab the response
-        QByteArray qbaResponse = this->EncodeResponse(qvmResponse);
-        // Log the response
-        this->LogMessage(qbaResponse);
-        // Send the response
-        return qbaResponse;
     }
+    // Create a map
+    QVariantMap qvmResponse;
+    // Set the error
+    QString sError = "No \"";
+    sError.append(SERVERPANEL_METHOD_NOTATION_KEY);
+    sError.append("\" was present in your request.");
+    // Add the error
+    qvmResponse.insert("sError", sError);
+    // Add the timestamp
+    qvmResponse.insert("sTimestamp", QDateTime::currentDateTime());
+    // Grab the response
+    QByteArray qbaResponse = this->EncodeResponse(qvmResponse);
+    // Log the response
+    this->LogMessage(qbaResponse);
+    // Send the response
+    return qbaResponse;
 }
 
 /**
@@ -264,4 +267,81 @@ void ServerPanel::LogMessage(QByteArray qbaMessage) {
     qtsOutput << QDateTime::currentDateTime().toString() << " : " << qbaMessage;
     // Close the log file
     qfsLogFile.close();
+}
+
+QVariantMap ServerPanel::SaveAccount(SpAccount spAccount) {
+    // Setup the return map
+    QVariantMap qvmReturn;
+    // Check for an ID
+    if (spAccount.iAccountId != 0) {
+        // Grab the query object
+        QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, this->mConfig->value("sqlQueries/updateAccount").toString());
+        // Try to execute the query
+        if (!qsqAccount.exec()) {
+            // Set the error
+            qvmReturn.insert("sError",   qsqAccount.lastError().text());
+            // Set the success status
+            qvmReturn.insert("bSuccess", false);
+            // Return the map
+            return qvmReturn;
+        }
+        // Set the system command
+        QString sCommand = "usermod";
+        // Setup the command arguments placeholder
+        QStringList qslArguments;
+        // Add the arguments
+        qslArguments.append(QString("-p ").append(spAccount.sPassword));                  // User's Password
+        // Try to add the system user
+        if (!this->ExecuteSystemCmd(sCommand, qslArguments)) {
+            // Set the error message
+            qvmReturn.insert("sError",   "Failed to update the system account.");
+            // Set the success status
+            qvmReturn.insert("bSuccess", false);
+            // Return the map
+            return qvmReturn;
+        }
+        // All is well, set the message
+        qvmReturn.insert("sMessage", "The account has been updated successfully.");
+        // Set the success status
+        qvmReturn.insert("bSuccess", true);
+        // Return the map
+        return qvmReturn;
+    }
+    // We are creating an account, so grab the query object
+    QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, this->mConfig->value("sqlQueries/insertAccount").toString());
+    // Try to execute the query
+    if (!qsqAccount.exec()) {
+        // Set the error
+        qvmReturn.insert("sError",   qsqAccount.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // Set the system command
+    QString sCommand = "useradd";
+    // Setup the command arguments placeholder
+    QStringList qslArguments;
+    // Add the arguments
+    qslArguments.append(QString("-d ").append("/home/").append(spAccount.sUsername)); // Home Directory
+    qslArguments.append("-m");                                                        // Create Home Directory
+    qslArguments.append(QString("-p ").append(spAccount.sPassword));                  // User's Password
+    qslArguments.append("-s /bin/bash");                                              // Login Shell
+    qslArguments.append("-U");                                                        // Create User's Group
+    qslArguments.append(spAccount.sUsername);                                         // User's Login Name
+    // Try to add the system user
+    if (!this->ExecuteSystemCmd(sCommand, qslArguments)) {
+        // Set the error message
+        qvmReturn.insert("sError",   "Failed to add the system account.");
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // All is well, set the message
+    qvmReturn.insert("sMessage", "The account has been successfully created.");
+    // Set the success status
+    qvmReturn.insert("bSuccess", true);
+    // Return the map
+    return qvmReturn;
 }

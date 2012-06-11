@@ -24,4 +24,5 @@ HEADERS     += \
 OTHER_FILES += \
     ServerPanel.ini \
     Access.log \
-    ServerPanel.ini
+    ServerPanel.ini \
+    Access.log
