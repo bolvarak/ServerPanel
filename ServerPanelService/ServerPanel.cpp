@@ -32,7 +32,7 @@ ServerPanel* ServerPanel::Instance() {
 
 ServerPanel::ServerPanel(QObject* cParent) : QObject(cParent) {
     // Load the configuration
-    this->mConfig = new QSettings("/home/tbrown/Documents/ServerPanel/ServerPanelService/ServerPanel.ini", QSettings::IniFormat);
+    this->mConfig = new QSettings("/Users/tbrown/Documents/ServerPanel/ServerPanelService/ServerPanel.ini", QSettings::IniFormat);
     // Setup the databae
     this->mDbc    = QSqlDatabase::addDatabase(this->mConfig->value("databaseSettings/driver").toString());
     // Set the host
@@ -102,23 +102,8 @@ QVariantMap ServerPanel::AuthenticateUser(QString sUsername, QString sPassword) 
     if (qsqAccount.size()) {
         // Loop through the rows
         while (qsqAccount.next()) {
-            // Grab the record
-            QSqlRecord qsrAccount = qsqAccount.record();
-            // Assign the data to the map
-            spAccount.iAccountId          = qsqAccount.value(qsrAccount.indexOf("iAccountId")).toInt();             // Account ID
-            spAccount.sEmailAddress       = qsqAccount.value(qsrAccount.indexOf("sEmailAddress")).toString();       // Email Address
-            spAccount.sFirstName          = qsqAccount.value(qsrAccount.indexOf("sFirstName")).toString();          // First Name
-            spAccount.sLastName           = qsqAccount.value(qsrAccount.indexOf("sLastName")).toString();           // Last Name
-            spAccount.sPhoneNumber        = qsqAccount.value(qsrAccount.indexOf("sPhoneNumber")).toString();        // Phone Number
-            spAccount.sStreetAddress      = qsqAccount.value(qsrAccount.indexOf("sStreetAddress")).toString();      // Street Address
-            spAccount.sStreetAddressExtra = qsqAccount.value(qsrAccount.indexOf("sStreetAddressExtra")).toString(); // Street Address Extra
-            spAccount.sCity               = qsqAccount.value(qsrAccount.indexOf("sCity")).toString();               // City
-            spAccount.sState              = qsqAccount.value(qsrAccount.indexOf("sState")).toString();              // State
-            spAccount.sPostalCode         = qsqAccount.value(qsrAccount.indexOf("sPostalCode")).toString();         // Zip Code
-            spAccount.bEnabled            = qsqAccount.value(qsrAccount.indexOf("bEnabled")).toBool();              // Account Enabled
-            spAccount.iAccountLevel       = qsqAccount.value(qsrAccount.indexOf("iAccountLevel")).toInt();          // Account Privilege Level
-            // Reset the password
-            spAccount.sPassword.clear();
+            // Populate the structure
+            spAccount = SpAccount(qsqAccount.record());
         }
         // Return the account map
         return spAccount.toMap();
@@ -168,6 +153,13 @@ QByteArray ServerPanel::EncodeResponse(QVariantMap qvmResponse) {
     return QtJson::Json::serialize(qvmResponse);
 }
 
+/**
+ * @paragraph This method executes a system command and returns a simple boolean
+ * @brief ServerPanel::ExecuteSystemCmd
+ * @param QString sProgram
+ * @param QStringList qslArguments
+ * @return QBool
+ */
 QBool ServerPanel::ExecuteSystemCmd(QString sProgram, QStringList qslArguments) {
     // Try to execute the command
     if (QProcess::execute(sProgram, qslArguments) == QProcess::NormalExit) {
@@ -269,13 +261,167 @@ void ServerPanel::LogMessage(QByteArray qbaMessage) {
     qfsLogFile.close();
 }
 
+QVariantMap ServerPanel::LoadAccount(SpAccount spAccount) {
+    // Set the return map
+    QVariantMap qvmReturn;
+    // Check for an account id
+    if (spAccount.iAccountId) {
+        // Grab the query object
+        QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectAccountByAccountId").toString());
+        // Try to execute the query
+        if (!qsqAccount.exec()) {
+            // Set the error
+            qvmReturn.insert("sError",   qsqAccount.lastError().text());
+            // Set the success status
+            qvmReturn.insert("bSuccess", false);
+            // Return the map
+            return qvmReturn;
+        }
+        // Check for results
+        if (!qsqAccount.size()) {
+            // Set the error
+            qvmReturn.insert("sError",   "The account could not be found in the system.");
+            // Set the success status
+            qvmReturn.insert("bSuccess", false);
+            // Return the map
+            return qvmReturn;
+        }
+        // Loop through the results
+        while (qsqAccount.next()) {
+            // Populate the structure
+            spAccount = SpAccount(qsqAccount.record());
+        }
+        // Return the account as a map
+        return spAccount.toMap();
+    }
+    // Check for a username and password
+    if (!spAccount.sUsername.isNull() && !spAccount.sPassword.isNull()) {
+        // Grab the query object
+        QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectAccountByUsernameAndPassword").toString());
+        // Try to execute the query
+        if (!qsqAccount.exec()) {
+            // Set the error
+            qvmReturn.insert("sError",   qsqAccount.lastError().text());
+            // Set the success status
+            qvmReturn.insert("bSuccess", false);
+            // Return the map
+            return qvmReturn;
+        }
+        // Check for results
+        if (!qsqAccount.size()) {
+            // Set the error
+            qvmReturn.insert("sError",   "The account could not be found in the system.");
+            // Set the success status
+            qvmReturn.insert("bSuccess", false);
+            // Return the map
+            return qvmReturn;
+        }
+        // Loop through the results
+        while (qsqAccount.next()) {
+            // Populate the structure
+            spAccount = SpAccount(qsqAccount.record());
+        }
+        // Return the structure as a map
+        return spAccount.toMap();
+    }
+
+    // Check for a username
+    if (!spAccount.sUsername.isNull()) {
+        // Grab the query object
+        QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectAccountByUsername").toString());
+        // Try to execute the query
+        if (!qsqAccount.exec()) {
+            // Set the error
+            qvmReturn.insert("sError",   qsqAccount.lastError().text());
+            // Set the success status
+            qvmReturn.insert("bSuccess", false);
+            // Return the map
+            return qvmReturn;
+        }
+        // Check for results
+        if (!qsqAccount.size()) {
+            // Set the error
+            qvmReturn.insert("sError",   "The account could not be found in the system.");
+            // Set the success status
+            qvmReturn.insert("bSuccess", false);
+            // Return the map
+            return qvmReturn;
+        }
+        // Loop through the results
+        while (qsqAccount.next()) {
+            // Populate the structure
+            spAccount = SpAccount(qsqAccount.record());
+        }
+        // Return the structure as a map
+        return spAccount.toMap();
+    }
+    // No keys were found, set the error
+    qvmReturn.insert("sError",   "No key found, at least one is needed.");
+    // Set the success status
+    qvmReturn.insert("bSuccess", false);
+    // Return the map
+    return qvmReturn;
+}
+
+QVariantMap ServerPanel::LoadDnsRecord(SpAccount spAccount) {
+
+}
+
+QVariantList ServerPanel::LoadDnsRecords(SpDnsRecord spDnsRecord) {
+
+}
+
+QVariantMap ServerPanel::LoadDomain(SpDomain spDomain) {
+
+}
+
+QVariantList ServerPanel::LoadDomains(SpDomain spDomain) {
+
+}
+
+QVariantMap ServerPanel::LoadMailBox(SpMailBox spMailBox) {
+
+}
+
+QVariantList ServerPanel::LoadMailBoxes(SpMailBox spMailBox) {
+
+}
+
+QVariantMap ServerPanel::LoadMailDomain(SpMailDomain spMailDomain) {
+
+}
+
+QVariantList ServerPanel::LoadMailDomains(SpMailDomain spMailDomain) {
+
+}
+
 QVariantMap ServerPanel::SaveAccount(SpAccount spAccount) {
     // Setup the return map
     QVariantMap qvmReturn;
     // Check for an ID
     if (spAccount.iAccountId != 0) {
         // Grab the query object
-        QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, this->mConfig->value("sqlQueries/updateAccount").toString());
+        QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, this->mConfig->value("sqlQueries/checkForExistingUsername").toString());
+        // Try to execute the query
+        if (!qsqAccount.exec()) {
+            // Set the error
+            qvmReturn.insert("sError",   qsqAccount.lastError().text());
+            // Set the success status
+            qvmReturn.insert("bSuccess", false);
+            // Return the map
+            return qvmReturn;
+        }
+        // Check for results
+        if (qsqAccount.size()) {
+            // Set the error
+            qvmReturn.insert("sError",   "An account with that username already exists in the system.");
+            // Set the success status
+            qvmReturn.insert("bSuccess", false);
+            // Return the map
+            return qvmReturn;
+        }
+        // Reset the query
+        qsqAccount = spAccount.toQuery(this->mDbc, this->mConfig->value("sqlQueries/insertAccount").toString());
         // Try to execute the query
         if (!qsqAccount.exec()) {
             // Set the error
@@ -340,6 +486,243 @@ QVariantMap ServerPanel::SaveAccount(SpAccount spAccount) {
     }
     // All is well, set the message
     qvmReturn.insert("sMessage", "The account has been successfully created.");
+    // Set the success status
+    qvmReturn.insert("bSuccess", true);
+    // Return the map
+    return qvmReturn;
+}
+
+QVariantMap ServerPanel::SaveDnsRecord(SpDnsRecord spDnsRecord) {
+    // Set the return map placeholder
+    QVariantMap qvmReturn;
+    // Check for a record id
+    if (spDnsRecord.iRecordId) {
+        // Grab the SQL query
+        QSqlQuery qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, this->mConfig->value("sqlQueries/updateDnsRecord").toString());
+        // Try to execute the query
+        if (!qsqDnsRecord.exec()) {
+            // Set the error
+            qvmReturn.insert("sError",   qsqDnsRecord.lastError().text());
+            // Set the success status
+            qvmReturn.insert("bSuccess", false);
+            // Return the map
+            return qvmReturn;
+        }
+        // All is well, set the message
+        qvmReturn.insert("sMessage", "The DNS record has been successfully updated.");
+        // Set the success status
+        qvmReturn.insert("bSuccess", true);
+    }
+    // We are adding a new record, so grab the query
+    QSqlQuery qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, this->mConfig->value("sqlQueries/checkForExistingDnsRecord").toString());
+    // Try to execute the query
+    if (!qsqDnsRecord.exec()) {
+        // Set the error
+        qvmReturn.insert("sError",   qsqDnsRecord.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // Grab the insert query
+    qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, this->mConfig->value("sqlQueries/insertDnsRecord").toString());
+    // Try to execute the query
+    if (!qsqDnsRecord.exec()) {
+        // Set the error
+        qvmReturn.insert("sError",   qsqDnsRecord.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // All is well, set the message
+    qvmReturn.insert("sMessage", "The DNS record has been successfully created.");
+    // Set the success status
+    qvmReturn.insert("bSuccess", true);
+    // Return the map
+    return qvmReturn;
+}
+
+QVariantMap ServerPanel::SaveDomain(SpDomain spDomain) {
+    // Set the return map placeholder
+    QVariantMap qvmReturn;
+    // Check for a domain id
+    if (spDomain.iDomainId) {
+        // Grab the query
+        QSqlQuery qsqDomain = spDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/updateDomain").toString());
+        // Try to execute the query
+        if (!qsqDomain.exec()) {
+            // Set the error
+            qvmReturn.insert("sError",   qsqDomain.lastError().text());
+            // Set the success status
+            qvmReturn.insert("bSuccess", false);
+            // Return the map
+            return qvmReturn;
+        }
+        // All is well, set the message
+        qvmReturn.insert("sMessage", "The domain has been successfully updated.");
+        // Set the success status
+        qvmReturn.insert("bSuccess", true);
+        // Return the map
+        return qvmReturn;
+    }
+    // Grab the query
+    QSqlQuery qsqDomain = spDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/checkForExistingDomain").toString());
+    // Try to execute the query
+    if (!qsqDomain.exec()) {
+        // Set the error
+        qvmReturn.insert("sError",   qsqDomain.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // Check for results
+    if (qsqDomain.size()) {
+        // Set the error
+        qvmReturn.insert("sError",   "The domain already exists in the system.");
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // Reset the query
+    qsqDomain = spDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/insertDomain").toString());
+    // Try to execute the query
+    if (!qsqDomain.exec()) {
+        // Set the error
+        qvmReturn.insert("sError",   qsqDomain.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // All is well, set the message
+    qvmReturn.insert("sMessage", "The domain was successfully added to the system.");
+    // Set the success status
+    qvmReturn.insert("bSuccess", true);
+    // Return the map
+    return qvmReturn;
+}
+
+QVariantMap ServerPanel::SaveMailBox(SpMailBox spMailBox) {
+    // Set the return map placeholder
+    QVariantMap qvmReturn;
+    // Check for a mailbox id
+    if (spMailBox.iMailBoxId) {
+        // Grab the query object
+        QSqlQuery qsqMailBox = spMailBox.toQuery(this->mDbc, this->mConfig->value("sqlQueries/updateMailBox").toString());
+        // Try to execute the statement
+        if (!qsqMailBox.exec()) {
+            // Set the error
+            qvmReturn.insert("sError",   qsqMailBox.lastError().text());
+            // Set the success status
+            qvmReturn.insert("bSuccess", false);
+            // Return the map
+           return  qvmReturn;
+        }
+        // All is well, set the message
+        qvmReturn.insert("sMessage", "The mailbox has been successfully updated.");
+        // Set the success status
+        qvmReturn.insert("bSuccess", true);
+        // Return the map
+        return qvmReturn;
+    }
+    // Grab the query
+    QSqlQuery qsqMailBox = spMailBox.toQuery(this->mDbc, this->mConfig->value("sqlQueries/checkForExistingMailBox").toString());
+    // Try to execute the query
+    if (!qsqMailBox.exec()) {
+        // Set the error
+        qvmReturn.insert("sError",   qsqMailBox.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // Check for results
+    if (qsqMailBox.size()) {
+        // Set the error
+        qvmReturn.insert("sError",   "The mailbox already exists in the system.");
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // Grab the query
+    qsqMailBox = spMailBox.toQuery(this->mDbc, this->mConfig->value("sqlQueries/insertMailBox").toString());
+    // Try to execute the query
+    if (!qsqMailBox.exec()) {
+        // Set the error
+        qvmReturn.insert("sError",   qsqMailBox.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // All is well, set the message
+    qvmReturn.insert("sMessage", "The mailbox has been successfully added to the system.");
+    // Set the success status
+    qvmReturn.insert("bSuccess", true);
+    // Return the map
+    return qvmReturn;
+}
+
+QVariantMap ServerPanel::SaveMailDomain(SpMailDomain spMailDomain) {
+    // Set the return map placeholder
+    QVariantMap qvmReturn;
+    // Check for a mail domain id
+    if (spMailDomain.iMailDomainId) {
+        // Grab the query
+        QSqlQuery qsqMailDomain = spMailDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/updateMailDomain").toString());
+        // Try to execute the query
+        if (!qsqMailDomain.exec()) {
+            // Set the error
+            qvmReturn.insert("sError",   qsqMailDomain.lastError().text());
+            // Set the success status
+            qvmReturn.insert("bSuccess", false);
+            // Return the map
+            return qvmReturn;
+        }
+        // All is well, set the message
+        qvmReturn.insert("sMessage", "The mail domain has been successfully updated.");
+        // Set the success status
+        qvmReturn.insert("bSuccess", true);
+        // Return the map
+        return qvmReturn;
+    }
+    // We're adding a new mail domain so grab the query
+    QSqlQuery qsqMailDomain = spMailDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/checkForExistingMailDomain").toString());
+    // Try to execute the query
+    if (!qsqMailDomain.exec()) {
+        // Set the error
+        qvmReturn.insert("sError",   qsqMailDomain.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // Check for results
+    if (qsqMailDomain.size()) {
+        // Set the error
+        qvmReturn.insert("sError",   "The mail domain is already in the system.");
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // Reset the query
+    qsqMailDomain = spMailDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/insertMailDomain").toString());
+    // Try to execute the query
+    if (!qsqMailDomain.exec()) {
+        // Set the error
+        qvmReturn.insert("sError",   qsqMailDomain.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Return the map
+        return qvmReturn;
+    }
+    // All is well, set the message
+    qvmReturn.insert("sMessage", "The mail domain has been successfully added to the system.");
     // Set the success status
     qvmReturn.insert("bSuccess", true);
     // Return the map
