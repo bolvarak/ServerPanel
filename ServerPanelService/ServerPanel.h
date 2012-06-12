@@ -33,11 +33,12 @@ class ServerPanel : public QObject {
 // Public
 public:
     // Singleton
-    static ServerPanel* Instance      ();
+    static ServerPanel* Instance();
     // Destructor
-    ~ServerPanel                      ();
+                ~ServerPanel    ();
     // Methods
-    QByteArray          HandleRequest (QString sRequest);
+    QVariantMap HandleCliRequest(QStringList qslArguments);
+    QByteArray  HandleRequest   (QString sRequest);
 // Protected
 protected :
     // Properties

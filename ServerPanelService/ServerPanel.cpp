@@ -32,7 +32,7 @@ ServerPanel* ServerPanel::Instance() {
 
 ServerPanel::ServerPanel(QObject* cParent) : QObject(cParent) {
     // Load the configuration
-    this->mConfig = new QSettings("/home/tbrown/Documents/ServerPanel/ServerPanelService/ServerPanel.ini", QSettings::IniFormat);
+    this->mConfig = new QSettings("/Users/tbrown/Documents/ServerPanel/ServerPanelService/ServerPanel.ini", QSettings::IniFormat);
     // Setup the databae
     this->mDbc    = QSqlDatabase::addDatabase(this->mConfig->value("databaseSettings/driver").toString());
     // Set the host
@@ -162,6 +162,18 @@ QBool ServerPanel::ExecuteSystemCmd(QString sProgram, QStringList qslArguments) 
     }
     // The execution failed
     return QBool(false);
+}
+
+QVariantMap ServerPanel::HandleCliRequest(QStringList qslArguments) {
+    // Set a return map placeholder
+    QVariantMap qvmReturn;
+    // Loop through the arguments
+    for (int iArgument = 1; iArgument < qslArguments.size(); iArgument++) {
+        // Print the argument
+        std::cout << qslArguments[iArgument].toStdString() << std::endl;
+    }
+    // Return the map
+    return qvmReturn;
 }
 
 /**
