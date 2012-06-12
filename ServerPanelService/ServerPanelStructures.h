@@ -40,7 +40,7 @@ struct SpAccount {
     int     iAccountLevel;
     bool    bEnabled;
     // Initializer
-    SpAccount() : iAccountId(0), sStreetAddress(), sStreetAddressExtra(), sCity(), sState(), sPostalCode(), sCountry("USA"), iAccountLevel(3), bEnabled(true) {}
+    SpAccount() : iAccountId(0), sCountry("USA"), iAccountLevel(3), bEnabled(true) {}
     SpAccount(QSqlRecord qsrAccount) {
         // Set the properties
         this->iAccountId          = qsrAccount.value("iAccountId").toInt();
@@ -68,8 +68,10 @@ struct SpAccount {
         if (qvmAccount.contains("sUsername")) {
             this->sUsername = qvmAccount["sUsername"].toString();
         }
-        // Clear the password
-        this->sPassword.clear();
+        // Convert the password
+        if (qvmAccount.contains("sPassword")) {
+            this->sPassword = qvmAccount["sPassword"].toString();
+        }
         // Convert the email address
         if (qvmAccount.contains("sEmailAddress")) {
             this->sEmailAddress = qvmAccount["sEmailAddress"].toString();
@@ -192,7 +194,7 @@ struct SpDnsRecord {
     int     iPriority;
     bool    bEnabled;
     // Initializer
-    SpDnsRecord() : iRecordId(0), sDirection("IN"), sType("A"), iPriority(), bEnabled(true) {}
+    SpDnsRecord() : iRecordId(0), iAccountId(0), iDomainId(0), sDirection("IN"), sType("A"), bEnabled(true) {}
     SpDnsRecord(QSqlRecord qsrDnsRecord) {
         // Set the properties
         this->iRecordId  = qsrDnsRecord.value("iRecordId").toInt();
@@ -212,7 +214,7 @@ struct SpDnsRecord {
         }
         // Convert the account id
         if (qvmDnsRecord.contains("iAccountId")) {
-            this->iAccountId = qvmDnsRecord["iAccontId"].toInt();
+            this->iAccountId = qvmDnsRecord["iAccountId"].toInt();
         }
         // Convert the domain id
         if (qvmDnsRecord.contains("iDomainId")) {
@@ -304,7 +306,7 @@ struct SpDomain {
     QString sDomain;
     bool    bEnabled;
     // Initializer
-    SpDomain() : iDomainId(0), bEnabled(true) {}
+    SpDomain() : iDomainId(0), iAccountId(0), bEnabled(true) {}
     SpDomain(QSqlRecord qsrDomain) {
         // Set the properties
         this->iDomainId  = qsrDomain.value("iDomainId").toInt();
@@ -412,14 +414,14 @@ struct SpMailBox {
     bool    bActive;
     QString sLocalPartition;
     // Initializer
-    SpMailBox() : iMailBoxId(0), sName(), sStorageDirectory("/var/vmail"), sStorageNode("serverpanel"), sMailDirectory(), iQuota(1024), iBytes(0), sTransport(), sDepartment(), sRank("normal"), sEmployeeId(), bEnableSmtp(true), bEnableSecureSmtp(true), bEnablePop3(true), bEnableSecurePop3(true), bEnableImap(true), bEnableSecureImap(true), bEnableDelivery(true), bEnableSieveManagement(true), bEnableSecureSieveManagement(true), bEnableInternalDelivery(true), sDisclaimer(), bActive(true), sLocalPartition() {}
+    SpMailBox() : iMailBoxId(0), iAccountId(0), iDomainId(0), sStorageDirectory("/var/vmail"), sStorageNode("serverpanel"), sMailDirectory(), iQuota(1024), iBytes(0), sRank("normal"), sEmployeeId(), bEnableSmtp(true), bEnableSecureSmtp(true), bEnablePop3(true), bEnableSecurePop3(true), bEnableImap(true), bEnableSecureImap(true), bEnableDelivery(true), bEnableSieveManagement(true), bEnableSecureSieveManagement(true), bEnableInternalDelivery(true), bActive(true) {}
     SpMailBox(QSqlRecord qsrMailBox) {
         // Set the properties
         this->iMailBoxId                   = qsrMailBox.value("iMailBoxId").toInt();
         this->iAccountId                   = qsrMailBox.value("iAccountId").toInt();
         this->iDomainId                    = qsrMailBox.value("iDomainId").toInt();
         this->sUsername                    = qsrMailBox.value("sUsername").toString();
-        this->sPassword.clear();
+        this->sPassword                    = qsrMailBox.value("sPassword").toString();
         this->sName                        = qsrMailBox.value("sName").toString();
         this->sStorageDirectory            = qsrMailBox.value("sStorageDirectory").toString();
         this->sStorageNode                 = qsrMailBox.value("sStorageNode").toString();
@@ -463,7 +465,9 @@ struct SpMailBox {
             this->sUsername = qvmMailBox["sUsername"].toString();
         }
         // Convert the password
-        this->sPassword.clear();
+        if (qvmMailBox.contains("sPassword")) {
+            this->sPassword = qvmMailBox["sPassword"].toString();
+        }
         // Convert the name
         if (qvmMailBox.contains("sName")) {
             this->sName = qvmMailBox["sName"].toString();
@@ -652,7 +656,7 @@ struct SpMailDomain {
     int     iMaximumPasswordLength;
     bool    bActive;
     // Initializer
-    SpMailDomain() : iMailDomainId(0), sDescription(), sDisclaimer(), iMaxQuota(1024), iQuota(1024), sTransport("dovecot"), bBackupMx(false), iDefaultUserQuota(1024), sDefaultPasswordScheme("md5"), iMinimumPasswordLength(5), iMaximumPasswordLength(75), bActive(true) {}
+    SpMailDomain() : iMailDomainId(0), iAccountId(0), iDomainId(0), iMaxQuota(1024), iQuota(1024), sTransport("dovecot"), bBackupMx(false), iDefaultUserQuota(1024), sDefaultPasswordScheme("md5"), iMinimumPasswordLength(5), iMaximumPasswordLength(75), bActive(true) {}
     SpMailDomain(QSqlRecord qsrMailDomain) {
         // Convert the properties
         this->iMailDomainId          = qsrMailDomain.value("iMailDomainId").toInt();

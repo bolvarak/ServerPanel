@@ -186,11 +186,7 @@ QByteArray ServerPanel::HandleRequest(QString sRequest) {
         // Determine the method to execute
         if (sMethod.contains("AuthenticateUser", Qt::CaseInsensitive)) {      // User authentication
             // Setup the structure
-            SpAccount spAccount;
-            // Set the username
-            spAccount.sUsername    = qvmRequest["sUsername"].toString();
-            // Set the password
-            spAccount.sPassword    = qvmRequest["sPassword"].toString();
+            SpAccount spAccount = SpAccount(qvmRequest);
             // Grab the response
             QByteArray qbaResponse = this->EncodeResponse(this->AuthenticateUser(spAccount));
             // Log the response
@@ -200,6 +196,7 @@ QByteArray ServerPanel::HandleRequest(QString sRequest) {
         } else if (sMethod.contains("LoadDnsRecords", Qt::CaseInsensitive)) { // Load DNS records
             // Setup the structure
             SpDnsRecord spDnsRecord = SpDnsRecord(qvmRequest);
+            std::cout << spDnsRecord.iAccountId << std::endl;
             // Grab the response
             QByteArray qbaResponse = this->EncodeResponse(this->LoadDnsRecords(spDnsRecord));
             // Log the response
@@ -269,7 +266,7 @@ QVariantMap ServerPanel::LoadAccount(SpAccount spAccount) {
     // Set the return map
     QVariantMap qvmReturn;
     // Check for an account id
-    if (spAccount.iAccountId) {
+    if (spAccount.iAccountId > 0) {
         // Grab the query object
         QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectAccountByAccountId").toString());
         // Try to execute the query
@@ -370,7 +367,7 @@ QVariantMap ServerPanel::LoadDnsRecord(SpDnsRecord spDnsRecord) {
     // Set the return map placeholder
     QVariantMap qvmReturn;
     // Check for a record id
-    if (spDnsRecord.iRecordId) {
+    if (spDnsRecord.iRecordId > 0) {
         // Grab the query object
         QSqlQuery qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, this->mConfig->value("sqlQuery/selectDnsRecord").toString());
         // Try to execute the query
@@ -413,7 +410,7 @@ QVariantMap ServerPanel::LoadDnsRecords(SpDnsRecord spDnsRecord) {
     // Set a return map placeholder
     QVariantMap qvmReturn;
     // Check for a domain id
-    if (spDnsRecord.iDomainId != NULL) {
+    if (spDnsRecord.iDomainId > 0) {
         // Grab the query object
         QSqlQuery qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectDnsRecordsByDomainId").toString());
         // Try to execute the query
@@ -450,7 +447,7 @@ QVariantMap ServerPanel::LoadDnsRecords(SpDnsRecord spDnsRecord) {
         return qvmReturn;
     }
     // Check for an account id
-    if (spDnsRecord.iAccountId != NULL) {
+    if (spDnsRecord.iAccountId > 0) {
         // Grab the query object
         QSqlQuery qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectDnsRecordsByAccountId").toString());
         // Try to execute the query
@@ -497,7 +494,7 @@ QVariantMap ServerPanel::LoadDomain(SpDomain spDomain) {
     // Set a return map placeholder
     QVariantMap qvmReturn;
     // Check for a domain id
-    if (spDomain.iDomainId) {
+    if (spDomain.iDomainId > 0) {
         // Grab a query object
         QSqlQuery qsqDomain = spDomain.toQuery(this->mDbc, this->mConfig->value("sqlQuery/selectDomain").toString());
         // Try to execute the query
@@ -540,7 +537,7 @@ QVariantMap ServerPanel::LoadDomains(SpDomain spDomain) {
     // Set a return map placeholder
     QVariantMap qvmReturn;
     // Check for an account id
-    if (spDomain.iAccountId) {
+    if (spDomain.iAccountId > 0) {
         // Grab the query object
         QSqlQuery qsqDomains = spDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectDomains").toString());
         // Try to execute the query
@@ -587,7 +584,7 @@ QVariantMap ServerPanel::LoadMailBox(SpMailBox spMailBox) {
     // Set a return map placeholder
     QVariantMap qvmReturn;
     // Check for a mailbox id
-    if (spMailBox.iMailBoxId) {
+    if (spMailBox.iMailBoxId > 0) {
         // Grab the query object
         QSqlQuery qsqMailBox = spMailBox.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectMailBoxByMailBoxId").toString());
         // Try to execute the query
@@ -680,6 +677,8 @@ QVariantMap ServerPanel::LoadMailBox(SpMailBox spMailBox) {
     qvmReturn.insert("sError",   "No iMailBoxId, sUsername or sPassword was found.");
     // Set the success status
     qvmReturn.insert("bSuccess", false);
+    // Return the map
+    return qvmReturn;
 }
 
 QVariantMap ServerPanel::LoadMailBoxes(SpMailBox spMailBox) {
@@ -688,7 +687,7 @@ QVariantMap ServerPanel::LoadMailBoxes(SpMailBox spMailBox) {
     // Set a return map placeholder
     QVariantMap qvmReturn;
     // Check for a domain id
-    if (spMailBox.iDomainId) {
+    if (spMailBox.iDomainId > 0) {
         // Grab the query object
         QSqlQuery qsqMailBoxes = spMailBox.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectMailBoxesByDomainId").toString());
         // Try to execute the query
@@ -724,7 +723,7 @@ QVariantMap ServerPanel::LoadMailBoxes(SpMailBox spMailBox) {
         return qvmReturn;
     }
     // Check for an account id
-    if (spMailBox.iAccountId) {
+    if (spMailBox.iAccountId > 0) {
         // Grab the query object
         QSqlQuery qsqMailBoxes = spMailBox.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectMailBoxesByAccountId").toString());
         // Try to execute the query
@@ -771,7 +770,7 @@ QVariantMap ServerPanel::LoadMailDomain(SpMailDomain spMailDomain) {
     // Set the return map placeholder
     QVariantMap qvmReturn;
     // Check for a mail domain id
-    if (spMailDomain.iMailDomainId) {
+    if (spMailDomain.iMailDomainId > 0) {
         // Grab the query object
         QSqlQuery qsqMailDomain = spMailDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectMailDomainByMailDomainId").toString());
         // Try to execute the query
@@ -801,7 +800,7 @@ QVariantMap ServerPanel::LoadMailDomain(SpMailDomain spMailDomain) {
         return spMailDomain.toMap();
     }
     // Check for a domain id
-    if (spMailDomain.iDomainId) {
+    if (spMailDomain.iDomainId > 0) {
         // Load the query object
         QSqlQuery qsqMailDomain = spMailDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectMailDomainByDomainId").toString());
         // Try to execute the query
@@ -844,7 +843,7 @@ QVariantMap ServerPanel::LoadMailDomains(SpMailDomain spMailDomain) {
     // Set the return map placeholder
     QVariantMap qvmReturn;
     // Check for an account id
-    if (spMailDomain.iAccountId) {
+    if (spMailDomain.iAccountId > 0) {
         // Grab the query object
         QSqlQuery qsqMailDomains = spMailDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectMailDomainsByAccountId").toString());
         // Try to execute the query
@@ -988,7 +987,7 @@ QVariantMap ServerPanel::SaveDnsRecord(SpDnsRecord spDnsRecord) {
     // Set the return map placeholder
     QVariantMap qvmReturn;
     // Check for a record id
-    if (spDnsRecord.iRecordId) {
+    if (spDnsRecord.iRecordId > 0) {
         // Grab the SQL query
         QSqlQuery qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, this->mConfig->value("sqlQueries/updateDnsRecord").toString());
         // Try to execute the query
@@ -1039,7 +1038,7 @@ QVariantMap ServerPanel::SaveDomain(SpDomain spDomain) {
     // Set the return map placeholder
     QVariantMap qvmReturn;
     // Check for a domain id
-    if (spDomain.iDomainId) {
+    if (spDomain.iDomainId > 0) {
         // Grab the query
         QSqlQuery qsqDomain = spDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/updateDomain").toString());
         // Try to execute the query
@@ -1101,7 +1100,7 @@ QVariantMap ServerPanel::SaveMailBox(SpMailBox spMailBox) {
     // Set the return map placeholder
     QVariantMap qvmReturn;
     // Check for a mailbox id
-    if (spMailBox.iMailBoxId) {
+    if (spMailBox.iMailBoxId > 0) {
         // Grab the query object
         QSqlQuery qsqMailBox = spMailBox.toQuery(this->mDbc, this->mConfig->value("sqlQueries/updateMailBox").toString());
         // Try to execute the statement
@@ -1163,7 +1162,7 @@ QVariantMap ServerPanel::SaveMailDomain(SpMailDomain spMailDomain) {
     // Set the return map placeholder
     QVariantMap qvmReturn;
     // Check for a mail domain id
-    if (spMailDomain.iMailDomainId) {
+    if (spMailDomain.iMailDomainId > 0) {
         // Grab the query
         QSqlQuery qsqMailDomain = spMailDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/updateMailDomain").toString());
         // Try to execute the query
