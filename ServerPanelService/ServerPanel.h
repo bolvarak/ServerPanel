@@ -47,24 +47,24 @@ protected :
     // Constructor
     ServerPanel(QObject* cParent = 0);
     // Methods
-    QVariantMap  AuthenticateUser(QString      sUsername, QString     sPassword);
-    QVariantMap  DecodeRequest   (QString      sRequest);
-    QByteArray   EncodeResponse  (QVariantMap  qvmResponse);
-    QBool        ExecuteSystemCmd(QString      sProgram,  QStringList qslArguments);
-    QVariantMap  LoadAccount     (SpAccount    spAccount);
-    QVariantMap  LoadDnsRecord   (SpAccount    spAccount);
-    QVariantList LoadDnsRecords  (SpDnsRecord  spDnsRecord);
-    QVariantMap  LoadDomain      (SpDomain     spDomain);
-    QVariantList LoadDomains     (SpDomain     spDomain);
-    QVariantMap  LoadMailBox     (SpMailBox    spMailBox);
-    QVariantList LoadMailBoxes   (SpMailBox    spMailBox);
-    QVariantMap  LoadMailDomain  (SpMailDomain spMailDomain);
-    QVariantList LoadMailDomains (SpMailDomain spMailDomain);
-    void         LogMessage      (QByteArray   qbaMessage);
-    QVariantMap  SaveAccount     (SpAccount    spAccount);
-    QVariantMap  SaveDnsRecord   (SpDnsRecord  spDnsRecord);
-    QVariantMap  SaveDomain      (SpDomain     spDomain);
-    QVariantMap  SaveMailBox     (SpMailBox    spMailBox);
-    QVariantMap  SaveMailDomain  (SpMailDomain spMailDomain);
+    QVariantMap AuthenticateUser(SpAccount    spAccount);
+    QVariantMap DecodeRequest   (QString      sRequest);
+    QByteArray  EncodeResponse  (QVariantMap  qvmResponse);
+    QBool       ExecuteSystemCmd(QString      sProgram,  QStringList qslArguments);
+    QVariantMap LoadAccount     (SpAccount    spAccount);
+    QVariantMap LoadDnsRecord   (SpDnsRecord  spDnsRecord);
+    QVariantMap LoadDnsRecords  (SpDnsRecord  spDnsRecord);
+    QVariantMap LoadDomain      (SpDomain     spDomain);
+    QVariantMap LoadDomains     (SpDomain     spDomain);
+    QVariantMap LoadMailBox     (SpMailBox    spMailBox);
+    QVariantMap LoadMailBoxes   (SpMailBox    spMailBox);
+    QVariantMap LoadMailDomain  (SpMailDomain spMailDomain);
+    QVariantMap LoadMailDomains (SpMailDomain spMailDomain);
+    void        LogMessage      (QByteArray   qbaMessage);
+    QVariantMap SaveAccount     (SpAccount    spAccount);
+    QVariantMap SaveDnsRecord   (SpDnsRecord  spDnsRecord);
+    QVariantMap SaveDomain      (SpDomain     spDomain);
+    QVariantMap SaveMailBox     (SpMailBox    spMailBox);
+    QVariantMap SaveMailDomain  (SpMailDomain spMailDomain);
 };
 #endif
