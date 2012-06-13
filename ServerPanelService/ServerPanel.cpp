@@ -99,8 +99,12 @@ QVariantMap ServerPanel::AuthenticateUser(SpAccount spAccount) {
             // Populate the structure
             spAccount = SpAccount(qsqAccount.record());
         }
+        // Set the account object
+        qvmReturn.insert("oAccount", spAccount.toMap());
+        // Set the success status
+        qvmReturn.insert("bSuccess", true);
         // Return the account map
-        return spAccount.toMap();
+        return qvmReturn;
     }
     // Clear the map
     qvmReturn.clear();
@@ -185,6 +189,8 @@ QVariantMap ServerPanel::HandleCliRequest(QStringList qslArguments) {
 QByteArray ServerPanel::HandleRequest(QString sRequest) {
     // Create a byte array of the request
     QByteArray qbaRequest;
+    // Create a response placeholder
+    QByteArray qbaResponse;
     // Add the request
     qbaRequest.append(sRequest);
     // Log the request
@@ -196,26 +202,57 @@ QByteArray ServerPanel::HandleRequest(QString sRequest) {
         // Set the method
         QString sMethod = qvmRequest[SERVERPANEL_METHOD_NOTATION_KEY].toString();
         // Determine the method to execute
-        if (sMethod.contains("AuthenticateUser", Qt::CaseInsensitive)) {      // User authentication
+        if (sMethod.contains("AuthenticateUser", Qt::CaseInsensitive)) {       // User authentication
             // Setup the structure
             SpAccount spAccount = SpAccount(qvmRequest);
             // Grab the response
-            QByteArray qbaResponse = this->EncodeResponse(this->AuthenticateUser(spAccount));
-            // Log the response
-            this->LogMessage(qbaResponse);
-            // Send the response
-            return qbaResponse;
-        } else if (sMethod.contains("LoadDnsRecords", Qt::CaseInsensitive)) { // Load DNS records
+            qbaResponse = this->EncodeResponse(this->AuthenticateUser(spAccount));
+        } else if (sMethod.contains("LoadAccount", Qt::CaseInsensitive)) {     // Load Account
+            // Setup the structure
+            SpAccount spAccount = SpAccount(qvmRequest);
+            // Grab the response
+            qbaResponse = this->EncodeResponse(this->LoadAccount(spAccount));
+        } else if (sMethod.contains("LoadDnsRecord", Qt::CaseInsensitive)) {   // Load DNS Record
             // Setup the structure
             SpDnsRecord spDnsRecord = SpDnsRecord(qvmRequest);
-            std::cout << spDnsRecord.iAccountId << std::endl;
             // Grab the response
-            QByteArray qbaResponse = this->EncodeResponse(this->LoadDnsRecords(spDnsRecord));
-            // Log the response
-            this->LogMessage(qbaResponse);
-            // Send the response
-            return qbaResponse;
-        } else if (sMethod.contains("Ping", Qt::CaseInsensitive)) {           // Ping test
+            qbaResponse = this->EncodeResponse(this->LoadDnsRecord(spDnsRecord));
+        } else if (sMethod.contains("LoadDnsRecords", Qt::CaseInsensitive)) {  // Load DNS Records
+            // Setup the structure
+            SpDnsRecord spDnsRecord = SpDnsRecord(qvmRequest);
+            // Grab the response
+            qbaResponse = this->EncodeResponse(this->LoadDnsRecords(spDnsRecord));
+        } else if (sMethod.contains("LoadDomain", Qt::CaseInsensitive)) {      // Load Domain
+            // Setup the structure
+            SpDomain spDomain = SpDomain(qvmRequest);
+            // Grab the response
+            qbaResponse = this->EncodeResponse(this->LoadDomain(spDomain));
+        } else if (sMethod.contains("LoadDomains", Qt::CaseInsensitive)) {     // Load Domains
+            // Setup the structure
+            SpDomain spDomain = SpDomain(qvmRequest);
+            // Grab the response
+            qbaResponse = this->EncodeResponse(this->LoadDomains(spDomain));
+        } else if (sMethod.contains("LoadMailBox", Qt::CaseInsensitive)) {     // Load Mailbox
+            // Setup the structure
+            SpMailBox spMailBox = SpMailBox(qvmRequest);
+            // Grab the response
+            qbaResponse = this->EncodeResponse(this->LoadMailBox(spMailBox));
+        } else if (sMethod.contains("LoadMailBoxes", Qt::CaseInsensitive)) {   // Load Mailboxes
+            // Setup the structure
+            SpMailBox spMailBox = SpMailBox(qvmRequest);
+            // Grab the response
+            qbaResponse = this->EncodeResponse(this->LoadMailBoxes(spMailBox));
+        } else if (sMethod.contains("LoadMailDomain", Qt::CaseInsensitive)) {  // Load Mail Domain
+            // Setup the structure
+            SpMailDomain spMailDomain = SpMailDomain(qvmRequest);
+            // Grab the response
+            qbaResponse = this->EncodeResponse(this->LoadMailDomain(spMailDomain));
+        } else if (sMethod.contains("LoadMailDomains", Qt::CaseInsensitive)) { // Load Mail Domains
+            // Setup the structure
+            SpMailDomain spMailDomain = SpMailDomain(qvmRequest);
+            // Set the response
+            qbaResponse = this->EncodeResponse(this->LoadMailDomains(spMailDomain));
+        } else if (sMethod.contains("Ping", Qt::CaseInsensitive)) {            // Ping
             // Create a map with the time stamps
             QVariantMap qvmPing;
             // Add the human readable time stamp
@@ -225,12 +262,46 @@ QByteArray ServerPanel::HandleRequest(QString sRequest) {
             // Add the seconds since epoch
             qvmPing.insert("sEpochTimestamp", QDateTime::currentMSecsSinceEpoch());
             // Grab the response
-            QByteArray qbaResponse = this->EncodeResponse(qvmPing);
-            // Log the response
-            this->LogMessage(qbaResponse);
-            // Send the encoded timestamps
-            return qbaResponse;
+            qbaResponse = this->EncodeResponse(qvmPing);
+        } else if (sMethod.contains("SaveAccount", Qt::CaseInsensitive)) {     // Save Account
+            // Setup the structure
+            SpAccount spAccount = SpAccount(qvmRequest);
+            // Grab the response
+            qbaResponse = this->EncodeResponse(this->SaveAccount(spAccount));
+        } else if (sMethod.contains("SaveDnsRecord", Qt::CaseInsensitive)) {   // Save DNS Record
+            // Setup the structure
+            SpDnsRecord spDnsRecord = SpDnsRecord(qvmRequest);
+            // Grab the response
+            qbaResponse = this->EncodeResponse(this->SaveDnsRecord(qvmRequest));
+        } else if (sMethod.contains("SaveDomain", Qt::CaseInsensitive)) {      // Save Domain
+            // Setup the structure
+            SpDomain spDomain = SpDomain(qvmRequest);
+            // Grab the response
+            qbaResponse = this->EncodeResponse(this->SaveDomain(spDomain));
+        } else if (sMethod.contains("SaveMailBox", Qt::CaseInsensitive)) {     // Save Mailbox
+            // Setup the structure
+            SpMailBox spMailBox = SpMailBox(qvmRequest);
+            // Grab the response
+            qbaResponse = this->EncodeResponse(this->SaveMailBox(spMailBox));
+        } else if (sMethod.contains("SaveMailDomain", Qt::CaseInsensitive)) {  // Save Mail Domain
+            // Setup the structure
+            SpMailDomain spMailDomain = SpMailDomain(qvmRequest);
+            // Grab the response
+            qbaResponse = this->EncodeResponse(this->SaveMailDomain(spMailDomain));
+        } else {
+            // Set the response map
+            QVariantMap qvmResponse;
+            // Set the error
+            qvmResponse.insert("sError",   "No valid method was provided.");
+            // Set the success status
+            qvmResponse.insert("bSuccess", false);
+            // Encode the response
+            qbaResponse = this->EncodeResponse(qvmResponse);
         }
+        // Log the response
+        this->LogMessage(qbaResponse);
+        // Return the response
+        return qbaResponse;
     }
     // Create a map
     QVariantMap qvmResponse;
@@ -304,8 +375,12 @@ QVariantMap ServerPanel::LoadAccount(SpAccount spAccount) {
             // Populate the structure
             spAccount = SpAccount(qsqAccount.record());
         }
+        // Set the account object
+        qvmReturn.insert("oAccount", spAccount.toMap());
+        // Set the success status
+        qvmReturn.insert("bSuccess", true);
         // Return the account as a map
-        return spAccount.toMap();
+        return qvmReturn;
     }
     // Check for a username and password
     if (!spAccount.sUsername.isEmpty() && !spAccount.sPassword.isEmpty()) {
@@ -334,8 +409,12 @@ QVariantMap ServerPanel::LoadAccount(SpAccount spAccount) {
             // Populate the structure
             spAccount = SpAccount(qsqAccount.record());
         }
-        // Return the structure as a map
-        return spAccount.toMap();
+        // Set the account object
+        qvmReturn.insert("oAccount", spAccount.toMap());
+        // Set the success status
+        qvmReturn.insert("bSuccess", true);
+        // Return the map
+        return qvmReturn;
     }
     // Check for a username
     if (!spAccount.sUsername.isEmpty()) {
@@ -364,8 +443,12 @@ QVariantMap ServerPanel::LoadAccount(SpAccount spAccount) {
             // Populate the structure
             spAccount = SpAccount(qsqAccount.record());
         }
-        // Return the structure as a map
-        return spAccount.toMap();
+        // Set the account object
+        qvmReturn.insert("oAccount", spAccount.toMap());
+        // Set the success status
+        qvmReturn.insert("bSuccess", true);
+        // Return the map
+        return qvmReturn;
     }
     // No keys were found, set the error
     qvmReturn.insert("sError",   "No key found, at least one is needed.");
@@ -405,8 +488,12 @@ QVariantMap ServerPanel::LoadDnsRecord(SpDnsRecord spDnsRecord) {
             // Populate the structure
             spDnsRecord = SpDnsRecord(qsqDnsRecord.record());
         }
-        // Return the structure as a map
-        return spDnsRecord.toMap();
+        // Set the DNS record object
+        qvmReturn.insert("oDnsRecord", spDnsRecord.toMap());
+        // Set the success status
+        qvmReturn.insert("bSuccess",   true);
+        // Return the map
+        return qvmReturn;
     }
     // No record id was found so set the error
     qvmReturn.insert("sError",   "No iRecordId was found.");
@@ -532,8 +619,12 @@ QVariantMap ServerPanel::LoadDomain(SpDomain spDomain) {
             // Populate the structure
             spDomain = SpDomain(qsqDomain.record());
         }
-        // Return the map converted structure
-        return spDomain.toMap();
+        // Set the domain object
+        qvmReturn.insert("oDomain",  spDomain.toMap());
+        // Set the success status
+        qvmReturn.insert("bSuccess", true);
+        // Return the map
+        return qvmReturn;
     }
     // Set the error
     qvmReturn.insert("sError",   "No iDomainId was found.");
@@ -622,8 +713,12 @@ QVariantMap ServerPanel::LoadMailBox(SpMailBox spMailBox) {
             // Populate the structure
             spMailBox = SpMailBox(qsqMailBox.record());
         }
-        // Return the structure as a map
-        return spMailBox.toMap();
+        // Set the mailbox object
+        qvmReturn.insert("oMailBox", spMailBox.toMap());
+        // Set the success status
+        qvmReturn.insert("bSuccess", true);
+        // Return the map
+        return qvmReturn;
     }
     // Check for a username and password
     if (!spMailBox.sUsername.isEmpty() && !spMailBox.sPassword.isEmpty()) {
@@ -652,8 +747,12 @@ QVariantMap ServerPanel::LoadMailBox(SpMailBox spMailBox) {
             // Populate the structure
             spMailBox = SpMailBox(qsqMailBox.record());
         }
+        // Set the mailbox object
+        qvmReturn.insert("oMailBox", spMailBox.toMap());
+        // Set the success status
+        qvmReturn.insert("bSuccess", true);
         // Return the map
-        return spMailBox.toMap();
+        return qvmReturn;
     }
     // Check for a password
     if (!spMailBox.sUsername.isEmpty()) {
@@ -682,8 +781,12 @@ QVariantMap ServerPanel::LoadMailBox(SpMailBox spMailBox) {
             // Populate the structure
             spMailBox = SpMailBox(qsqMailBox.record());
         }
+        // Set the mailbox object
+        qvmReturn.insert("oMailBox", spMailBox.toMap());
+        // Set the success status
+        qvmReturn.insert("bSuccess", true);
         // Return the map
-        return spMailBox.toMap();
+        return qvmReturn;
     }
     // Set the error
     qvmReturn.insert("sError",   "No iMailBoxId, sUsername or sPassword was found.");
@@ -808,8 +911,12 @@ QVariantMap ServerPanel::LoadMailDomain(SpMailDomain spMailDomain) {
             // Populate the structure
             spMailDomain = SpMailDomain(qsqMailDomain.record());
         }
+        // Set the domain object
+        qvmReturn.insert("oMailDomain", spMailDomain.toMap());
+        // Set the success status
+        qvmReturn.insert("bSuccess",    true);
         // Return the map
-        return spMailDomain.toMap();
+        return qvmReturn;
     }
     // Check for a domain id
     if (spMailDomain.iDomainId > 0) {
@@ -838,8 +945,12 @@ QVariantMap ServerPanel::LoadMailDomain(SpMailDomain spMailDomain) {
             // Populate the structure
             spMailDomain = SpMailDomain(qsqMailDomain.record());
         }
+        // Set the mail domain object
+        qvmReturn.insert("oMailDomain", spMailDomain.toMap());
+        // Set the success status
+        qvmReturn.insert("bSuccess",    true);
         // Return the map
-        return spMailDomain.toMap();
+        return qvmReturn;
     }
     // Set the error
     qvmReturn.insert("sError",   "No iMailDomainId or iDomainId was found.");
