@@ -308,10 +308,21 @@ struct SpDomain {
      */
     SpDomain() : mObject(new QObject()) {
         // Initialize the properties
-        this->mObject->setProperty("iDomainId",  int());
-        this->mObject->setProperty("iAccountId", int());
-        this->mObject->setProperty("sDomain",    QString());
-        this->mObject->setProperty("bEnabled",   bool());
+        this->mObject->setProperty("iDomainId",   int());
+        this->mObject->setProperty("iAccountId",  int());
+        this->mObject->setProperty("sDomain",     QString());
+        this->mObject->setProperty("iTtl",        int());
+        this->mObject->setProperty("iSerial",     int());
+        this->mObject->setProperty("sZoneFile",   QString());
+        this->mObject->setProperty("sCreated",    QString());
+        this->mObject->setProperty("sModified",   QString());
+        this->mObject->setProperty("bEnabled",    bool());
+        this->mObject->setProperty("sNameServer", QString());
+        this->mObject->setProperty("iRefresh",    int());
+        this->mObject->setProperty("iRetry",      int());
+        this->mObject->setProperty("iExpire",     int());
+        this->mObject->setProperty("iMinimum",    int());
+        this->mObject->setProperty("sRoot",       QString());
     }
     /**
      * @paragraph This constrcutor creates a structure out of a QSqlRecord
@@ -321,10 +332,21 @@ struct SpDomain {
      */
     SpDomain(QSqlRecord qsrDomain) : mObject(new QObject()) {
         // Set the properties
-        this->mObject->setProperty("iDomainId",  qsrDomain.value("iDomainId").toInt());
-        this->mObject->setProperty("iAccountId", qsrDomain.value("iAccountId").toInt());
-        this->mObject->setProperty("sDomain",    qsrDomain.value("sDomain").toString());
-        this->mObject->setProperty("bEnabled",   qsrDomain.value("bEnabled").toBool());
+        this->mObject->setProperty("iDomainId",   qsrDomain.value("iDomainId").toInt());
+        this->mObject->setProperty("iAccountId",  qsrDomain.value("iAccountId").toInt());
+        this->mObject->setProperty("sDomain",     qsrDomain.value("sDomain").toString());
+        this->mObject->setProperty("iTtl",        qsrDomain.value("iTtl").toInt());
+        this->mObject->setProperty("iSerial",     qsrDomain.value("iSerial").toInt());
+        this->mObject->setProperty("sZoneFile",   qsrDomain.value("sZoneFile").toString());
+        this->mObject->setProperty("sCreated",    qsrDomain.value("sCreated").toString());
+        this->mObject->setProperty("sModified",   qsrDomain.value("sModified").toString());
+        this->mObject->setProperty("bEnabled",    qsrDomain.value("bEnabled").toBool());
+        this->mObject->setProperty("sNameServer", qsrDomain.value("sNameServer").toString());
+        this->mObject->setProperty("iRefresh",    qsrDomain.value("iRefresh").toInt());
+        this->mObject->setProperty("iRetry",      qsrDomain.value("iRetry").toInt());
+        this->mObject->setProperty("iExpire",     qsrDomain.value("iExpire").toInt());
+        this->mObject->setProperty("iMinimum",    qsrDomain.value("iMinimum").toInt());
+        this->mObject->setProperty("sRoot",       qsrDomain.value("sRoot").toString());
     }
     /**
      * @paragraph This constructor creates a structure out of a QVariantMap
@@ -426,9 +448,6 @@ struct SpMailBox {
      */
     SpMailBox() : mObject(new QObject()) {
         // Initialize the properties
-        this->mObject->setProperty("iMailBoxId",                   int());
-        this->mObject->setProperty("iAccountId",                   int());
-        this->mObject->setProperty("iDomainId",                    int());
         this->mObject->setProperty("sUsername",                    QString());
         this->mObject->setProperty("sPassword",                    QString());
         this->mObject->setProperty("sName",                        QString());
@@ -437,6 +456,7 @@ struct SpMailBox {
         this->mObject->setProperty("sMailDirectory",               QString());
         this->mObject->setProperty("iQuota",                       int());
         this->mObject->setProperty("iBytes",                       int());
+        this->mObject->setProperty("iMessages",                    int());
         this->mObject->setProperty("sDomain",                      QString());
         this->mObject->setProperty("sTransport",                   QString());
         this->mObject->setProperty("sDepartment",                  QString());
@@ -452,9 +472,19 @@ struct SpMailBox {
         this->mObject->setProperty("bEnableSieveManagement",       bool());
         this->mObject->setProperty("bEnableSecureSieveManagement", bool());
         this->mObject->setProperty("bEnableInternalDelivery",      bool());
+        this->mObject->setProperty("sLastLogin",                   QString());
+        this->mObject->setProperty("sLastLoginId",                 QString());
+        this->mObject->setProperty("sLastLoginProtocol",           QString());
         this->mObject->setProperty("sDisclaimer",                  QString());
+        this->mObject->setProperty("sPasswordModified",            QString());
+        this->mObject->setProperty("sCreated",                     QString());
+        this->mObject->setProperty("sModified",                    QString());
+        this->mObject->setProperty("sExpires",                     QString());
         this->mObject->setProperty("bActive",                      bool());
         this->mObject->setProperty("sLocalPartition",              QString());
+        this->mObject->setProperty("iMailBoxId",                   int());
+        this->mObject->setProperty("iAccountId",                   int());
+        this->mObject->setProperty("iDomainId",                    int());
     }
     /**
      * @paragraph This constructor creates a structure out of a QSqlRecord
@@ -464,9 +494,6 @@ struct SpMailBox {
      */
     SpMailBox(QSqlRecord qsrMailBox) {
         // Set the properties
-        this->mObject->setProperty("iMailBoxId",                   qsrMailBox.value("iMailBoxId").toInt());
-        this->mObject->setProperty("iAccountId",                   qsrMailBox.value("iAccountId").toInt());
-        this->mObject->setProperty("iDomainId",                    qsrMailBox.value("iDomainId").toInt());
         this->mObject->setProperty("sUsername",                    qsrMailBox.value("sUsername").toString());
         this->mObject->setProperty("sPassword",                    qsrMailBox.value("sPassword").toString());
         this->mObject->setProperty("sName",                        qsrMailBox.value("sName").toString());
@@ -475,6 +502,7 @@ struct SpMailBox {
         this->mObject->setProperty("sMailDirectory",               qsrMailBox.value("sMailDirectory").toString());
         this->mObject->setProperty("iQuota",                       qsrMailBox.value("iQuota").toInt());
         this->mObject->setProperty("iBytes",                       qsrMailBox.value("iBytes").toInt());
+        this->mObject->setProperty("iMessages",                    qsrMailBox.value("iMessages").toInt());
         this->mObject->setProperty("sDomain",                      qsrMailBox.value("sDomain").toString());
         this->mObject->setProperty("sTransport",                   qsrMailBox.value("sTransport").toString());
         this->mObject->setProperty("sDepartment",                  qsrMailBox.value("sDepartment").toString());
@@ -490,9 +518,19 @@ struct SpMailBox {
         this->mObject->setProperty("bEnableSieveManagement",       qsrMailBox.value("bEnableSieveManagement").toBool());
         this->mObject->setProperty("bEnableSecureSieveManagement", qsrMailBox.value("bEnableSecureSieveManagement").toBool());
         this->mObject->setProperty("bEnableInternalDelivery",      qsrMailBox.value("bEnableInternalDelivery").toBool());
+        this->mObject->setProperty("sLastLogin",                   qsrMailBox.value("sLastLogin").toString());
+        this->mObject->setProperty("sLastLoginIp",                 qsrMailBox.value("sLastLoginIp").toString());
+        this->mObject->setProperty("sLastLoginProtocol",           qsrMailBox.value("sLastLoginProtocol").toString());
         this->mObject->setProperty("sDisclaimer",                  qsrMailBox.value("sDisclaimer").toString());
+        this->mObject->setProperty("sPasswordModified",            qsrMailBox.value("sPasswordModified").toString());
+        this->mObject->setProperty("sCreated",                     qsrMailBox.value("sCreated").toString());
+        this->mObject->setProperty("sModified",                    qsrMailBox.value("sModified").toString());
+        this->mObject->setProperty("sExpires",                     qsrMailBox.value("sExpired").toString());
         this->mObject->setProperty("bActive",                      qsrMailBox.value("bActive").toBool());
         this->mObject->setProperty("sLocalPartition",              qsrMailBox.value("sLocalPartition").toString());
+        this->mObject->setProperty("iMailBoxId",                   qsrMailBox.value("iMailBoxId").toInt());
+        this->mObject->setProperty("iAccountId",                   qsrMailBox.value("iAccountId").toInt());
+        this->mObject->setProperty("iDomainId",                    qsrMailBox.value("iDomainId").toInt());
     }
     /**
      * @paragraph This creates a structure out of a QVariantMap
@@ -595,8 +633,6 @@ struct SpMailDomain {
     SpMailDomain() : mObject(new QObject()) {
         // Initialize the properties
         this->mObject->setProperty("iMailDomainId",          int());
-        this->mObject->setProperty("iAccountId",             int());
-        this->mObject->setProperty("iDomainId",              int());
         this->mObject->setProperty("sDescription",           QString());
         this->mObject->setProperty("sDisclaimer",            QString());
         this->mObject->setProperty("iMaxQuota",              int());
@@ -607,7 +643,11 @@ struct SpMailDomain {
         this->mObject->setProperty("sDefaultPasswordScheme", QString());
         this->mObject->setProperty("iMinimumPasswordLength", int());
         this->mObject->setProperty("iMaximumPasswordLength", int());
+        this->mObject->setProperty("sCreated",               QString());
+        this->mObject->setProperty("sModified",              QString());
         this->mObject->setProperty("bActive",                bool());
+        this->mObject->setProperty("iAccountId",             int());
+        this->mObject->setProperty("iDomainId",              int());
     }
     /**
      * @paragraph This structure creates a structure out of a QSqlRecord
@@ -618,8 +658,6 @@ struct SpMailDomain {
     SpMailDomain(QSqlRecord qsrMailDomain) : mObject(new QObject()) {
         // Convert the properties
         this->mObject->setProperty("iMailDomainId",          qsrMailDomain.value("iMailDomainId").toInt());
-        this->mObject->setProperty("iAccountId",             qsrMailDomain.value("iAccountId").toInt());
-        this->mObject->setProperty("iDomainId",              qsrMailDomain.value("iDomainId").toInt());
         this->mObject->setProperty("sDescription",           qsrMailDomain.value("sDescription").toString());
         this->mObject->setProperty("sDisclaimer",            qsrMailDomain.value("sDisclaimer").toString());
         this->mObject->setProperty("iMaxQuota",              qsrMailDomain.value("iMaxQuota").toInt());
@@ -630,7 +668,11 @@ struct SpMailDomain {
         this->mObject->setProperty("sDefaultPasswordScheme", qsrMailDomain.value("sDefaultPasswordScheme").toString());
         this->mObject->setProperty("iMinimumPasswordLength", qsrMailDomain.value("iMinimumPasswordLength").toInt());
         this->mObject->setProperty("iMaximumPasswordLength", qsrMailDomain.value("iMaximumPasswordLength").toInt());
+        this->mObject->setProperty("sCreated",               qsrMailDomain.value("sCreated").toString());
+        this->mObject->setProperty("sModified",              qsrMailDomain.value("sModified").toString());
         this->mObject->setProperty("bActive",                qsrMailDomain.value("bActive").toBool());
+        this->mObject->setProperty("iAccountId",             qsrMailDomain.value("iAccountId").toInt());
+        this->mObject->setProperty("iDomainId",              qsrMailDomain.value("iDomainId").toInt());
     }
     /**
      * @paragraph This constructor creates a structure out of a QVariantMap
