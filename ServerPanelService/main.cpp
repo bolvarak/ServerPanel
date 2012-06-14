@@ -8,7 +8,7 @@
 /// Headers //////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-#include <QtGui/QApplication>
+#include <QCoreApplication>
 #include <ServerPanelService.h>
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -17,11 +17,11 @@
 
 int main (int iArguments, char** aArguments) {
     // Setup the application
-    QApplication qanApplication(iArguments, aArguments);
+    QCoreApplication qcaApplication(iArguments, aArguments);
     // Check the arguments
     if (iArguments > 1) {
         // Handle the cli request
-        ServerPanel::Instance()->HandleCliRequest(qanApplication.arguments());
+        ServerPanel::Instance()->HandleCliRequest(qcaApplication.arguments());
         // We're done
         qanApplication.exit();
     } else {
@@ -29,5 +29,5 @@ int main (int iArguments, char** aArguments) {
         ServerPanelService::Instance();
     }
     // Execute and return the application
-    return qanApplication.exec();
+    return qcaApplication.exec();
 }

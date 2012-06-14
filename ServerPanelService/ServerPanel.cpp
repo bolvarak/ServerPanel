@@ -314,7 +314,7 @@ QByteArray ServerPanel::HandleRequest(QString sRequest) {
     // Add the timestamp
     qvmResponse.insert("sTimestamp", QDateTime::currentDateTime());
     // Grab the response
-    QByteArray qbaResponse = this->EncodeResponse(qvmResponse);
+    qbaResponse = this->EncodeResponse(qvmResponse);
     // Log the response
     this->LogMessage(qbaResponse);
     // Send the response

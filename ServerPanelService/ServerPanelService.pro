@@ -10,13 +10,11 @@ CONFIG      += console app_bundle
 TEMPLATE     = app
 SOURCES     += main.cpp \
     Json.cpp \
-    ServerPanelRpc.cpp \
     ServerPanelService.cpp \
     ServerPanel.cpp
 
 HEADERS     += \
     Json.h \
-    ServerPanelRpc.h \
     ServerPanelService.h \
     ServerPanel.h \
     ServerPanelStructures.h
