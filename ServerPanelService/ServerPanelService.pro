@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT          += gui core network sql
+QT          += core network sql
 TARGET       = ServerPanelService
 CONFIG      += console app_bundle
 TEMPLATE     = app

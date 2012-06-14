@@ -23,7 +23,7 @@ int main (int iArguments, char** aArguments) {
         // Handle the cli request
         ServerPanel::Instance()->HandleCliRequest(qcaApplication.arguments());
         // We're done
-        qanApplication.exit();
+        qcaApplication.exit();
     } else {
         // Instantiate the server
         ServerPanelService::Instance();
