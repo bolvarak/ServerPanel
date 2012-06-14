@@ -202,57 +202,57 @@ QByteArray ServerPanel::HandleRequest(QString sRequest) {
         // Set the method
         QString sMethod = qvmRequest[SERVERPANEL_METHOD_NOTATION_KEY].toString();
         // Determine the method to execute
-        if (sMethod.contains("AuthenticateUser", Qt::CaseInsensitive)) {       // User authentication
+        if (sMethod == "AuthenticateUser") {       // User authentication
             // Setup the structure
             SpAccount spAccount = SpAccount(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->AuthenticateUser(spAccount));
-        } else if (sMethod.contains("LoadAccount", Qt::CaseInsensitive)) {     // Load Account
+        } else if (sMethod == "LoadAccount") {     // Load Account
             // Setup the structure
             SpAccount spAccount = SpAccount(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->LoadAccount(spAccount));
-        } else if (sMethod.contains("LoadDnsRecord", Qt::CaseInsensitive)) {   // Load DNS Record
+        } else if (sMethod == "LoadDnsRecord") {   // Load DNS Record
             // Setup the structure
             SpDnsRecord spDnsRecord = SpDnsRecord(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->LoadDnsRecord(spDnsRecord));
-        } else if (sMethod.contains("LoadDnsRecords", Qt::CaseInsensitive)) {  // Load DNS Records
+        } else if (sMethod == "LoadDnsRecords") {  // Load DNS Records
             // Setup the structure
             SpDnsRecord spDnsRecord = SpDnsRecord(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->LoadDnsRecords(spDnsRecord));
-        } else if (sMethod.contains("LoadDomain", Qt::CaseInsensitive)) {      // Load Domain
+        } else if (sMethod == "LoadDomain") {      // Load Domain
             // Setup the structure
             SpDomain spDomain = SpDomain(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->LoadDomain(spDomain));
-        } else if (sMethod.contains("LoadDomains", Qt::CaseInsensitive)) {     // Load Domains
+        } else if (sMethod == "LoadDomains") {     // Load Domains
             // Setup the structure
             SpDomain spDomain = SpDomain(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->LoadDomains(spDomain));
-        } else if (sMethod.contains("LoadMailBox", Qt::CaseInsensitive)) {     // Load Mailbox
+        } else if (sMethod == "LoadMailBox") {     // Load Mailbox
             // Setup the structure
             SpMailBox spMailBox = SpMailBox(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->LoadMailBox(spMailBox));
-        } else if (sMethod.contains("LoadMailBoxes", Qt::CaseInsensitive)) {   // Load Mailboxes
+        } else if (sMethod == "LoadMailBoxes") {   // Load Mailboxes
             // Setup the structure
             SpMailBox spMailBox = SpMailBox(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->LoadMailBoxes(spMailBox));
-        } else if (sMethod.contains("LoadMailDomain", Qt::CaseInsensitive)) {  // Load Mail Domain
+        } else if (sMethod == "LoadMailDomain") {  // Load Mail Domain
             // Setup the structure
             SpMailDomain spMailDomain = SpMailDomain(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->LoadMailDomain(spMailDomain));
-        } else if (sMethod.contains("LoadMailDomains", Qt::CaseInsensitive)) { // Load Mail Domains
+        } else if (sMethod == "LoadMailDomains") { // Load Mail Domains
             // Setup the structure
             SpMailDomain spMailDomain = SpMailDomain(qvmRequest);
             // Set the response
             qbaResponse = this->EncodeResponse(this->LoadMailDomains(spMailDomain));
-        } else if (sMethod.contains("Ping", Qt::CaseInsensitive)) {            // Ping
+        } else if (sMethod == "Ping") {            // Ping
             // Create a map with the time stamps
             QVariantMap qvmPing;
             // Add the human readable time stamp
