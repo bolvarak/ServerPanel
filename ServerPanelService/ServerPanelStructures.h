@@ -383,162 +383,93 @@ struct SpMailBox {
      * @return SpMailBox
      */
     SpMailBox() : mObject(new QObject()) {
-
+        // Initialize the properties
+        this->mObject->setProperty("iMailBoxId",                   int());
+        this->mObject->setProperty("iAccountId",                   int());
+        this->mObject->setProperty("iDomainId",                    int());
+        this->mObject->setProperty("sUsername",                    QString());
+        this->mObject->setProperty("sPassword",                    QString());
+        this->mObject->setProperty("sName",                        QString());
+        this->mObject->setProperty("sStorageDirectory",            QString());
+        this->mObject->setProperty("sStorageNode",                 QString());
+        this->mObject->setProperty("sMailDirectory",               QString());
+        this->mObject->setProperty("iQuota",                       int());
+        this->mObject->setProperty("iBytes",                       int());
+        this->mObject->setProperty("sDomain",                      QString());
+        this->mObject->setProperty("sTransport",                   QString());
+        this->mObject->setProperty("sDepartment",                  QString());
+        this->mObject->setProperty("sRank",                        QString());
+        this->mObject->setProperty("sEmployeeId",                  QString());
+        this->mObject->setProperty("bEnableSmtp",                  bool());
+        this->mObject->setProperty("bEnableSecureSmtp",            bool());
+        this->mObject->setProperty("bEnablePop3",                  bool());
+        this->mObject->setProperty("bEnableSecurePop3",            bool());
+        this->mObject->setProperty("bEnableImap",                  bool());
+        this->mObject->setProperty("bEnableSecureImap",            bool());
+        this->mObject->setProperty("bEnableDelivery",              bool());
+        this->mObject->setProperty("bEnableSieveManagement",       bool());
+        this->mObject->setProperty("bEnableSecureSieveManagement", bool());
+        this->mObject->setProperty("bEnableInternalDelivery",      bool());
+        this->mObject->setProperty("sDisclaimer",                  QString());
+        this->mObject->setProperty("bActive",                      bool());
+        this->mObject->setProperty("sLocalPartition",              QString());
     }
     /**
-     * @paragraph This constructor creates a structure out of a QVariantMap
+     * @paragraph This constructor creates a structure out of a QSqlRecord
      * @brief SpMailBox()
      * @param QSqlRecord qsr
-     *
+     * @return SpMailBox
      */
     SpMailBox(QSqlRecord qsrMailBox) {
         // Set the properties
-        this->iMailBoxId                   = qsrMailBox.value("iMailBoxId").toInt();
-        this->iAccountId                   = qsrMailBox.value("iAccountId").toInt();
-        this->iDomainId                    = qsrMailBox.value("iDomainId").toInt();
-        this->sUsername                    = qsrMailBox.value("sUsername").toString();
-        this->sPassword                    = qsrMailBox.value("sPassword").toString();
-        this->sName                        = qsrMailBox.value("sName").toString();
-        this->sStorageDirectory            = qsrMailBox.value("sStorageDirectory").toString();
-        this->sStorageNode                 = qsrMailBox.value("sStorageNode").toString();
-        this->sMailDirectory               = qsrMailBox.value("sMailDirectory").toString();
-        this->iQuota                       = qsrMailBox.value("iQuota").toInt();
-        this->iBytes                       = qsrMailBox.value("iBytes").toInt();
-        this->sDomain                      = qsrMailBox.value("sDomain").toString();
-        this->sTransport                   = qsrMailBox.value("sTransport").toString();
-        this->sDepartment                  = qsrMailBox.value("sDepartment").toString();
-        this->sRank                        = qsrMailBox.value("sRank").toString();
-        this->sEmployeeId                  = qsrMailBox.value("sEmployeeId").toString();
-        this->bEnableSmtp                  = qsrMailBox.value("bEnableSmtp").toBool();
-        this->bEnableSecureSmtp            = qsrMailBox.value("bEnableSecureSmtp").toBool();
-        this->bEnablePop3                  = qsrMailBox.value("bEnablePop3").toBool();
-        this->bEnableSecurePop3            = qsrMailBox.value("bEnableSecurePop3").toBool();
-        this->bEnableImap                  = qsrMailBox.value("bEnableImap").toBool();
-        this->bEnableSecureImap            = qsrMailBox.value("bEnableSecureImap").toBool();
-        this->bEnableDelivery              = qsrMailBox.value("bEnableDelivery").toBool();
-        this->bEnableSieveManagement       = qsrMailBox.value("bEnableSieveManagement").toBool();
-        this->bEnableSecureSieveManagement = qsrMailBox.value("bEnableSecureSieveManagement").toBool();
-        this->bEnableInternalDelivery      = qsrMailBox.value("bEnableInternalDelivery").toBool();
-        this->sDisclaimer                  = qsrMailBox.value("sDisclaimer").toString();
-        this->bActive                      = qsrMailBox.value("bActive").toBool();
-        this->sLocalPartition              = qsrMailBox.value("sLocalPartition").toString();
+        this->mObject->setProperty("iMailBoxId",                   qsrMailBox.value("iMailBoxId").toInt());
+        this->mObject->setProperty("iAccountId",                   qsrMailBox.value("iAccountId").toInt());
+        this->mObject->setProperty("iDomainId",                    qsrMailBox.value("iDomainId").toInt());
+        this->mObject->setProperty("sUsername",                    qsrMailBox.value("sUsername").toString());
+        this->mObject->setProperty("sPassword",                    qsrMailBox.value("sPassword").toString());
+        this->mObject->setProperty("sName",                        qsrMailBox.value("sName").toString());
+        this->mObject->setProperty("sStorageDirectory",            qsrMailBox.value("sStorageDirectory").toString());
+        this->mObject->setProperty("sStorageNode",                 qsrMailBox.value("sStorageNode").toString());
+        this->mObject->setProperty("sMailDirectory",               qsrMailBox.value("sMailDirectory").toString());
+        this->mObject->setProperty("iQuota",                       qsrMailBox.value("iQuota").toInt());
+        this->mObject->setProperty("iBytes",                       qsrMailBox.value("iBytes").toInt());
+        this->mObject->setProperty("sDomain",                      qsrMailBox.value("sDomain").toString());
+        this->mObject->setProperty("sTransport",                   qsrMailBox.value("sTransport").toString());
+        this->mObject->setProperty("sDepartment",                  qsrMailBox.value("sDepartment").toString());
+        this->mObject->setProperty("sRank",                        qsrMailBox.value("sRank").toString());
+        this->mObject->setProperty("sEmployeeId",                  qsrMailBox.value("sEmployeeId").toString());
+        this->mObject->setProperty("bEnableSmtp",                  qsrMailBox.value("bEnableSmtp").toBool());
+        this->mObject->setProperty("bEnableSecureSmtp",            qsrMailBox.value("bEnableSecureSmtp").toBool());
+        this->mObject->setProperty("bEnablePop3",                  qsrMailBox.value("bEnablePop3").toBool());
+        this->mObject->setProperty("bEnableSecurePop3",            qsrMailBox.value("bEnableSecurePop3").toBool());
+        this->mObject->setProperty("bEnableImap",                  qsrMailBox.value("bEnableImap").toBool());
+        this->mObject->setProperty("bEnableSecureImap",            qsrMailBox.value("bEnableSecureImap").toBool());
+        this->mObject->setProperty("bEnableDelivery",              qsrMailBox.value("bEnableDelivery").toBool());
+        this->mObject->setProperty("bEnableSieveManagement",       qsrMailBox.value("bEnableSieveManagement").toBool());
+        this->mObject->setProperty("bEnableSecureSieveManagement", qsrMailBox.value("bEnableSecureSieveManagement").toBool());
+        this->mObject->setProperty("bEnableInternalDelivery",      qsrMailBox.value("bEnableInternalDelivery").toBool());
+        this->mObject->setProperty("sDisclaimer",                  qsrMailBox.value("sDisclaimer").toString());
+        this->mObject->setProperty("bActive",                      qsrMailBox.value("bActive").toBool());
+        this->mObject->setProperty("sLocalPartition",              qsrMailBox.value("sLocalPartition").toString());
     }
+    /**
+     * @paragraph This creates a structure out of a QVariantMap
+     * @brief SpMailBox()
+     * @param QVariantMap qvmMailBox
+     * @return SpMailBox
+     */
     SpMailBox(QVariantMap qvmMailBox) {
-        // Convert the mailbox id
-        if (qvmMailBox.contains("iMailBoxId")) {
-            this->iMailBoxId = qvmMailBox["iMailBoxId"].toInt();
-        }
-        // Convert the account id
-        if (qvmMailBox.contains("iAccountId")) {
-            this->iAccountId = qvmMailBox["iAccountId"].toInt();
-        }
-        // Convert the domain id
-        if (qvmMailBox.contains("iDomainId")) {
-            this->iDomainId = qvmMailBox["iDomainId"].toInt();
-        }
-        // Convert the username
-        if (qvmMailBox.contains("sUsername")) {
-            this->sUsername = qvmMailBox["sUsername"].toString();
-        }
-        // Convert the password
-        if (qvmMailBox.contains("sPassword")) {
-            this->sPassword = qvmMailBox["sPassword"].toString();
-        }
-        // Convert the name
-        if (qvmMailBox.contains("sName")) {
-            this->sName = qvmMailBox["sName"].toString();
-        }
-        // Convert the storage directory
-        if (qvmMailBox.contains("sStorageDirectory")) {
-            this->sStorageDirectory = qvmMailBox["sStorageDirectory"].toString();
-        }
-        // Convert the storage node
-        if (qvmMailBox.contains("sStorageNode")) {
-            this->sStorageNode = qvmMailBox["sStorageNode"].toString();
-        }
-        // Convert the mail directory
-        if (qvmMailBox.contains("sMailDirectory")) {
-            this->sMailDirectory = qvmMailBox["sMailDirectory"].toString();
-        }
-        // Convert the quota
-        if (qvmMailBox.contains("iQuota")) {
-            this->iQuota = qvmMailBox["iQuota"].toInt();
-        }
-        // Convert the bytes
-        if (qvmMailBox.contains("iBytes")) {
-            this->iBytes = qvmMailBox["iBytes"].toInt();
-        }
-        // Convert the domain
-        if (qvmMailBox.contains("sDomain")) {
-            this->sDomain = qvmMailBox["sDomain"].toString();
-        }
-        // Convert the transport
-        if (qvmMailBox.contains("sTransport")) {
-            this->sTransport = qvmMailBox["sTransport"].toString();
-        }
-        // Convert the department
-        if (qvmMailBox.contains("sDepartment")) {
-            this->sDepartment = qvmMailBox["sDepartment"].toString();
-        }
-        // Convert the rank
-        if (qvmMailBox.contains("sRank")) {
-            this->sRank = qvmMailBox["sRank"].toString();
-        }
-        // Convert the employee id
-        if (qvmMailBox.contains("sEmployeeId")) {
-            this->sEmployeeId = qvmMailBox["sEmployeeId"].toString();
-        }
-        // Convert the SMTP enabler
-        if (qvmMailBox.contains("bEnableSmtp")) {
-            this->bEnableSmtp = qvmMailBox["bEnableSmtp"].toBool();
-        }
-        // Convert the secure SMTP enabler
-        if (qvmMailBox.contains("bEnableSecureSmtp")) {
-            this->bEnableSecureSmtp = qvmMailBox["bEnableSecureSmtp"].toBool();
-        }
-        // Convert the POP3 enabler
-        if (qvmMailBox.contains("bEnablePop3")) {
-            this->bEnablePop3 = qvmMailBox["bEnablePop3"].toBool();
-        }
-        // Convert the secure POP3 enabler
-        if (qvmMailBox.contains("bEnableSecurePop3")) {
-            this->bEnableSecurePop3 = qvmMailBox["bEnableSecurePop3"].toBool();
-        }
-        // Convert the IMAP enabler
-        if (qvmMailBox.contains("bEnableImap")) {
-            this->bEnableImap = qvmMailBox["bEnableImap"].toBool();
-        }
-        // Convert the secure IMAP enabler
-        if (qvmMailBox.contains("bEnableSecureImap")) {
-            this->bEnableSecureImap = qvmMailBox["bEnableSecureImap"].toBool();
-        }
-        // Convert the delivery enabler
-        if (qvmMailBox.contains("bEnableDelivery")) {
-            this->bEnableDelivery = qvmMailBox["bEnableDelivery"].toBool();
-        }
-        // Convert the sieve management enabler
-        if (qvmMailBox.contains("bEnableSieveManagement")) {
-            this->bEnableSieveManagement = qvmMailBox["bEnableSieveManagement"].toBool();
-        }
-        // Convert the secure sieve management enabler
-        if (qvmMailBox.contains("bEnableSecureSieveManagement")) {
-            this->bEnableSecureSieveManagement = qvmMailBox["bSecureSieveManagement"].toBool();
-        }
-        // Convert the internal delivery enabler
-        if (qvmMailBox.contains("bEnableInternalDelivery")) {
-            this->bEnableInternalDelivery = qvmMailBox["bEnableInternalDelivery"].toBool();
-        }
-        // Convert the disclaimer
-        if (qvmMailBox.contains("sDisclaimer")) {
-            this->sDisclaimer = qvmMailBox["sDisclaimer"].toString();
-        }
-        // Convert the actvie notator
-        if (qvmMailBox.contains("bActive")) {
-            this->bActive = qvmMailBox["bActive"].toBool();
-        }
-        // Convert the local partition
-        if (qvmMailBox.contains("sLocalPartition")) {
-            this->sLocalPartition = qvmMailBox["sLocalPartition"].toString();
+        // Create an iterator
+        QVariantMap::ConstIterator itrProperty     = qvmMailBox.constBegin();
+        QVariantMap::ConstIterator itrLastProperty = qvmMailBox.constEnd();
+        // Iterate through the properties
+        for (; itrProperty != itrLastProperty; ++itrProperty) {
+            // Set a name placeholder
+            QByteArray qbaPropertyName;
+            // Set the name
+            qbaPropertyName.append(itrProperty.key());
+            // Set the property
+            this->mObject->setProperty(qbaPropertyName, itrProperty.value());
         }
     }
     /**
@@ -560,36 +491,11 @@ struct SpMailBox {
     QVariantMap toMap() {
         // Create a map placeholder
         QVariantMap qvmProperties;
-        // Set the properties
-        qvmProperties.insert("iMailBoxId",                   this->iMailBoxId);
-        qvmProperties.insert("iAccountId",                   this->iAccountId);
-        qvmProperties.insert("iDomainId",                    this->iDomainId);
-        qvmProperties.insert("sUsername",                    this->sUsername);
-        qvmProperties.insert("sPassword",                    this->sPassword);
-        qvmProperties.insert("sName",                        this->sName);
-        qvmProperties.insert("sStorageDirectory",            this->sStorageDirectory);
-        qvmProperties.insert("sStorageNode",                 this->sStorageNode);
-        qvmProperties.insert("sMailDirectory",               this->sMailDirectory);
-        qvmProperties.insert("iQuota",                       this->iQuota);
-        qvmProperties.insert("iBytes",                       this->iBytes);
-        qvmProperties.insert("sDomain",                      this->sDomain);
-        qvmProperties.insert("sTransport",                   this->sTransport);
-        qvmProperties.insert("sDepartment",                  this->sDepartment);
-        qvmProperties.insert("sRank",                        this->sRank);
-        qvmProperties.insert("sEmployeeId",                  this->sEmployeeId);
-        qvmProperties.insert("bEnableSmtp",                  this->bEnableSmtp);
-        qvmProperties.insert("bEnableSecureSmtp",            this->bEnableSecureSmtp);
-        qvmProperties.insert("bEnablePop3",                  this->bEnablePop3);
-        qvmProperties.insert("bEnableSecurePop3",            this->bEnableSecurePop3);
-        qvmProperties.insert("bEnableImap",                  this->bEnableImap);
-        qvmProperties.insert("bEnableSecureImap",            this->bEnableSecureImap);
-        qvmProperties.insert("bEnableDelivery",              this->bEnableDelivery);
-        qvmProperties.insert("bEnableSieveManagement",       this->bEnableSieveManagement);
-        qvmProperties.insert("bEnableSecureSieveManagement", this->bEnableSecureSieveManagement);
-        qvmProperties.insert("bEnableInternalDelivery",      this->bEnableInternalDelivery);
-        qvmProperties.insert("sDisclaimer",                  this->sDisclaimer);
-        qvmProperties.insert("bActive",                      this->bActive);
-        qvmProperties.insert("sLocalPartition",              this->sLocalPartition);
+        // Loop through the properties
+        foreach (QString sPropertyName, this->mObject->dynamicPropertyNames()) {
+            // Add the property to the map
+            qvmProperties.insert(sPropertyName, this->mObject->property(sPropertyName.toLatin1()));
+        }
         // Return the map
         return qvmProperties;
     }
@@ -628,95 +534,70 @@ struct SpMailBox {
  * @brief The SpMailDomain struct
  */
 struct SpMailDomain {
-    int     iMailDomainId;
-    int     iAccountId;
-    int     iDomainId;
-    QString sDescription;
-    QString sDisclaimer;
-    int     iMaxQuota;
-    int     iQuota;
-    QString sTransport;
-    bool    bBackupMx;
-    int     iDefaultUserQuota;
-    QString sDefaultPasswordScheme;
-    int     iMinimumPasswordLength;
-    int     iMaximumPasswordLength;
-    bool    bActive;
-    // Initializer
-    SpMailDomain() : iMailDomainId(0), iAccountId(0), iDomainId(0), iMaxQuota(1024), iQuota(1024), sTransport("dovecot"), bBackupMx(false), iDefaultUserQuota(1024), sDefaultPasswordScheme("md5"), iMinimumPasswordLength(5), iMaximumPasswordLength(75), bActive(true) {}
-    SpMailDomain(QSqlRecord qsrMailDomain) {
-        // Convert the properties
-        this->iMailDomainId          = qsrMailDomain.value("iMailDomainId").toInt();
-        this->iAccountId             = qsrMailDomain.value("iAccountId").toInt();
-        this->iDomainId              = qsrMailDomain.value("iDomainId").toInt();
-        this->sDescription           = qsrMailDomain.value("sDescription").toString();
-        this->sDisclaimer            = qsrMailDomain.value("sDisclaimer").toString();
-        this->iMaxQuota              = qsrMailDomain.value("iMaxQuota").toInt();
-        this->iQuota                 = qsrMailDomain.value("iQuota").toInt();
-        this->sTransport             = qsrMailDomain.value("sTransport").toString();
-        this->bBackupMx              = qsrMailDomain.value("bBackupMx").toBool();
-        this->iDefaultUserQuota      = qsrMailDomain.value("iDefaultUserQuota").toInt();
-        this->sDefaultPasswordScheme = qsrMailDomain.value("sDefaultPasswordScheme").toString();
-        this->iMinimumPasswordLength = qsrMailDomain.value("iMinimumPasswordLength").toInt();
-        this->iMaximumPasswordLength = qsrMailDomain.value("iMaximumPasswordLength").toInt();
-        this->bActive                = qsrMailDomain.value("bActive").toBool();
+    QObject* mObject;
+    /**
+     * @paragraph This is the base constructor
+     * @brief SpMailDomain()
+     * @return SpMailDomain
+     */
+    SpMailDomain() : mObject(new QObject()) {
+        // Initialize the properties
+        this->mObject->setProperty("iMailDomainId",          int());
+        this->mObject->setProperty("iAccountId",             int());
+        this->mObject->setProperty("iDomainId",              int());
+        this->mObject->setProperty("sDescription",           QString());
+        this->mObject->setProperty("sDisclaimer",            QString());
+        this->mObject->setProperty("iMaxQuota",              int());
+        this->mObject->setProperty("iQuota",                 int());
+        this->mObject->setProperty("sTransport",             QString());
+        this->mObject->setProperty("bBackupMx",              bool());
+        this->mObject->setProperty("iDefaultUserQuota",      int());
+        this->mObject->setProperty("sDefaultPasswordScheme", QString());
+        this->mObject->setProperty("iMinimumPasswordLength", int());
+        this->mObject->setProperty("iMaximumPasswordLength", int());
+        this->mObject->setProperty("bActive",                bool());
     }
-    SpMailDomain(QVariantMap qvmMailDomain) {
-        // Convert the mail domain id
-        if (qvmMailDomain.contains("iMailDomainId")) {
-            this->iMailDomainId = qvmMailDomain["iMailDomainId"].toInt();
-        }
-        // Convert the account id
-        if (qvmMailDomain.contains("iAccountId")) {
-            this->iAccountId = qvmMailDomain["iAccountId"].toInt();
-        }
-        // Convert the domain id
-        if (qvmMailDomain.contains("iDomainId")) {
-            this->iDomainId = qvmMailDomain["iDomainId"].toInt();
-        }
-        // Convert the description
-        if (qvmMailDomain.contains("sDescription")) {
-            this->sDescription = qvmMailDomain["sDescription"].toString();
-        }
-        // Convert the disclaimer
-        if (qvmMailDomain.contains("sDisclaimer")) {
-            this->sDisclaimer = qvmMailDomain["sDisclaimer"].toString();
-        }
-        // Convert the max quota
-        if (qvmMailDomain.contains("iMaxQuota")) {
-            this->iMaxQuota = qvmMailDomain["iMaxQuota"].toInt();
-        }
-        // Convert the quota
-        if (qvmMailDomain.contains("iQuota")) {
-            this->iQuota = qvmMailDomain["iQuota"].toInt();
-        }
-        // Convert the transport
-        if (qvmMailDomain.contains("sTransport")) {
-            this->sTransport = qvmMailDomain["sTransport"].toString();
-        }
-        // Convert the backup mx notator
-        if (qvmMailDomain.contains("bBackupMx")) {
-            this->bBackupMx = qvmMailDomain["bBackupMx"].toBool();
-        }
-        // Convert the default user quota
-        if (qvmMailDomain.contains("iDefaultUserQuota")) {
-            this->iDefaultUserQuota = qvmMailDomain["iDefaultUserQuota"].toInt();
-        }
-        // Convert the default password scheme
-        if (qvmMailDomain.contains("sDefaultPasswordScheme")) {
-            this->sDefaultPasswordScheme = qvmMailDomain["sDefaultPasswordScheme"].toString();
-        }
-        // Convert the minimum password length
-        if (qvmMailDomain.contains("iMinimumPasswordLength")) {
-            this->iMinimumPasswordLength = qvmMailDomain["iMinimumPasswordLength"].toInt();
-        }
-        // Convert the maximum password length
-        if (qvmMailDomain.contains("iMaximumPasswordLength")) {
-            this->iMaximumPasswordLength = qvmMailDomain["iMaximumPasswordLength"].toInt();
-        }
-        // Convert the active state
-        if (qvmMailDomain.contains("bActive")) {
-            this->bActive = qvmMailDomain["bActive"].toBool();
+    /**
+     * @paragraph This structure creates a structure out of a QSqlRecord
+     * @brief SpMailDomain()
+     * @param QSqlRecord qsrMailDomain
+     * @return SpMailDomain
+     */
+    SpMailDomain(QSqlRecord qsrMailDomain) : mObject(new QObject()) {
+        // Convert the properties
+        this->mObject->setProperty("iMailDomainId",          qsrMailDomain.value("iMailDomainId").toInt());
+        this->mObject->setProperty("iAccountId",             qsrMailDomain.value("iAccountId").toInt());
+        this->mObject->setProperty("iDomainId",              qsrMailDomain.value("iDomainId").toInt());
+        this->mObject->setProperty("sDescription",           qsrMailDomain.value("sDescription").toString());
+        this->mObject->setProperty("sDisclaimer",            qsrMailDomain.value("sDisclaimer").toString());
+        this->mObject->setProperty("iMaxQuota",              qsrMailDomain.value("iMaxQuota").toInt());
+        this->mObject->setProperty("iQuota",                 qsrMailDomain.value("iQuota").toInt());
+        this->mObject->setProperty("sTransport",             qsrMailDomain.value("sTransport").toString());
+        this->mObject->setProperty("bBackupMx",              qsrMailDomain.value("bBackupMx").toBool());
+        this->mObject->setProperty("iDefaultUserQuota",      qsrMailDomain.value("iDefaultUserQuota").toInt());
+        this->mObject->setProperty("sDefaultPasswordScheme", qsrMailDomain.value("sDefaultPasswordScheme").toString());
+        this->mObject->setProperty("iMinimumPasswordLength", qsrMailDomain.value("iMinimumPasswordLength").toInt());
+        this->mObject->setProperty("iMaximumPasswordLength", qsrMailDomain.value("iMaximumPasswordLength").toInt());
+        this->mObject->setProperty("bActive",                qsrMailDomain.value("bActive").toBool());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QVariantMap
+     * @brief SpMailDomain()
+     * @param QVariantMap qvmMailDomain
+     * @return SpMailDomain
+     */
+    SpMailDomain(QVariantMap qvmMailDomain) : mObject(new QObject()) {
+        // Create an iterator
+        QVariantMap::ConstIterator itrProperty     = qvmMailDomain.constBegin();
+        QVariantMap::ConstIterator itrLastProperty = qvmMailDomain.constEnd();
+        // Iterate through the properties
+        for (; itrProperty != itrLastProperty; ++itrProperty) {
+            // Set a name placeholder
+            QByteArray qbaPropertyName;
+            // Set the name
+            qbaPropertyName.append(itrProperty.key());
+            // Set the property
+            this->mObject->setProperty(qbaPropertyName, itrProperty.value());
         }
     }
     /**
@@ -738,21 +619,11 @@ struct SpMailDomain {
     QVariantMap toMap() {
         // Create a map placeholder
         QVariantMap qvmProperties;
-        // Set the properties
-        qvmProperties.insert("iMailDomainId",          this->iMailDomainId);
-        qvmProperties.insert("iAccountId",             this->iAccountId);
-        qvmProperties.insert("iDomainId",              this->iDomainId);
-        qvmProperties.insert("sDescription",           this->sDescription);
-        qvmProperties.insert("sDisclaimer",            this->sDisclaimer);
-        qvmProperties.insert("iMaxQuota",              this->iMaxQuota);
-        qvmProperties.insert("iQuota",                 this->iQuota);
-        qvmProperties.insert("sTransport",             this->sTransport);
-        qvmProperties.insert("bBackupMx",              this->bBackupMx);
-        qvmProperties.insert("iDefaultUserQuota",      this->iDefaultUserQuota);
-        qvmProperties.insert("sDefaultPasswordScheme", this->sDefaultPasswordScheme);
-        qvmProperties.insert("iMinimumPasswordLength", this->iMinimumPasswordLength);
-        qvmProperties.insert("iMaximumPasswordLength", this->iMaximumPasswordLength);
-        qvmProperties.insert("bActive",                this->bActive);
+        // Loop through the properties
+        foreach (QString sPropertyName, this->mObject->dynamicPropertyNames()) {
+            // Add the property to the map
+            qvmProperties.insert(sPropertyName, this->mObject->property(sPropertyName.toLatin1()));
+        }
         // Return the map
         return qvmProperties;
     }
