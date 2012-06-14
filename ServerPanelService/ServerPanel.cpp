@@ -272,7 +272,7 @@ QByteArray ServerPanel::HandleRequest(QString sRequest) {
             // Setup the structure
             SpDnsRecord spDnsRecord = SpDnsRecord(qvmRequest);
             // Grab the response
-            qbaResponse = this->EncodeResponse(this->SaveDnsRecord(spDnsRecord);
+            qbaResponse = this->EncodeResponse(this->SaveDnsRecord(spDnsRecord));
         } else if (sMethod.contains("SaveDomain", Qt::CaseInsensitive)) {      // Save Domain
             // Setup the structure
             SpDomain spDomain = SpDomain(qvmRequest);
