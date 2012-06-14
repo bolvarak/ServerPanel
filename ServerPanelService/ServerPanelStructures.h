@@ -35,14 +35,18 @@ struct SpAccount {
         this->mObject->setProperty("sFirstName",          QString());
         this->mObject->setProperty("sLastName",           QString());
         this->mObject->setProperty("sPhoneNumber",        QString());
-        this->mObject->setProperty("sHomeDirectory",      QString());
         this->mObject->setProperty("sStreetAddress",      QString());
         this->mObject->setProperty("sStreetAddressExtra", QString());
-        this->mObject->setProperty("sCity",               QString());
         this->mObject->setProperty("sState",              QString());
         this->mObject->setProperty("sPostalCode",         QString());
         this->mObject->setProperty("sCountry",            QString());
+        this->mObject->setProperty("iAccountLevel",       int());
+        this->mObject->setProperty("sCity",               QString());
+        this->mObject->setProperty("sHomeDirectory",      QString());
+        this->mObject->setProperty("sApiKey",             QString());
         this->mObject->setProperty("bEnabled",            bool());
+        this->mObject->setProperty("sCreated",            QString());
+        this->mObject->setProperty("sModified",           QString());
     }
     /**
      * @paragraph This routine creates a structure out of a QSqlRecord object
@@ -59,14 +63,18 @@ struct SpAccount {
         this->mObject->setProperty("sFirstName",          qsrAccount.value("sFirstName").toString());
         this->mObject->setProperty("sLastName",           qsrAccount.value("sLastName").toString());
         this->mObject->setProperty("sPhoneNumber",        qsrAccount.value("sPhoneNumber").toString());
-        this->mObject->setProperty("sHomeDirectory",      qsrAccount.value("sHomeDirectory").toString());
         this->mObject->setProperty("sStreetAddress",      qsrAccount.value("sStreetAddress").toString());
         this->mObject->setProperty("sStreetAddressExtra", qsrAccount.value("sStreetAddressExtra").toString());
-        this->mObject->setProperty("sCity",               qsrAccount.value("sCity").toString());
         this->mObject->setProperty("sState",              qsrAccount.value("sState").toString());
         this->mObject->setProperty("sPostalCode",         qsrAccount.value("sPostalCode").toString());
         this->mObject->setProperty("sCountry",            qsrAccount.value("sCountry").toString());
+        this->mObject->setProperty("iAccountLevel",       qsrAccount.value("iAccountLevel").toInt());
+        this->mObject->setProperty("sCity",               qsrAccount.value("sCity").toString());
+        this->mObject->setProperty("sHomeDirectory",      qsrAccount.value("sHomeDirectory").toString());
+        this->mObject->setProperty("sApiKey",             qsrAccount.value("sApiKey").toString());
         this->mObject->setProperty("bEnabled",            qsrAccount.value("bEnabled").toBool());
+        this->mObject->setProperty("sCreated",            qsrAccount.value("sCreated").toString());
+        this->mObject->setProperty("sModified",           qsrAccount.value("sModified").toString());
     }
     /**
      * @paragraph This routine creates a structure out of a QVariantMap
@@ -168,15 +176,17 @@ struct SpDnsRecord {
      */
     SpDnsRecord() : mObject(new QObject()) {
         // Initialize the properties
-        this->mObject->setProperty("iRecordId", int());
-        this->mObject->setProperty("iAccountId",int());
-        this->mObject->setProperty("iDomainId", int());
-        this->mObject->setProperty("sHostName", QString());
-        this->mObject->setProperty("sAddress",  QString());
-        this->mObject->setProperty("sDirection",QString());
-        this->mObject->setProperty("sType",     QString());
-        this->mObject->setProperty("iPriority", int());
-        this->mObject->setProperty("bEnabled",  bool());
+        this->mObject->setProperty("iRecordId",  int());
+        this->mObject->setProperty("iAccountId", int());
+        this->mObject->setProperty("iDomainId",  int());
+        this->mObject->setProperty("sHostName",  QString());
+        this->mObject->setProperty("sDirection", QString());
+        this->mObject->setProperty("sType",      QString());
+        this->mObject->setProperty("iPriority",  int());
+        this->mObject->setProperty("sAddress",   QString());
+        this->mObject->setProperty("sCreated",   QString());
+        this->mObject->setProperty("sModified",  QString());
+        this->mObject->setProperty("bEnabled",   bool());
     }
     /**
      * @paragraph This constructor creates a structure out of a QSqlRecord object
@@ -186,15 +196,17 @@ struct SpDnsRecord {
      */
     SpDnsRecord(QSqlRecord qsrDnsRecord) : mObject(new QObject()) {
         // Set the properties
-        this->mObject->setProperty("iRecordId", qsrDnsRecord.value("iRecordId").toInt());
-        this->mObject->setProperty("iAccountId",qsrDnsRecord.value("iAccountId").toInt());
-        this->mObject->setProperty("iDomainId", qsrDnsRecord.value("iDomainId").toInt());
-        this->mObject->setProperty("sHostName", qsrDnsRecord.value("sHostName").toString());
-        this->mObject->setProperty("sAddress",  qsrDnsRecord.value("sAddress").toString());
-        this->mObject->setProperty("sDirection",qsrDnsRecord.value("sDirection").toString());
-        this->mObject->setProperty("sType",     qsrDnsRecord.value("sType").toString());
-        this->mObject->setProperty("iPriority", qsrDnsRecord.value("iPriority").toInt());
-        this->mObject->setProperty("bEnabled",  qsrDnsRecord.value("bEnabled").toBool());
+        this->mObject->setProperty("iRecordId",  qsrDnsRecord.value("iRecordId").toInt());
+        this->mObject->setProperty("iAccountId", qsrDnsRecord.value("iAccountId").toInt());
+        this->mObject->setProperty("iDomainId",  qsrDnsRecord.value("iDomainId").toInt());
+        this->mObject->setProperty("sHostName",  qsrDnsRecord.value("sHostName").toString());
+        this->mObject->setProperty("sDirection", qsrDnsRecord.value("sDirection").toString());
+        this->mObject->setProperty("sType",      qsrDnsRecord.value("sType").toString());
+        this->mObject->setProperty("iPriority",  qsrDnsRecord.value("iPriority").toInt());
+        this->mObject->setProperty("sAddress",   qsrDnsRecord.value("sAddress").toString());
+        this->mObject->setProperty("sCreated",   qsrDnsRecord.value("sCreated").toString());
+        this->mObject->setProperty("sModified",  qsrDnsRecord.value("sModified").toString());
+        this->mObject->setProperty("bEnabled",   qsrDnsRecord.value("bEnabled").toBool());
     }
     /**
      * @paragraph This constructor creates a structure out of a QVariantMap
