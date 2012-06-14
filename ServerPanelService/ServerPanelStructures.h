@@ -20,108 +20,85 @@
 
 /**
  * @paragraph This structure maps out a user account object that is compatible with ServerPanel
- * @brief The SpAccount struct
+ * @brief SpAccount()
+ * @return SpAccount
  */
 struct SpAccount {
-    int     iAccountId;
-    QString sUsername;
-    QString sPassword;
-    QString sEmailAddress;
-    QString sFirstName;
-    QString sLastName;
-    QString sPhoneNumber;
-    QString sHomeDirectory;
-    QString sStreetAddress;
-    QString sStreetAddressExtra;
-    QString sCity;
-    QString sState;
-    QString sPostalCode;
-    QString sCountry;
-    int     iAccountLevel;
-    bool    bEnabled;
+    QObject* mObject;
     // Initializer
-    SpAccount() : iAccountId(0), sCountry("USA"), iAccountLevel(3), bEnabled(true) {}
-    SpAccount(QSqlRecord qsrAccount) {
+    SpAccount() : mObject(new QObject()) {
+        // Initialize the properties
+        this->mObject->setProperty("iAccountId",          int());
+        this->mObject->setProperty("sUsername",           QString());
+        this->mObject->setProperty("sPassword",           QString());
+        this->mObject->setProperty("sEmailAddress",       QString());
+        this->mObject->setProperty("sFirstName",          QString());
+        this->mObject->setProperty("sLastName",           QString());
+        this->mObject->setProperty("sPhoneNumber",        QString());
+        this->mObject->setProperty("sHomeDirectory",      QString());
+        this->mObject->setProperty("sStreetAddress",      QString());
+        this->mObject->setProperty("sStreetAddressExtra", QString());
+        this->mObject->setProperty("sCity",               QString());
+        this->mObject->setProperty("sState",              QString());
+        this->mObject->setProperty("sPostalCode",         QString());
+        this->mObject->setProperty("sCountry",            QString());
+        this->mObject->setProperty("bEnabled",            bool());
+    }
+    /**
+     * @paragraph This routine creates a structure out of a QSqlRecord object
+     * @brief SpAccount()
+     * @param QSqlRecord qsrAccount
+     * @return SpAccount
+     */
+    SpAccount(QSqlRecord qsrAccount) : mObject(new QObject()) {
         // Set the properties
-        this->iAccountId          = qsrAccount.value("iAccountId").toInt();
-        this->sUsername           = qsrAccount.value("sUsername").toString();
-        this->sPassword.clear();
-        this->sEmailAddress       = qsrAccount.value("sEmailAddress").toString();
-        this->sFirstName          = qsrAccount.value("sFirstName").toString();
-        this->sLastName           = qsrAccount.value("sLastName").toString();
-        this->sPhoneNumber        = qsrAccount.value("sPhoneNumber").toString();
-        this->sHomeDirectory      = qsrAccount.value("sHomeDirectory").toString();
-        this->sStreetAddress      = qsrAccount.value("sStreetAddress").toString();
-        this->sStreetAddressExtra = qsrAccount.value("sStreetAddressExtra").toString();
-        this->sCity               = qsrAccount.value("sCity").toString();
-        this->sState              = qsrAccount.value("sState").toString();
-        this->sPostalCode         = qsrAccount.value("sPostalCode").toString();
-        this->sCountry            = qsrAccount.value("sCountry").toString();
-        this->bEnabled            = qsrAccount.value("bEnabled").toBool();
+        this->mObject->setProperty("iAccountId",          qsrAccount.value("iAccountId").toInt());
+        this->mObject->setProperty("sUsername",           qsrAccount.value("sUsername").toString());
+        this->mObject->setProperty("sPassword",           qsrAccount.value("sPassword").toString());
+        this->mObject->setProperty("sEmailAddress",       qsrAccount.value("sEmailAddress").toString());
+        this->mObject->setProperty("sFirstName",          qsrAccount.value("sFirstName").toString());
+        this->mObject->setProperty("sLastName",           qsrAccount.value("sLastName").toString());
+        this->mObject->setProperty("sPhoneNumber",        qsrAccount.value("sPhoneNumber").toString());
+        this->mObject->setProperty("sHomeDirectory",      qsrAccount.value("sHomeDirectory").toString());
+        this->mObject->setProperty("sStreetAddress",      qsrAccount.value("sStreetAddress").toString());
+        this->mObject->setProperty("sStreetAddressExtra", qsrAccount.value("sStreetAddressExtra").toString());
+        this->mObject->setProperty("sCity",               qsrAccount.value("sCity").toString());
+        this->mObject->setProperty("sState",              qsrAccount.value("sState").toString());
+        this->mObject->setProperty("sPostalCode",         qsrAccount.value("sPostalCode").toString());
+        this->mObject->setProperty("sCountry",            qsrAccount.value("sCountry").toString());
+        this->mObject->setProperty("bEnabled",            qsrAccount.value("bEnabled").toBool());
     }
-    SpAccount(QVariantMap qvmAccount) {
-        // Convert the account id
-        if (qvmAccount.contains("iAccountId")) {
-            this->iAccountId = qvmAccount["iAccountId"].toInt();
-        }
-        // Convert the username
-        if (qvmAccount.contains("sUsername")) {
-            this->sUsername = qvmAccount["sUsername"].toString();
-        }
-        // Convert the password
-        if (qvmAccount.contains("sPassword")) {
-            this->sPassword = qvmAccount["sPassword"].toString();
-        }
-        // Convert the email address
-        if (qvmAccount.contains("sEmailAddress")) {
-            this->sEmailAddress = qvmAccount["sEmailAddress"].toString();
-        }
-        // Convert the first name
-        if (qvmAccount.contains("sFirstName")) {
-            this->sFirstName = qvmAccount["sFirstName"].toString();
-        }
-        // Convert the last name
-        if (qvmAccount.contains("sLastName")) {
-            this->sLastName = qvmAccount["sLastName"].toString();
-        }
-        // Convert the phone number
-        if (qvmAccount.contains("sPhoneNumber")) {
-            this->sPhoneNumber = qvmAccount["sPhoneNumber"].toString();
-        }
-        // Convert the home directory
-        if (qvmAccount.contains("sHomeDirectory")) {
-            this->sHomeDirectory = qvmAccount["sHomeDirectory"].toString();
-        }
-        // Convert the street address
-        if (qvmAccount.contains("sStreetAddress")) {
-            this->sStreetAddress = qvmAccount["sStreetAddress"].toString();
-        }
-        // Convert the extra street address
-        if (qvmAccount.contains("sStreetAddressExtra")) {
-            this->sStreetAddressExtra = qvmAccount["sStreetAddressExtra"].toString();
-        }
-        // Convert the city
-        if (qvmAccount.contains("sCity")) {
-            this->sCity = qvmAccount["sCity"].toString();
-        }
-        // Convert the state
-        if (qvmAccount.contains("sState")) {
-            this->sState = qvmAccount["sState"].toString();
-        }
-        // Convert the postal code
-        if (qvmAccount.contains("sPostalCode")) {
-            this->sPostalCode = qvmAccount["sPostalCode"].toString();
-        }
-        // Convert the country
-        if (qvmAccount.contains("sCountry")) {
-            this->sCountry = qvmAccount["sCountry"].toString();
-        }
-        // Convert the active status
-        if (qvmAccount.contains("bEnabled")) {
-            this->bEnabled = qvmAccount["bEnabled"].toBool();
+    /**
+     * @paragraph This routine creates a structure out of a QVariantMap
+     * @brief SpAccount()
+     * @param QVariantMap qvmAccount
+     * @return SpAccount
+     */
+    SpAccount(QVariantMap qvmAccount) : mObject(new QObject()) {
+        // Create an iterator
+        QVariantMap::ConstIterator itrProperty     = qvmAccount.constBegin();
+        QVariantMap::ConstIterator itrLastProperty = qvmAccount.constEnd();
+        // Iterate through the properties
+        for (; itrProperty != itrLastProperty; ++itrProperty) {
+            // Set a name placeholder
+            QByteArray qbaPropertyName;
+            // Set the name
+            qbaPropertyName.append(itrProperty.key());
+            // Set the property
+            this->mObject->setProperty(qbaPropertyName, itrProperty.value());
         }
     }
-
+    /**
+     * @paragraph This routine adds or updates a property
+     * @brief saveProperty()
+     * @param QString sPropertyName
+     * @param QVariant qvValue
+     * @return void
+     */
+    void saveProperty(QString sPropertyName, QVariant qvValue) {
+        // Set or update the property
+        this->mObject->setProperty(sPropertyName.toLatin1(), qvValue);
+    }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
      * @brief toMap
@@ -130,22 +107,11 @@ struct SpAccount {
     QVariantMap toMap() {
         // Create a map placeholder
         QVariantMap qvmProperties;
-        // Set the properties
-        qvmProperties.insert("iAccountId",          this->iAccountId);
-        qvmProperties.insert("sUsername",           this->sUsername);
-        qvmProperties.insert("sPassword",           this->sPassword);
-        qvmProperties.insert("sEmailAddress",       this->sEmailAddress);
-        qvmProperties.insert("sFirstName",          this->sFirstName);
-        qvmProperties.insert("sLastName",           this->sLastName);
-        qvmProperties.insert("sPhoneNumber",        this->sPhoneNumber);
-        qvmProperties.insert("sHomeDirectory",      this->sHomeDirectory);
-        qvmProperties.insert("sStreetAddress",      this->sStreetAddress);
-        qvmProperties.insert("sStreetAddressExtra", this->sStreetAddressExtra);
-        qvmProperties.insert("sCity",               this->sCity);
-        qvmProperties.insert("sState",              this->sState);
-        qvmProperties.insert("sPostalCode",         this->sPostalCode);
-        qvmProperties.insert("sCountry",            this->sCountry);
-        qvmProperties.insert("bEnabled",            this->bEnabled);
+        // Loop through the properties
+        foreach (QString sPropertyName, this->mObject->dynamicPropertyNames()) {
+            // Add the property to the map
+            qvmProperties.insert(sPropertyName, this->mObject->property(sPropertyName.toLatin1()));
+        }
         // Return the map
         return qvmProperties;
     }
@@ -184,66 +150,72 @@ struct SpAccount {
  * @brief The SpDnsRecord struct
  */
 struct SpDnsRecord {
-    int     iRecordId;
-    int     iAccountId;
-    int     iDomainId;
-    QString sHostName;
-    QString sAddress;
-    QString sDirection;
-    QString sType;
-    int     iPriority;
-    bool    bEnabled;
-    // Initializer
-    SpDnsRecord() : iRecordId(0), iAccountId(0), iDomainId(0), sDirection("IN"), sType("A"), bEnabled(true) {}
-    SpDnsRecord(QSqlRecord qsrDnsRecord) {
-        // Set the properties
-        this->iRecordId  = qsrDnsRecord.value("iRecordId").toInt();
-        this->iAccountId = qsrDnsRecord.value("iAccountId").toInt();
-        this->iDomainId  = qsrDnsRecord.value("iDomainId").toInt();
-        this->sHostName  = qsrDnsRecord.value("sHostName").toString();
-        this->sAddress   = qsrDnsRecord.value("sAddress").toString();
-        this->sDirection = qsrDnsRecord.value("sDirection").toString();
-        this->sType      = qsrDnsRecord.value("sType").toString();
-        this->iPriority  = qsrDnsRecord.value("iPriority").toInt();
-        this->bEnabled   = qsrDnsRecord.value("bEnabled").toBool();
+    QObject* mObject;
+    /**
+     * @paragraph This is just the default constructor
+     * @brief SpDnsRecord()
+     * @return SpAccount()
+     */
+    SpDnsRecord() : mObject(new QObject()) {
+        // Initialize the properties
+        this->mObject->setProperty("iRecordId", int());
+        this->mObject->setProperty("iAccountId",int());
+        this->mObject->setProperty("iDomainId", int());
+        this->mObject->setProperty("sHostName", QString());
+        this->mObject->setProperty("sAddress",  QString());
+        this->mObject->setProperty("sDirection",QString());
+        this->mObject->setProperty("sType",     QString());
+        this->mObject->setProperty("iPriority", int());
+        this->mObject->setProperty("bEnabled",  bool());
     }
-    SpDnsRecord(QVariantMap qvmDnsRecord) {
-        // Convert record id
-        if (qvmDnsRecord.contains("iRecordId")) {
-            this->iRecordId = qvmDnsRecord["iRecordId"].toInt();
+    /**
+     * @paragraph This constructor creates a structure out of a QSqlRecord object
+     * @brief SpDnsRecord()
+     * @param QSqlRecord qsrDnsRecord
+     * @return SpDnsRecord
+     */
+    SpDnsRecord(QSqlRecord qsrDnsRecord) : mObject(new QObject()) {
+        // Set the properties
+        this->mObject->setProperty("iRecordId", qsrDnsRecord.value("iRecordId").toInt());
+        this->mObject->setProperty("iAccountId",qsrDnsRecord.value("iAccountId").toInt());
+        this->mObject->setProperty("iDomainId", qsrDnsRecord.value("iDomainId").toInt());
+        this->mObject->setProperty("sHostName", qsrDnsRecord.value("sHostName").toString());
+        this->mObject->setProperty("sAddress",  qsrDnsRecord.value("sAddress").toString());
+        this->mObject->setProperty("sDirection",qsrDnsRecord.value("sDirection").toString());
+        this->mObject->setProperty("sType",     qsrDnsRecord.value("sType").toString());
+        this->mObject->setProperty("iPriority", qsrDnsRecord.value("iPriority").toInt());
+        this->mObject->setProperty("bEnabled",  qsrDnsRecord.value("bEnabled").toBool());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QVariantMap
+     * @brief SpDnsRecord()
+     * @param QVariantMap qvmDnsRecord
+     * @return SpDnsRecord
+     */
+    SpDnsRecord(QVariantMap qvmDnsRecord) : mObject(new QObject()) {
+        // Create an iterator
+        QVariantMap::ConstIterator itrProperty     = qvmDnsRecord.constBegin();
+        QVariantMap::ConstIterator itrLastProperty = qvmDnsRecord.constEnd();
+        // Iterate through the properties
+        for (; itrProperty != itrLastProperty; ++itrProperty) {
+            // Set a name placeholder
+            QByteArray qbaPropertyName;
+            // Set the name
+            qbaPropertyName.append(itrProperty.key());
+            // Set the property
+            this->mObject->setProperty(qbaPropertyName, itrProperty.value());
         }
-        // Convert the account id
-        if (qvmDnsRecord.contains("iAccountId")) {
-            this->iAccountId = qvmDnsRecord["iAccountId"].toInt();
-        }
-        // Convert the domain id
-        if (qvmDnsRecord.contains("iDomainId")) {
-            this->iDomainId = qvmDnsRecord["iDomainId"].toInt();
-        }
-        // Convert the host name
-        if (qvmDnsRecord.contains("sHostName")) {
-            this->sHostName = qvmDnsRecord["sHostName"].toString();
-        }
-        // Convert the address
-        if (qvmDnsRecord.contains("sAddress")) {
-            this->sAddress = qvmDnsRecord["sAddress"].toString();
-        }
-        // Convert the direction
-        if (qvmDnsRecord.contains("sDirection")) {
-            this->sDirection = qvmDnsRecord["sDirection"].toString();
-        }
-        // Convert the type
-        if (qvmDnsRecord.contains("sType")) {
-            this->sType = qvmDnsRecord["sType"].toString();
-        }
-        // Convert the priority
-        if (qvmDnsRecord.contains("iPriority")) {
-            this->iPriority = qvmDnsRecord["iPriority"].toInt();
-        }
-        // Convert the active status
-        if (qvmDnsRecord.contains("bEnabled")) {
-            this->bEnabled = qvmDnsRecord["bEnabled"].toBool();
-        }
+    }
+    /**
+     * @paragraph This routine adds or updates a property
+     * @brief saveProperty()
+     * @param QString sPropertyName
+     * @param QVariant qvValue
+     * @return void
+     */
+    void saveProperty(QString sPropertyName, QVariant qvValue) {
+        // Set or update the property
+        this->mObject->setProperty(sPropertyName.toLatin1(), qvValue);
     }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
@@ -253,16 +225,11 @@ struct SpDnsRecord {
     QVariantMap toMap() {
         // Create a map placeholder
         QVariantMap qvmProperties;
-        // Set the properties
-        qvmProperties.insert("iRecordId",  this->iRecordId);
-        qvmProperties.insert("iAccountId", this->iAccountId);
-        qvmProperties.insert("iDomainId",  this->iDomainId);
-        qvmProperties.insert("sHostName",  this->sHostName);
-        qvmProperties.insert("sAddress",   this->sAddress);
-        qvmProperties.insert("sDirection", this->sDirection);
-        qvmProperties.insert("sType",      this->sType);
-        qvmProperties.insert("iPriority",  this->iPriority);
-        qvmProperties.insert("bEnabled",   this->bEnabled);
+        // Loop through the properties
+        foreach (QString sPropertyName, this->mObject->dynamicPropertyNames()) {
+            // Add the property to the map
+            qvmProperties.insert(sPropertyName, this->mObject->property(sPropertyName.toLatin1()));
+        }
         // Return the map
         return qvmProperties;
     }
@@ -301,38 +268,63 @@ struct SpDnsRecord {
  * @brief The SpDomain struct
  */
 struct SpDomain {
-    int     iDomainId;
-    int     iAccountId;
-    QString sDomain;
-    bool    bEnabled;
-    // Initializer
-    SpDomain() : iDomainId(0), iAccountId(0), bEnabled(true) {}
-    SpDomain(QSqlRecord qsrDomain) {
+    QObject* mObject;
+    /**
+     * @paragraph This is the base constructor
+     * @brief SpDomain()
+     * @return SpDomain
+     */
+    SpDomain() : mObject(new QObject()) {
+        // Initialize the properties
+        this->mObject->setProperty("iDomainId",  int());
+        this->mObject->setProperty("iAccountId", int());
+        this->mObject->setProperty("sDomain",    QString());
+        this->mObject->setProperty("bEnabled",   bool());
+    }
+    /**
+     * @paragraph This constrcutor creates a structure out of a QSqlRecord
+     * @brief SpDomain()
+     * @param QSqlRecord qsrDomain
+     * @return SpDomain
+     */
+    SpDomain(QSqlRecord qsrDomain) : mObject(new QObject()) {
         // Set the properties
-        this->iDomainId  = qsrDomain.value("iDomainId").toInt();
-        this->iAccountId = qsrDomain.value("iAccountId").toInt();
-        this->sDomain    = qsrDomain.value("sDomain").toString();
-        this->bEnabled   = qsrDomain.value("bEnabled").toBool();
+        this->mObject->setProperty("iDomainId",  qsrDomain.value("iDomainId").toInt());
+        this->mObject->setProperty("iAccountId", qsrDomain.value("iAccountId").toInt());
+        this->mObject->setProperty("sDomain",    qsrDomain.value("sDomain").toString());
+        this->mObject->setProperty("bEnabled",   qsrDomain.value("bEnabled").toBool());
     }
+    /**
+     * @paragraph This constructor creates a structure out of a QVariantMap
+     * @brief SpDomain()
+     * @param QVariantMap qvmDomain
+     * @return SpDomain
+     */
     SpDomain(QVariantMap qvmDomain) {
-        // Convert the domain id
-        if (qvmDomain.contains("iDomainId")) {
-            this->iDomainId = qvmDomain["iDomainId"].toInt();
-        }
-        // Convert the account id
-        if (qvmDomain.contains("iAccountId")) {
-            this->iAccountId = qvmDomain["iAccountId"].toInt();
-        }
-        // Convert the domain name
-        if (qvmDomain.contains("sDomain")) {
-            this->sDomain = qvmDomain["sDomain"].toString();
-        }
-        // Convert the active status
-        if (qvmDomain.contains("bEnabled")) {
-            this->bEnabled = qvmDomain["bEnabled"].toBool();
+        // Create an iterator
+        QVariantMap::ConstIterator itrProperty     = qvmDomain.constBegin();
+        QVariantMap::ConstIterator itrLastProperty = qvmDomain.constEnd();
+        // Iterate through the properties
+        for (; itrProperty != itrLastProperty; ++itrProperty) {
+            // Set a name placeholder
+            QByteArray qbaPropertyName;
+            // Set the name
+            qbaPropertyName.append(itrProperty.key());
+            // Set the property
+            this->mObject->setProperty(qbaPropertyName, itrProperty.value());
         }
     }
-
+    /**
+     * @paragraph This routine adds or updates a property
+     * @brief saveProperty()
+     * @param QString sPropertyName
+     * @param QVariant qvValue
+     * @return void
+     */
+    void saveProperty(QString sPropertyName, QVariant qvValue) {
+        // Set or update the property
+        this->mObject->setProperty(sPropertyName.toLatin1(), qvValue);
+    }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
      * @brief toMap
@@ -341,11 +333,11 @@ struct SpDomain {
     QVariantMap toMap() {
         // Create a map placeholder
         QVariantMap qvmProperties;
-        // Set the properties
-        qvmProperties.insert("iDomainId",  this->iDomainId);
-        qvmProperties.insert("iAccountId", this->iAccountId);
-        qvmProperties.insert("sDomain",    this->sDomain);
-        qvmProperties.insert("bEnabled",   this->bEnabled);
+        // Loop through the properties
+        foreach (QString sPropertyName, this->mObject->dynamicPropertyNames()) {
+            // Add the property to the map
+            qvmProperties.insert(sPropertyName, this->mObject->property(sPropertyName.toLatin1()));
+        }
         // Return the map
         return qvmProperties;
     }
@@ -384,37 +376,21 @@ struct SpDomain {
  * @brief The SpMailBox struct
  */
 struct SpMailBox {
-    int     iMailBoxId;
-    int     iAccountId;
-    int     iDomainId;
-    QString sUsername;
-    QString sPassword;
-    QString sName;
-    QString sStorageDirectory;
-    QString sStorageNode;
-    QString sMailDirectory;
-    int     iQuota;
-    int     iBytes;
-    QString sDomain;
-    QString sTransport;
-    QString sDepartment;
-    QString sRank;
-    QString sEmployeeId;
-    bool    bEnableSmtp;
-    bool    bEnableSecureSmtp;
-    bool    bEnablePop3;
-    bool    bEnableSecurePop3;
-    bool    bEnableImap;
-    bool    bEnableSecureImap;
-    bool    bEnableDelivery;
-    bool    bEnableSieveManagement;
-    bool    bEnableSecureSieveManagement;
-    bool    bEnableInternalDelivery;
-    QString sDisclaimer;
-    bool    bActive;
-    QString sLocalPartition;
-    // Initializer
-    SpMailBox() : iMailBoxId(0), iAccountId(0), iDomainId(0), sStorageDirectory("/var/vmail"), sStorageNode("serverpanel"), sMailDirectory(), iQuota(1024), iBytes(0), sRank("normal"), sEmployeeId(), bEnableSmtp(true), bEnableSecureSmtp(true), bEnablePop3(true), bEnableSecurePop3(true), bEnableImap(true), bEnableSecureImap(true), bEnableDelivery(true), bEnableSieveManagement(true), bEnableSecureSieveManagement(true), bEnableInternalDelivery(true), bActive(true) {}
+    QObject* mObject;
+    /**
+     * @paragraph This is the base constructor
+     * @brief SpMailBox()
+     * @return SpMailBox
+     */
+    SpMailBox() : mObject(new QObject()) {
+
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QVariantMap
+     * @brief SpMailBox()
+     * @param QSqlRecord qsr
+     *
+     */
     SpMailBox(QSqlRecord qsrMailBox) {
         // Set the properties
         this->iMailBoxId                   = qsrMailBox.value("iMailBoxId").toInt();
@@ -564,6 +540,17 @@ struct SpMailBox {
         if (qvmMailBox.contains("sLocalPartition")) {
             this->sLocalPartition = qvmMailBox["sLocalPartition"].toString();
         }
+    }
+    /**
+     * @paragraph This routine adds or updates a property
+     * @brief saveProperty()
+     * @param QString sPropertyName
+     * @param QVariant qvValue
+     * @return void
+     */
+    void saveProperty(QString sPropertyName, QVariant qvValue) {
+        // Set or update the property
+        this->mObject->setProperty(sPropertyName.toLatin1(), qvValue);
     }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
@@ -732,7 +719,17 @@ struct SpMailDomain {
             this->bActive = qvmMailDomain["bActive"].toBool();
         }
     }
-
+    /**
+     * @paragraph This routine adds or updates a property
+     * @brief saveProperty()
+     * @param QString sPropertyName
+     * @param QVariant qvValue
+     * @return void
+     */
+    void saveProperty(QString sPropertyName, QVariant qvValue) {
+        // Set or update the property
+        this->mObject->setProperty(sPropertyName.toLatin1(), qvValue);
+    }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
      * @brief toMap
