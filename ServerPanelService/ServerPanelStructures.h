@@ -89,6 +89,16 @@ struct SpAccount {
         }
     }
     /**
+     * @paragraph This routine grabs a property from the structure
+     * @brief getProperty()
+     * @param QString sPropertyName
+     * @return QVariant
+     */
+    QVariant getProperty(QString sPropertyName) {
+        // Grab and return the property
+        return this->mObject->property(sPropertyName.toLatin1());
+    }
+    /**
      * @paragraph This routine adds or updates a property
      * @brief saveProperty()
      * @param QString sPropertyName
@@ -207,6 +217,16 @@ struct SpDnsRecord {
         }
     }
     /**
+     * @paragraph This routine grabs a property from the structure
+     * @brief getProperty()
+     * @param QString sPropertyName
+     * @return QVariant
+     */
+    QVariant getProperty(QString sPropertyName) {
+        // Grab and return the property
+        return this->mObject->property(sPropertyName.toLatin1());
+    }
+    /**
      * @paragraph This routine adds or updates a property
      * @brief saveProperty()
      * @param QString sPropertyName
@@ -313,6 +333,16 @@ struct SpDomain {
             // Set the property
             this->mObject->setProperty(qbaPropertyName, itrProperty.value());
         }
+    }
+    /**
+     * @paragraph This routine grabs a property from the structure
+     * @brief getProperty()
+     * @param QString sPropertyName
+     * @return QVariant
+     */
+    QVariant getProperty(QString sPropertyName) {
+        // Grab and return the property
+        return this->mObject->property(sPropertyName.toLatin1());
     }
     /**
      * @paragraph This routine adds or updates a property
@@ -473,6 +503,16 @@ struct SpMailBox {
         }
     }
     /**
+     * @paragraph This routine grabs a property from the structure
+     * @brief getProperty()
+     * @param QString sPropertyName
+     * @return QVariant
+     */
+    QVariant getProperty(QString sPropertyName) {
+        // Grab and return the property
+        return this->mObject->property(sPropertyName.toLatin1());
+    }
+    /**
      * @paragraph This routine adds or updates a property
      * @brief saveProperty()
      * @param QString sPropertyName
@@ -599,6 +639,16 @@ struct SpMailDomain {
             // Set the property
             this->mObject->setProperty(qbaPropertyName, itrProperty.value());
         }
+    }
+    /**
+     * @paragraph This routine grabs a property from the structure
+     * @brief getProperty()
+     * @param QString sPropertyName
+     * @return QVariant
+     */
+    QVariant getProperty(QString sPropertyName) {
+        // Grab and return the property
+        return this->mObject->property(sPropertyName.toLatin1());
     }
     /**
      * @paragraph This routine adds or updates a property
