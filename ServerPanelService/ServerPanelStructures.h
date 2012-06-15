@@ -164,6 +164,266 @@ struct SpAccount {
 };
 
 /**
+ * @paragraph This structure maps out an Alias Domain object that is compatible with ServerPanel
+ * @brief The SpAliasDomain struct
+ */
+struct SpAliasDomain {
+    QObject* mObject;
+    /**
+     * @paragraph This is the base constructor
+     * @brief SpAliasDomain()
+     * @return SpAliasDomain
+     */
+    SpAliasDomain() : mObject(new QObject()) {
+        // Initialize the properties
+        this->mObject->setProperty("sAliasDomain",   QString());
+        this->mObject->setProperty("sActualDomain",  QString());
+        this->mObject->setProperty("sCreated",       QString());
+        this->mObject->setProperty("sModified",      QString());
+        this->mObject->setProperty("bActive",        bool());
+        this->mObject->setProperty("iAccountId",     int());
+        this->mObject->setProperty("iAliasDomainId", int());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QSqlRecord object
+     * @brief SpAliasDomain()
+     * @param QSqlRecord qsrAliasDomain
+     * @return SpAliasDomain
+     */
+    SpAliasDomain(QSqlRecord qsrAliasDomain) : mObject(new QObject()) {
+        // Set the properties
+        this->mObject->setProperty("sAliasDomain",   qsrAliasDomain.value("sAliasDomain").toString());
+        this->mObject->setProperty("sActualDomain",  qsrAliasDomain.value("sActualDomain").toString());
+        this->mObject->setProperty("sCreated",       qsrAliasDomain.value("sCreated").toString());
+        this->mObject->setProperty("sModified",      qsrAliasDomain.value("sModified").toString());
+        this->mObject->setProperty("bActive",        qsrAliasDomain.value("bActive").toBool());
+        this->mObject->setProperty("iAccountId",     qsrAliasDomain.value("iAccountId").toInt());
+        this->mObject->setProperty("iAliasDomainId", qsrAliasDomain.value("iAliasDomainId").toInt());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QVariantMap
+     * @brief SpAliasDomain()
+     * @param QVariantMap qvmAliasDomain
+     * @return SpAliasDomain
+     */
+    SpAliasDomain(QVariantMap qvmAliasDomain) : mObject(new QObject()) {
+        // Create an iterator
+        QVariantMap::ConstIterator itrProperty     = qvmAliasDomain.constBegin();
+        QVariantMap::ConstIterator itrLastProperty = qvmAliasDomain.constEnd();
+        // Iterate through the properties
+        for (; itrProperty != itrLastProperty; ++itrProperty) {
+            // Set a name placeholder
+            QByteArray qbaPropertyName;
+            // Set the name
+            qbaPropertyName.append(itrProperty.key());
+            // Set the property
+            this->mObject->setProperty(qbaPropertyName, itrProperty.value());
+        }
+    }
+    /**
+     * @paragraph This routine grabs a property from the structure
+     * @brief getProperty()
+     * @param QString sPropertyName
+     * @return QVariant
+     */
+    QVariant getProperty(QString sPropertyName) {
+        // Grab and return the property
+        return this->mObject->property(sPropertyName.toLatin1());
+    }
+    /**
+     * @paragraph This routine adds or updates a property
+     * @brief saveProperty()
+     * @param QString sPropertyName
+     * @param QVariant qvValue
+     * @return void
+     */
+    void saveProperty(QString sPropertyName, QVariant qvValue) {
+        // Set or update the property
+        this->mObject->setProperty(sPropertyName.toLatin1(), qvValue);
+    }
+    /**
+     * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
+     * @brief toMap
+     * @return QVariantMap
+     */
+    QVariantMap toMap() {
+        // Create a map placeholder
+        QVariantMap qvmProperties;
+        // Loop through the properties
+        foreach (QString sPropertyName, this->mObject->dynamicPropertyNames()) {
+            // Add the property to the map
+            qvmProperties.insert(sPropertyName, this->mObject->property(sPropertyName.toLatin1()));
+        }
+        // Return the map
+        return qvmProperties;
+    }
+    /**
+     * @paragraph This function converts the structure to a prepared bound QSqlQuery statement
+     * @brief toQuery
+     * @param QSqlDatabase qsdConnection
+     * @param QString sQuery
+     * @return QSqlQuery
+     */
+    QSqlQuery toQuery(QSqlDatabase qsdConnection, QString sQuery) {
+        // Setup the SQL Query
+        QSqlQuery qsqAliasDomain(qsdConnection);
+        // Prepare the SQL statement
+        qsqAliasDomain.prepare(sQuery);
+        // Grab the map
+        QVariantMap qvmProperties(this->toMap());
+        // Grab the iterators
+        QVariantMap::ConstIterator itrProperty      = qvmProperties.constBegin();
+        QVariantMap::ConstIterator itrPropertyEnd   = qvmProperties.constEnd();
+        // Loop through the properties
+        for (; itrProperty != itrPropertyEnd; ++itrProperty) {
+            // Check for the identifier in the SQL statement
+            if (sQuery.contains(QString(itrProperty.key()).prepend(":"), Qt::CaseSensitive)) {
+                // Bind the value
+                qsqAliasDomain.bindValue(QString(itrProperty.key()).prepend(":"), itrProperty.value());
+            }
+        }
+        // Return the query object
+        return qsqAccount;
+    }
+};
+
+/**
+ * @paragraph This structure maps out an Alias object that is compatible with ServerPanel
+ * @brief The SpAlias struct
+ */
+struct SpAlias {
+    QObject* mObject;
+    /**
+     * @paragraph This is the base constructor
+     * @brief SpAlias()
+     * @return SpAlias
+     */
+    SpAlias() : mObject(new QObject()) {
+        // Initialize the properties
+        this->mObject->setProperty("sFormAddress",  QString());
+        this->mObject->setProperty("sToAddress",    QString());
+        this->mObject->setProperty("sName",         QString());
+        this->mObject->setProperty("sModerators",   QString());
+        this->mObject->setProperty("sAccessPolicy", QString());
+        this->mObject->setProperty("sDomain",       QString());
+        this->mObject->setProperty("sCreated",      QString());
+        this->mObject->setProperty("sModified",     QString());
+        this->mObject->setProperty("sExpires",      QString());
+        this->mObject->setProperty("bActive",       bool());
+        this->mObject->setProperty("iAliasId",      int());
+        this->mObject->setProperty("iDomainId",     int());
+        this->mObject->setProperty("iAccountId",    int());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QSqlRecord object
+     * @brief SpAlias()
+     * @param QSqlRecord qsrAlias
+     * @return SpAlias
+     */
+    SpAlias(QSqlRecord qsrAlias) : mObject(new QObject()) {
+        // Set the properties
+        this->mObject->setProperty("sFormAddress",  qsrAlias.value("sFormAddress").toString());
+        this->mObject->setProperty("sToAddress",    qsrAlias.value("sToAddress").toString());
+        this->mObject->setProperty("sName",         qsrAlias.value("sName").toString());
+        this->mObject->setProperty("sModerators",   qsrAlias.value("sModerators").toString());
+        this->mObject->setProperty("sAccessPolicy", qsrAlias.value("sAccessPolicy").toString());
+        this->mObject->setProperty("sDomain",       qsrAlias.value("sDomain").toString());
+        this->mObject->setProperty("sCreated",      qsrAlias.value("sCreated").toString());
+        this->mObject->setProperty("sModified",     qsrAlias.value("sModified").toString());
+        this->mObject->setProperty("sExpires",      qsrAlias.value("sExpires").toString());
+        this->mObject->setProperty("bActive",       qsrAlias.value("bActive").toBool());
+        this->mObject->setProperty("iAliasId",      qsrAlias.value("iAliasId").toInt());
+        this->mObject->setProperty("iDomainId",     qsrAlias.value("iDomainId").toInt());
+        this->mObject->setProperty("iAccountId",    qsrAlias.value("iAccountId").toInt());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QVariantMap
+     * @brief SpAlias()
+     * @param QVariantMap qvmAlias
+     * @return SpAlias
+     */
+    SpAliasDomain(QVariantMap qvmAlias) : mObject(new QObject()) {
+        // Create an iterator
+        QVariantMap::ConstIterator itrProperty     = qvmAlias.constBegin();
+        QVariantMap::ConstIterator itrLastProperty = qvmAlias.constEnd();
+        // Iterate through the properties
+        for (; itrProperty != itrLastProperty; ++itrProperty) {
+            // Set a name placeholder
+            QByteArray qbaPropertyName;
+            // Set the name
+            qbaPropertyName.append(itrProperty.key());
+            // Set the property
+            this->mObject->setProperty(qbaPropertyName, itrProperty.value());
+        }
+    }
+    /**
+     * @paragraph This routine grabs a property from the structure
+     * @brief getProperty()
+     * @param QString sPropertyName
+     * @return QVariant
+     */
+    QVariant getProperty(QString sPropertyName) {
+        // Grab and return the property
+        return this->mObject->property(sPropertyName.toLatin1());
+    }
+    /**
+     * @paragraph This routine adds or updates a property
+     * @brief saveProperty()
+     * @param QString sPropertyName
+     * @param QVariant qvValue
+     * @return void
+     */
+    void saveProperty(QString sPropertyName, QVariant qvValue) {
+        // Set or update the property
+        this->mObject->setProperty(sPropertyName.toLatin1(), qvValue);
+    }
+    /**
+     * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
+     * @brief toMap
+     * @return QVariantMap
+     */
+    QVariantMap toMap() {
+        // Create a map placeholder
+        QVariantMap qvmProperties;
+        // Loop through the properties
+        foreach (QString sPropertyName, this->mObject->dynamicPropertyNames()) {
+            // Add the property to the map
+            qvmProperties.insert(sPropertyName, this->mObject->property(sPropertyName.toLatin1()));
+        }
+        // Return the map
+        return qvmProperties;
+    }
+    /**
+     * @paragraph This function converts the structure to a prepared bound QSqlQuery statement
+     * @brief toQuery
+     * @param QSqlDatabase qsdConnection
+     * @param QString sQuery
+     * @return QSqlQuery
+     */
+    QSqlQuery toQuery(QSqlDatabase qsdConnection, QString sQuery) {
+        // Setup the SQL Query
+        QSqlQuery qsqAlias(qsdConnection);
+        // Prepare the SQL statement
+        qsqAlias.prepare(sQuery);
+        // Grab the map
+        QVariantMap qvmProperties(this->toMap());
+        // Grab the iterators
+        QVariantMap::ConstIterator itrProperty      = qvmProperties.constBegin();
+        QVariantMap::ConstIterator itrPropertyEnd   = qvmProperties.constEnd();
+        // Loop through the properties
+        for (; itrProperty != itrPropertyEnd; ++itrProperty) {
+            // Check for the identifier in the SQL statement
+            if (sQuery.contains(QString(itrProperty.key()).prepend(":"), Qt::CaseSensitive)) {
+                // Bind the value
+                qsqAlias.bindValue(QString(itrProperty.key()).prepend(":"), itrProperty.value());
+            }
+        }
+        // Return the query object
+        return qsqAccount;
+    }
+};
+
+/**
  * @paragraph This structure maps out a DNS record object that is compatible with ServerPanel
  * @brief The SpDnsRecord struct
  */
@@ -760,4 +1020,901 @@ struct SpMailDomain {
         return qsqMailDomain;
     }
 };
+
+/**
+ * @paragraph This structure converts a Recipient BCC Domain into an object compatible with ServerPanel
+ * @brief The SpRecipientBccDomain struct
+ */
+struct SpRecipientBccDomain {
+    QObject* mObject;
+    /**
+     * @paragraph This is the base constructor
+     * @brief SpRecipientBccDomain()
+     * @return SpRecipientBccDomain
+     */
+    SpRecipientBccDomain() : mObject(new QObject()) {
+        // Initialize the properties
+        this->mObject->setProperty("sDomain",               QString());
+        this->mObject->setProperty("sBccAddress",           QString());
+        this->mObject->setProperty("sCreated",              QString());
+        this->mObject->setProperty("sModified",             QString());
+        this->mObject->setProperty("sExpires",              QString());
+        this->mObject->setProperty("bActive",               bool());
+        this->mObject->setProperty("iRecipientBccDomainId", int());
+        this->mObject->setProperty("iDomainId",             int());
+        this->mObject->setProperty("iAccountId",            int());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QSqlRecord object
+     * @brief SpRecipientBccDomain()
+     * @param QSqlRecord qsrRecipientBccDomain
+     * @return SpRecipientBccDomain
+     */
+    SpRecipientBccDomain(QSqlRecord qsrRecipientBccDomain) : mObject(new QObject()) {
+        // Set the properties
+        this->mObject->setProperty("sDomain",               qsrRecipientBccDomain.value("sDomain").toString());
+        this->mObject->setProperty("sBccAddress",           qsrRecipientBccDomain.value("sBccAddress").toString());
+        this->mObject->setProperty("sCreated",              qsrRecipientBccDomain.value("sCreated").toString());
+        this->mObject->setProperty("sModified",             qsrRecipientBccDomain.value("sModified").toString());
+        this->mObject->setProperty("sExpires",              qsrRecipientBccDomain.value("sExpires").toString());
+        this->mObject->setProperty("bActive",               qsrRecipientBccDomain.value("bActive").toBool());
+        this->mObject->setProperty("iRecipientBccDomainId", qsrRecipientBccDomain.value("iRecipientBccDomainId").toInt());
+        this->mObject->setProperty("iDomainId",             qsrRecipientBccDomain.value("iDomainId").toInt());
+        this->mObject->setProperty("iAccountId",            qsrRecipientBccDomain.value("iAccountId").toInt());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QVariantMap
+     * @brief SpRecipientBccDomain()
+     * @param QVariantMap qvmRecipientBccDomain
+     * @return SpRecipientBccDomain
+     */
+    SpRecipientBccDomain(QVariantMap qvmRecipientBccDomain) : mObject(new QObject()) {
+        // Create an iterator
+        QVariantMap::ConstIterator itrProperty     = qvmRecipientBccDomain.constBegin();
+        QVariantMap::ConstIterator itrLastProperty = qvmRecipientBccDomain.constEnd();
+        // Iterate through the properties
+        for (; itrProperty != itrLastProperty; ++itrProperty) {
+            // Set a name placeholder
+            QByteArray qbaPropertyName;
+            // Set the name
+            qbaPropertyName.append(itrProperty.key());
+            // Set the property
+            this->mObject->setProperty(qbaPropertyName, itrProperty.value());
+        }
+    }
+    /**
+     * @paragraph This routine grabs a property from the structure
+     * @brief getProperty()
+     * @param QString sPropertyName
+     * @return QVariant
+     */
+    QVariant getProperty(QString sPropertyName) {
+        // Grab and return the property
+        return this->mObject->property(sPropertyName.toLatin1());
+    }
+    /**
+     * @paragraph This routine adds or updates a property
+     * @brief saveProperty()
+     * @param QString sPropertyName
+     * @param QVariant qvValue
+     * @return void
+     */
+    void saveProperty(QString sPropertyName, QVariant qvValue) {
+        // Set or update the property
+        this->mObject->setProperty(sPropertyName.toLatin1(), qvValue);
+    }
+    /**
+     * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
+     * @brief toMap
+     * @return QVariantMap
+     */
+    QVariantMap toMap() {
+        // Create a map placeholder
+        QVariantMap qvmProperties;
+        // Loop through the properties
+        foreach (QString sPropertyName, this->mObject->dynamicPropertyNames()) {
+            // Add the property to the map
+            qvmProperties.insert(sPropertyName, this->mObject->property(sPropertyName.toLatin1()));
+        }
+        // Return the map
+        return qvmProperties;
+    }
+    /**
+     * @paragraph This function converts the structure to a prepared bound QSqlQuery statement
+     * @brief toQuery
+     * @param QSqlDatabase qsdConnection
+     * @param QString sQuery
+     * @return QSqlQuery
+     */
+    QSqlQuery toQuery(QSqlDatabase qsdConnection, QString sQuery) {
+        // Setup the SQL Query
+        QSqlQuery qsqRecipientBccDomain(qsdConnection);
+        // Prepare the SQL statement
+        qsqRecipientBccDomain.prepare(sQuery);
+        // Grab the map
+        QVariantMap qvmProperties(this->toMap());
+        // Grab the iterators
+        QVariantMap::ConstIterator itrProperty      = qvmProperties.constBegin();
+        QVariantMap::ConstIterator itrPropertyEnd   = qvmProperties.constEnd();
+        // Loop through the properties
+        for (; itrProperty != itrPropertyEnd; ++itrProperty) {
+            // Check for the identifier in the SQL statement
+            if (sQuery.contains(QString(itrProperty.key()).prepend(":"), Qt::CaseSensitive)) {
+                // Bind the value
+                qsqRecipientBccDomain.bindValue(QString(itrProperty.key()).prepend(":"), itrProperty.value());
+            }
+        }
+        // Return the query object
+        return qsqRecipientBccDomain;
+    }
+};
+
+/**
+ * @paragraph This structure converts a Recipient BCC User into an object compatible with ServerPanel
+ * @brief The SpRecipientBccUser struct
+ */
+struct SpRecipientBccUser {
+    QObject* mObject;
+    /**
+     * @paragraph This is the base constructor
+     * @brief SpRecipientBccUser()
+     * @return SpRecipientBccUser
+     */
+    SpRecipientBccUser() : mObject(new QObject()) {
+        // Initialize the properties
+        this->mObject->setProperty("sUsername",           QString());
+        this->mObject->setProperty("sBccAddress",         QString());
+        this->mObject->setProperty("sDomain",             QString());
+        this->mObject->setProperty("sCreated",            QString());
+        this->mObject->setProperty("sModified",           QString());
+        this->mObject->setProperty("sExpires",            QString());
+        this->mObject->setProperty("bActive",             bool());
+        this->mObject->setProperty("iRecipientBccUserId", int());
+        this->mObject->setProperty("iDomainId",           int());
+        this->mObject->setProperty("iAccountId",          int());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QSqlRecord object
+     * @brief SpRecipientBccUser()
+     * @param QSqlRecord qsrRecipientBccUser
+     * @return SpRecipientBccUser
+     */
+    SpRecipientBccUser(QSqlRecord qsrRecipientBccUser) : mObject(new QObject()) {
+        // Set the properties
+        this->mObject->setProperty("sUsername",           qsrRecipientBccUser.value("sUsername").toString());
+        this->mObject->setProperty("sBccAddress",         qsrRecipientBccUser.value("sBccAddress").toString());
+        this->mObject->setProperty("sDomain",             qsrRecipientBccUser.value("sDomain").toString());
+        this->mObject->setProperty("sCreated",            qsrRecipientBccUser.value("sCreated").toString());
+        this->mObject->setProperty("sModified",           qsrRecipientBccUser.value("sModified").toString());
+        this->mObject->setProperty("sExpires",            qsrRecipientBccUser.value("sExpires").toString());
+        this->mObject->setProperty("bActive",             qsrRecipientBccUser.value("bActive").toBool());
+        this->mObject->setProperty("iRecipientBccUserId", qsrRecipientBccUser.value("iRecipientBccUserId").toInt());
+        this->mObject->setProperty("iDomainId",           qsrRecipientBccUser.value("iDomainId").toInt());
+        this->mObject->setProperty("iAccountId",          qsrRecipientBccUser.value("iAccountId").toInt());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QVariantMap
+     * @brief SpRecipientBccUser()
+     * @param QVariantMap qvmRecipientBccUser
+     * @return SpRecipientBccUser
+     */
+    SpRecipientBccUser(QVariantMap qvmRecipientBccUser) : mObject(new QObject()) {
+        // Create an iterator
+        QVariantMap::ConstIterator itrProperty     = qvmRecipientBccUser.constBegin();
+        QVariantMap::ConstIterator itrLastProperty = qvmRecipientBccUser.constEnd();
+        // Iterate through the properties
+        for (; itrProperty != itrLastProperty; ++itrProperty) {
+            // Set a name placeholder
+            QByteArray qbaPropertyName;
+            // Set the name
+            qbaPropertyName.append(itrProperty.key());
+            // Set the property
+            this->mObject->setProperty(qbaPropertyName, itrProperty.value());
+        }
+    }
+    /**
+     * @paragraph This routine grabs a property from the structure
+     * @brief getProperty()
+     * @param QString sPropertyName
+     * @return QVariant
+     */
+    QVariant getProperty(QString sPropertyName) {
+        // Grab and return the property
+        return this->mObject->property(sPropertyName.toLatin1());
+    }
+    /**
+     * @paragraph This routine adds or updates a property
+     * @brief saveProperty()
+     * @param QString sPropertyName
+     * @param QVariant qvValue
+     * @return void
+     */
+    void saveProperty(QString sPropertyName, QVariant qvValue) {
+        // Set or update the property
+        this->mObject->setProperty(sPropertyName.toLatin1(), qvValue);
+    }
+    /**
+     * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
+     * @brief toMap
+     * @return QVariantMap
+     */
+    QVariantMap toMap() {
+        // Create a map placeholder
+        QVariantMap qvmProperties;
+        // Loop through the properties
+        foreach (QString sPropertyName, this->mObject->dynamicPropertyNames()) {
+            // Add the property to the map
+            qvmProperties.insert(sPropertyName, this->mObject->property(sPropertyName.toLatin1()));
+        }
+        // Return the map
+        return qvmProperties;
+    }
+    /**
+     * @paragraph This function converts the structure to a prepared bound QSqlQuery statement
+     * @brief toQuery
+     * @param QSqlDatabase qsdConnection
+     * @param QString sQuery
+     * @return QSqlQuery
+     */
+    QSqlQuery toQuery(QSqlDatabase qsdConnection, QString sQuery) {
+        // Setup the SQL Query
+        QSqlQuery qsqRecipientBccUser(qsdConnection);
+        // Prepare the SQL statement
+        qsqRecipientBccUser.prepare(sQuery);
+        // Grab the map
+        QVariantMap qvmProperties(this->toMap());
+        // Grab the iterators
+        QVariantMap::ConstIterator itrProperty      = qvmProperties.constBegin();
+        QVariantMap::ConstIterator itrPropertyEnd   = qvmProperties.constEnd();
+        // Loop through the properties
+        for (; itrProperty != itrPropertyEnd; ++itrProperty) {
+            // Check for the identifier in the SQL statement
+            if (sQuery.contains(QString(itrProperty.key()).prepend(":"), Qt::CaseSensitive)) {
+                // Bind the value
+                qsqRecipientBccUser.bindValue(QString(itrProperty.key()).prepend(":"), itrProperty.value());
+            }
+        }
+        // Return the query object
+        return qsqRecipientBccUser;
+    }
+};
+
+/**
+ * @paragraph This structure converts a Recipient BCC Domain into an object compatible with ServerPanel
+ * @brief The SpRecipientBccDomain struct
+ */
+struct SpSenderBccDomain {
+    QObject* mObject;
+    /**
+     * @paragraph This is the base constructor
+     * @brief SpSenderBccDomain()
+     * @return SpSenderBccDomain
+     */
+    SpSenderBccDomain() : mObject(new QObject()) {
+        // Initialize the properties
+        this->mObject->setProperty("sDomain",            QString());
+        this->mObject->setProperty("sBccAddress",        QString());
+        this->mObject->setProperty("sCreated",           QString());
+        this->mObject->setProperty("sModified",          QString());
+        this->mObject->setProperty("sExpires",           QString());
+        this->mObject->setProperty("bActive",            bool());
+        this->mObject->setProperty("iSenderBccDomainId", int());
+        this->mObject->setProperty("iDomainId",          int());
+        this->mObject->setProperty("iAccountId",         int());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QSqlRecord object
+     * @brief SpSenderBccDomain()
+     * @param QSqlRecord qsrSenderBccDomain
+     * @return SpSenderBccDomain
+     */
+    SpSenderBccDomain(QSqlRecord qsrSenderBccDomain) : mObject(new QObject()) {
+        // Set the properties
+        this->mObject->setProperty("sDomain",            qsrSenderBccDomain.value("sDomain").toString());
+        this->mObject->setProperty("sBccAddress",        qsrSenderBccDomain.value("sBccAddress").toString());
+        this->mObject->setProperty("sCreated",           qsrSenderBccDomain.value("sCreated").toString());
+        this->mObject->setProperty("sModified",          qsrSenderBccDomain.value("sModified").toString());
+        this->mObject->setProperty("sExpires",           qsrSenderBccDomain.value("sExpires").toString());
+        this->mObject->setProperty("bActive",            qsrSenderBccDomain.value("bActive").toBool());
+        this->mObject->setProperty("iSenderBccDomainId", qsrSenderBccDomain.value("iSenderBccDomainId").toInt());
+        this->mObject->setProperty("iDomainId",          qsrSenderBccDomain.value("iDomainId").toInt());
+        this->mObject->setProperty("iAccountId",         qsrSenderBccDomain.value("iAccountId").toInt());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QVariantMap
+     * @brief SpRecipientBccUser()
+     * @param QVariantMap qvmRecipientBccDomain
+     * @return SpRecipientBccDomain
+     */
+    SpSenderBccDomain(QVariantMap qvmSenderBccDomain) : mObject(new QObject()) {
+        // Create an iterator
+        QVariantMap::ConstIterator itrProperty     = qvmSenderBccDomain.constBegin();
+        QVariantMap::ConstIterator itrLastProperty = qvmSenderBccDomain.constEnd();
+        // Iterate through the properties
+        for (; itrProperty != itrLastProperty; ++itrProperty) {
+            // Set a name placeholder
+            QByteArray qbaPropertyName;
+            // Set the name
+            qbaPropertyName.append(itrProperty.key());
+            // Set the property
+            this->mObject->setProperty(qbaPropertyName, itrProperty.value());
+        }
+    }
+    /**
+     * @paragraph This routine grabs a property from the structure
+     * @brief getProperty()
+     * @param QString sPropertyName
+     * @return QVariant
+     */
+    QVariant getProperty(QString sPropertyName) {
+        // Grab and return the property
+        return this->mObject->property(sPropertyName.toLatin1());
+    }
+    /**
+     * @paragraph This routine adds or updates a property
+     * @brief saveProperty()
+     * @param QString sPropertyName
+     * @param QVariant qvValue
+     * @return void
+     */
+    void saveProperty(QString sPropertyName, QVariant qvValue) {
+        // Set or update the property
+        this->mObject->setProperty(sPropertyName.toLatin1(), qvValue);
+    }
+    /**
+     * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
+     * @brief toMap
+     * @return QVariantMap
+     */
+    QVariantMap toMap() {
+        // Create a map placeholder
+        QVariantMap qvmProperties;
+        // Loop through the properties
+        foreach (QString sPropertyName, this->mObject->dynamicPropertyNames()) {
+            // Add the property to the map
+            qvmProperties.insert(sPropertyName, this->mObject->property(sPropertyName.toLatin1()));
+        }
+        // Return the map
+        return qvmProperties;
+    }
+    /**
+     * @paragraph This function converts the structure to a prepared bound QSqlQuery statement
+     * @brief toQuery
+     * @param QSqlDatabase qsdConnection
+     * @param QString sQuery
+     * @return QSqlQuery
+     */
+    QSqlQuery toQuery(QSqlDatabase qsdConnection, QString sQuery) {
+        // Setup the SQL Query
+        QSqlQuery qsqSenderBccDomain(qsdConnection);
+        // Prepare the SQL statement
+        qsqSenderBccDomain.prepare(sQuery);
+        // Grab the map
+        QVariantMap qvmProperties(this->toMap());
+        // Grab the iterators
+        QVariantMap::ConstIterator itrProperty      = qvmProperties.constBegin();
+        QVariantMap::ConstIterator itrPropertyEnd   = qvmProperties.constEnd();
+        // Loop through the properties
+        for (; itrProperty != itrPropertyEnd; ++itrProperty) {
+            // Check for the identifier in the SQL statement
+            if (sQuery.contains(QString(itrProperty.key()).prepend(":"), Qt::CaseSensitive)) {
+                // Bind the value
+                qsqSenderBccDomain.bindValue(QString(itrProperty.key()).prepend(":"), itrProperty.value());
+            }
+        }
+        // Return the query object
+        return qsqSenderBccDomain;
+    }
+};
+
+/**
+ * @paragraph This structure converts a Recipient BCC User into an object compatible with ServerPanel
+ * @brief The SpRecipientBccUser struct
+ */
+struct SpSenderBccUser {
+    QObject* mObject;
+    /**
+     * @paragraph This is the base constructor
+     * @brief SpSenderBccUser()
+     * @return SpSenderBccUser
+     */
+    SpSenderBccUser() : mObject(new QObject()) {
+        // Initialize the properties
+        this->mObject->setProperty("sUsername",        QString());
+        this->mObject->setProperty("sBccAddress",      QString());
+        this->mObject->setProperty("sDomain",          QString());
+        this->mObject->setProperty("sCreated",         QString());
+        this->mObject->setProperty("sModified",        QString());
+        this->mObject->setProperty("sExpires",         QString());
+        this->mObject->setProperty("bActive",          bool());
+        this->mObject->setProperty("iSenderBccUserId", int());
+        this->mObject->setProperty("iDomainId",        int());
+        this->mObject->setProperty("iAccountId",       int());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QSqlRecord object
+     * @brief SpSenderBccUser()
+     * @param QSqlRecord qsrSenderBccUser
+     * @return SpSenderBccUser
+     */
+    SpSenderBccUser(QSqlRecord qsrSenderBccUser) : mObject(new QObject()) {
+        // Set the properties
+        this->mObject->setProperty("sUsername",        qsrSenderBccUser.value("sUsername").toString());
+        this->mObject->setProperty("sBccAddress",      qsrSenderBccUser.value("sBccAddress").toString());
+        this->mObject->setProperty("sDomain",          qsrSenderBccUser.value("sDomain").toString());
+        this->mObject->setProperty("sCreated",         qsrSenderBccUser.value("sCreated").toString());
+        this->mObject->setProperty("sModified",        qsrSenderBccUser.value("sModified").toString());
+        this->mObject->setProperty("sExpires",         qsrSenderBccUser.value("sExpires").toString());
+        this->mObject->setProperty("bActive",          qsrSenderBccUser.value("bActive").toBool());
+        this->mObject->setProperty("iSenderBccUserId", qsrSenderBccUser.value("iSenderBccUserId").toInt());
+        this->mObject->setProperty("iDomainId",        qsrSenderBccUser.value("iDomainId").toInt());
+        this->mObject->setProperty("iAccountId",       qsrSenderBccUser.value("iAccountId").toInt());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QVariantMap
+     * @brief SpRecipientBccUser()
+     * @param QVariantMap qvmRecipientBccUser
+     * @return SpRecipientBccUser
+     */
+    SpSenderBccUser(QVariantMap qvmSenderBccUser) : mObject(new QObject()) {
+        // Create an iterator
+        QVariantMap::ConstIterator itrProperty     = qvmSenderBccUser.constBegin();
+        QVariantMap::ConstIterator itrLastProperty = qvmSenderBccUser.constEnd();
+        // Iterate through the properties
+        for (; itrProperty != itrLastProperty; ++itrProperty) {
+            // Set a name placeholder
+            QByteArray qbaPropertyName;
+            // Set the name
+            qbaPropertyName.append(itrProperty.key());
+            // Set the property
+            this->mObject->setProperty(qbaPropertyName, itrProperty.value());
+        }
+    }
+    /**
+     * @paragraph This routine grabs a property from the structure
+     * @brief getProperty()
+     * @param QString sPropertyName
+     * @return QVariant
+     */
+    QVariant getProperty(QString sPropertyName) {
+        // Grab and return the property
+        return this->mObject->property(sPropertyName.toLatin1());
+    }
+    /**
+     * @paragraph This routine adds or updates a property
+     * @brief saveProperty()
+     * @param QString sPropertyName
+     * @param QVariant qvValue
+     * @return void
+     */
+    void saveProperty(QString sPropertyName, QVariant qvValue) {
+        // Set or update the property
+        this->mObject->setProperty(sPropertyName.toLatin1(), qvValue);
+    }
+    /**
+     * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
+     * @brief toMap
+     * @return QVariantMap
+     */
+    QVariantMap toMap() {
+        // Create a map placeholder
+        QVariantMap qvmProperties;
+        // Loop through the properties
+        foreach (QString sPropertyName, this->mObject->dynamicPropertyNames()) {
+            // Add the property to the map
+            qvmProperties.insert(sPropertyName, this->mObject->property(sPropertyName.toLatin1()));
+        }
+        // Return the map
+        return qvmProperties;
+    }
+    /**
+     * @paragraph This function converts the structure to a prepared bound QSqlQuery statement
+     * @brief toQuery
+     * @param QSqlDatabase qsdConnection
+     * @param QString sQuery
+     * @return QSqlQuery
+     */
+    QSqlQuery toQuery(QSqlDatabase qsdConnection, QString sQuery) {
+        // Setup the SQL Query
+        QSqlQuery qsqSenderBccUser(qsdConnection);
+        // Prepare the SQL statement
+        qsqSenderBccUser.prepare(sQuery);
+        // Grab the map
+        QVariantMap qvmProperties(this->toMap());
+        // Grab the iterators
+        QVariantMap::ConstIterator itrProperty      = qvmProperties.constBegin();
+        QVariantMap::ConstIterator itrPropertyEnd   = qvmProperties.constEnd();
+        // Loop through the properties
+        for (; itrProperty != itrPropertyEnd; ++itrProperty) {
+            // Check for the identifier in the SQL statement
+            if (sQuery.contains(QString(itrProperty.key()).prepend(":"), Qt::CaseSensitive)) {
+                // Bind the value
+                qsqSenderBccUser.bindValue(QString(itrProperty.key()).prepend(":"), itrProperty.value());
+            }
+        }
+        // Return the query object
+        return qsqSenderBccUser;
+    }
+};
+
+/**
+ * @paragraph This structure converts a Shared Folder into an object compatible with ServerPanel
+ * @brief The SpSharedFolder struct
+ */
+struct SpSharedFolder {
+    QObject* mObject;
+    /**
+     * @paragraph This is the base constructor
+     * @brief SpSharedFolder()
+     * @return SpSharedFolder
+     */
+    SpSharedFolder() : mObject(new QObject()) {
+        // Initialize the properties
+        this->mObject->setProperty("sSender",         QString());
+        this->mObject->setProperty("sRecipient",      QString());
+        this->mObject->setProperty("sDummy",          QString());
+        this->mObject->setProperty("iSharedFolderId", int());
+        this->mObject->setProperty("iAccountId",      int());
+        this->mObject->setProperty("bActive",         bool());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QSqlRecord object
+     * @brief SpSharedFolder()
+     * @param QSqlRecord qsrSharedFolder
+     * @return SpSharedFolder
+     */
+    SpSharedFolder(QSqlRecord qsrSharedFolder) : mObject(new QObject()) {
+        // Set the properties
+        this->mObject->setProperty("sSender",         qsrSharedFolder.value("sSender").toString());
+        this->mObject->setProperty("sRecipient",      qsrSharedFolder.value("sRecipient").toString());
+        this->mObject->setProperty("sDummy",          qsrSharedFolder.value("sDummy").toString());
+        this->mObject->setProperty("iSharedFolderId", qsrSharedFolder.value("iSharedFolderId").toInt());
+        this->mObject->setProperty("iAccountId",      qsrSharedFolder.value("iAccountId").toInt());
+        this->mObject->setProperty("bActive",         qsrSharedFolder.value("bActive").toBool());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QVariantMap
+     * @brief SpSharedFolder()
+     * @param QVariantMap qvmSharedFolder
+     * @return SpSharedFolder
+     */
+    SpSharedFolder(QVariantMap qvmSharedFolder) : mObject(new QObject()) {
+        // Create an iterator
+        QVariantMap::ConstIterator itrProperty     = qvmSharedFolder.constBegin();
+        QVariantMap::ConstIterator itrLastProperty = qvmSharedFolder.constEnd();
+        // Iterate through the properties
+        for (; itrProperty != itrLastProperty; ++itrProperty) {
+            // Set a name placeholder
+            QByteArray qbaPropertyName;
+            // Set the name
+            qbaPropertyName.append(itrProperty.key());
+            // Set the property
+            this->mObject->setProperty(qbaPropertyName, itrProperty.value());
+        }
+    }
+    /**
+     * @paragraph This routine grabs a property from the structure
+     * @brief getProperty()
+     * @param QString sPropertyName
+     * @return QVariant
+     */
+    QVariant getProperty(QString sPropertyName) {
+        // Grab and return the property
+        return this->mObject->property(sPropertyName.toLatin1());
+    }
+    /**
+     * @paragraph This routine adds or updates a property
+     * @brief saveProperty()
+     * @param QString sPropertyName
+     * @param QVariant qvValue
+     * @return void
+     */
+    void saveProperty(QString sPropertyName, QVariant qvValue) {
+        // Set or update the property
+        this->mObject->setProperty(sPropertyName.toLatin1(), qvValue);
+    }
+    /**
+     * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
+     * @brief toMap
+     * @return QVariantMap
+     */
+    QVariantMap toMap() {
+        // Create a map placeholder
+        QVariantMap qvmProperties;
+        // Loop through the properties
+        foreach (QString sPropertyName, this->mObject->dynamicPropertyNames()) {
+            // Add the property to the map
+            qvmProperties.insert(sPropertyName, this->mObject->property(sPropertyName.toLatin1()));
+        }
+        // Return the map
+        return qvmProperties;
+    }
+    /**
+     * @paragraph This function converts the structure to a prepared bound QSqlQuery statement
+     * @brief toQuery
+     * @param QSqlDatabase qsdConnection
+     * @param QString sQuery
+     * @return QSqlQuery
+     */
+    QSqlQuery toQuery(QSqlDatabase qsdConnection, QString sQuery) {
+        // Setup the SQL Query
+        QSqlQuery qsqSharedFolder(qsdConnection);
+        // Prepare the SQL statement
+        qsqSenderSharedFolder.prepare(sQuery);
+        // Grab the map
+        QVariantMap qvmProperties(this->toMap());
+        // Grab the iterators
+        QVariantMap::ConstIterator itrProperty      = qvmProperties.constBegin();
+        QVariantMap::ConstIterator itrPropertyEnd   = qvmProperties.constEnd();
+        // Loop through the properties
+        for (; itrProperty != itrPropertyEnd; ++itrProperty) {
+            // Check for the identifier in the SQL statement
+            if (sQuery.contains(QString(itrProperty.key()).prepend(":"), Qt::CaseSensitive)) {
+                // Bind the value
+                qsqSharedFolder.bindValue(QString(itrProperty.key()).prepend(":"), itrProperty.value());
+            }
+        }
+        // Return the query object
+        return qsqSharedFolder;
+    }
+};
+
+/**
+ * @paragraph This structure converts a Vacation Message into an object compatible with ServerPanel
+ * @brief The SpVacationMessage struct
+ */
+struct SpVacationMessage {
+    QObject* mObject;
+    /**
+     * @paragraph This is the base constructor
+     * @brief SpVacationMessage()
+     * @return SpVacationMessage
+     */
+    SpVacationMessage() : mObject(new QObject()) {
+        // Initialize the properties
+        this->mObject->setProperty("sEmailAddress",      QString());
+        this->mObject->setProperty("sSubject",           QString());
+        this->mObject->setProperty("sBody",              QString());
+        this->mObject->setProperty("sCache",             QString());
+        this->mObject->setProperty("sDomain",            QString());
+        this->mObject->setProperty("sCreated",           QString());
+        this->mObject->setProperty("sModified",          QString());
+        this->mObject->setProperty("bActive",            bool());
+        this->mObject->setProperty("iVacationMessageId", int());
+        this->mObject->setProperty("iMailBoxId",         int());
+        this->mObject->setProperty("iDomainId",          int());
+        this->mObject->setProperty("iAccountId",         int());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QSqlRecord object
+     * @brief SpVacationMessage()
+     * @param QSqlRecord qsrVacationMessage
+     * @return SpVacationMessage
+     */
+    SpVacationMessage(QSqlRecord qsrVacationMessage) : mObject(new QObject()) {
+        // Set the properties
+        this->mObject->setProperty("sEmailAddress",      qsrVacationMessage.value("sEmailAddress").toString());
+        this->mObject->setProperty("sSubject",           qsrVacationMessage.value("sSubject").toString());
+        this->mObject->setProperty("sBody",              qsrVacationMessage.value("sBody").toString());
+        this->mObject->setProperty("sCache",             qsrVacationMessage.value("sCache").toString());
+        this->mObject->setProperty("sDomain",            qsrVacationMessage.value("sDomain").toString());
+        this->mObject->setProperty("sCreated",           qsrVacationMessage.value("sCreated").toString());
+        this->mObject->setProperty("sModified",          qsrVacationMessage.value("sModified").toString());
+        this->mObject->setProperty("bActive",            qsrVacationMessage.value("bActive").toBool());
+        this->mObject->setProperty("iVacationMessageId", qsrVacationMessage.value("iVacationMessageId").toInt());
+        this->mObject->setProperty("iMailBoxId",         qsrVacationMessage.value("iMailBox").toInt());
+        this->mObject->setProperty("iDomainId",          qsrVacationMessage.value("iDomainId").toInt());
+        this->mObject->setProperty("iAccountId",         qsrVacationMessage.value("iAccountId").toInt());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QVariantMap
+     * @brief SpVacationMessage()
+     * @param QVariantMap qvmVacationMessage
+     * @return SpVacationMessage
+     */
+    SpVacationMessage(QVariantMap qvmVacationMessage) : mObject(new QObject()) {
+        // Create an iterator
+        QVariantMap::ConstIterator itrProperty     = qvmVacationMessage.constBegin();
+        QVariantMap::ConstIterator itrLastProperty = qvmVacationMessage.constEnd();
+        // Iterate through the properties
+        for (; itrProperty != itrLastProperty; ++itrProperty) {
+            // Set a name placeholder
+            QByteArray qbaPropertyName;
+            // Set the name
+            qbaPropertyName.append(itrProperty.key());
+            // Set the property
+            this->mObject->setProperty(qbaPropertyName, itrProperty.value());
+        }
+    }
+    /**
+     * @paragraph This routine grabs a property from the structure
+     * @brief getProperty()
+     * @param QString sPropertyName
+     * @return QVariant
+     */
+    QVariant getProperty(QString sPropertyName) {
+        // Grab and return the property
+        return this->mObject->property(sPropertyName.toLatin1());
+    }
+    /**
+     * @paragraph This routine adds or updates a property
+     * @brief saveProperty()
+     * @param QString sPropertyName
+     * @param QVariant qvValue
+     * @return void
+     */
+    void saveProperty(QString sPropertyName, QVariant qvValue) {
+        // Set or update the property
+        this->mObject->setProperty(sPropertyName.toLatin1(), qvValue);
+    }
+    /**
+     * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
+     * @brief toMap
+     * @return QVariantMap
+     */
+    QVariantMap toMap() {
+        // Create a map placeholder
+        QVariantMap qvmProperties;
+        // Loop through the properties
+        foreach (QString sPropertyName, this->mObject->dynamicPropertyNames()) {
+            // Add the property to the map
+            qvmProperties.insert(sPropertyName, this->mObject->property(sPropertyName.toLatin1()));
+        }
+        // Return the map
+        return qvmProperties;
+    }
+    /**
+     * @paragraph This function converts the structure to a prepared bound QSqlQuery statement
+     * @brief toQuery
+     * @param QSqlDatabase qsdConnection
+     * @param QString sQuery
+     * @return QSqlQuery
+     */
+    QSqlQuery toQuery(QSqlDatabase qsdConnection, QString sQuery) {
+        // Setup the SQL Query
+        QSqlQuery qsqVacationMessage(qsdConnection);
+        // Prepare the SQL statement
+        qsqVacationMessage.prepare(sQuery);
+        // Grab the map
+        QVariantMap qvmProperties(this->toMap());
+        // Grab the iterators
+        QVariantMap::ConstIterator itrProperty      = qvmProperties.constBegin();
+        QVariantMap::ConstIterator itrPropertyEnd   = qvmProperties.constEnd();
+        // Loop through the properties
+        for (; itrProperty != itrPropertyEnd; ++itrProperty) {
+            // Check for the identifier in the SQL statement
+            if (sQuery.contains(QString(itrProperty.key()).prepend(":"), Qt::CaseSensitive)) {
+                // Bind the value
+                qsqVacationMessage.bindValue(QString(itrProperty.key()).prepend(":"), itrProperty.value());
+            }
+        }
+        // Return the query object
+        return qsqVacationMessage;
+    }
+};
+
+/**
+ * @paragraph This structure converts a Vacation Message into an object compatible with ServerPanel
+ * @brief The SpVacationMessage struct
+ */
+struct SpVacationNotification {
+    QObject* mObject;
+    /**
+     * @paragraph This is the base constructor
+     * @brief SpVacationNotification()
+     * @return SpVacationNotification
+     */
+    SpVacationNotification() : mObject(new QObject()) {
+        // Initialize the properties
+        this->mObject->setProperty("sOnVacation",             QString());
+        this->mObject->setProperty("sNotified",               QString());
+        this->mObject->setProperty("sNotifiedTimestamp",      QString());
+        this->mObject->setProperty("iVacationNotificationId", int());
+        this->mObject->setProperty("iMailBoxId",              int());
+        this->mObject->setProperty("iAccountId",              int());
+        this->mObject->setProperty("bEnabled",                bool());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QSqlRecord object
+     * @brief SpVacationNotification()
+     * @param QSqlRecord qsrVacationNotification
+     * @return SpVacationNotification
+     */
+    SpVacationNotificartion(QSqlRecord qsrVacationNotification) : mObject(new QObject()) {
+        // Set the properties
+        this->mObject->setProperty("sOnVacation",             qsrVacationNotification.value("sOnVacation").toString());
+        this->mObject->setProperty("sNotified",               qsrVacationNotification.value("sNotified").toString());
+        this->mObject->setProperty("sNotifiedTimestamp",      qsrVacationNotification.value("sNotifiedTimestamp").toString());
+        this->mObject->setProperty("iVacationNotificationId", qsrVacationNotification.value("iVacationNotificationId").toInt());
+        this->mObject->setProperty("iMailBoxId",              qsrVacationNotification.value("iMailBoxId").toInt());
+        this->mObject->setProperty("iAccountId",              qsrVacationNotification.value("iAccountId").toInt());
+        this->mObject->setProperty("bEnabled",                qsrVacationNotification.value("bEnabled").toBool());
+    }
+    /**
+     * @paragraph This constructor creates a structure out of a QVariantMap
+     * @brief SpVacationNotification()
+     * @param QVariantMap qvmVacationNotification
+     * @return SpVacationNotification
+     */
+    SpVacationNotification(QVariantMap qvmVacationNotification) : mObject(new QObject()) {
+        // Create an iterator
+        QVariantMap::ConstIterator itrProperty     = qvmVacationNotification.constBegin();
+        QVariantMap::ConstIterator itrLastProperty = qvmVacationNotification.constEnd();
+        // Iterate through the properties
+        for (; itrProperty != itrLastProperty; ++itrProperty) {
+            // Set a name placeholder
+            QByteArray qbaPropertyName;
+            // Set the name
+            qbaPropertyName.append(itrProperty.key());
+            // Set the property
+            this->mObject->setProperty(qbaPropertyName, itrProperty.value());
+        }
+    }
+    /**
+     * @paragraph This routine grabs a property from the structure
+     * @brief getProperty()
+     * @param QString sPropertyName
+     * @return QVariant
+     */
+    QVariant getProperty(QString sPropertyName) {
+        // Grab and return the property
+        return this->mObject->property(sPropertyName.toLatin1());
+    }
+    /**
+     * @paragraph This routine adds or updates a property
+     * @brief saveProperty()
+     * @param QString sPropertyName
+     * @param QVariant qvValue
+     * @return void
+     */
+    void saveProperty(QString sPropertyName, QVariant qvValue) {
+        // Set or update the property
+        this->mObject->setProperty(sPropertyName.toLatin1(), qvValue);
+    }
+    /**
+     * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
+     * @brief toMap
+     * @return QVariantMap
+     */
+    QVariantMap toMap() {
+        // Create a map placeholder
+        QVariantMap qvmProperties;
+        // Loop through the properties
+        foreach (QString sPropertyName, this->mObject->dynamicPropertyNames()) {
+            // Add the property to the map
+            qvmProperties.insert(sPropertyName, this->mObject->property(sPropertyName.toLatin1()));
+        }
+        // Return the map
+        return qvmProperties;
+    }
+    /**
+     * @paragraph This function converts the structure to a prepared bound QSqlQuery statement
+     * @brief toQuery
+     * @param QSqlDatabase qsdConnection
+     * @param QString sQuery
+     * @return QSqlQuery
+     */
+    QSqlQuery toQuery(QSqlDatabase qsdConnection, QString sQuery) {
+        // Setup the SQL Query
+        QSqlQuery qsqVacationNotification(qsdConnection);
+        // Prepare the SQL statement
+        qsqVacationNotification.prepare(sQuery);
+        // Grab the map
+        QVariantMap qvmProperties(this->toMap());
+        // Grab the iterators
+        QVariantMap::ConstIterator itrProperty      = qvmProperties.constBegin();
+        QVariantMap::ConstIterator itrPropertyEnd   = qvmProperties.constEnd();
+        // Loop through the properties
+        for (; itrProperty != itrPropertyEnd; ++itrProperty) {
+            // Check for the identifier in the SQL statement
+            if (sQuery.contains(QString(itrProperty.key()).prepend(":"), Qt::CaseSensitive)) {
+                // Bind the value
+                qsqVacationNotification.bindValue(QString(itrProperty.key()).prepend(":"), itrProperty.value());
+            }
+        }
+        // Return the query object
+        return qsqVacationNotification;
+    }
+};
+
 #endif // SERVERPANELSTRUCTURES_H
