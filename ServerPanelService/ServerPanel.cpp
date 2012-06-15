@@ -205,6 +205,7 @@ QByteArray ServerPanel::HandleRequest(QString sRequest) {
         if (sMethod == "AuthenticateUser") {       // User authentication
             // Setup the structure
             SpAccount spAccount = SpAccount(qvmRequest);
+            std::cout << spAccount.getProperty("sUsername").toString().toStdString() << std::endl;
             // Grab the response
             qbaResponse = this->EncodeResponse(this->AuthenticateUser(spAccount));
         } else if (sMethod == "LoadAccount") {     // Load Account
