@@ -17,6 +17,7 @@ HEADERS     += \
     Json.h \
     ServerPanelService.h \
     ServerPanel.h \
+    ServerPanelStructures.h \
     ServerPanelStructures.h
 
 OTHER_FILES += \
