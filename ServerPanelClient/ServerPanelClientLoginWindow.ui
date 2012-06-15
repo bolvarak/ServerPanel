@@ -167,7 +167,7 @@
      <enum>Qt::ToolButtonTextOnly</enum>
     </property>
    </widget>
-   <widget class="QToolButton" name="toolButton">
+   <widget class="QToolButton" name="btnRemoveServer">
     <property name="geometry">
      <rect>
       <x>150</x>

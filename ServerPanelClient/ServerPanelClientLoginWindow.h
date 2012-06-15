@@ -42,6 +42,13 @@ protected:
     static ServerPanelClientLoginWindow* mInstance;
     // User Interface Instance
     Ui::ServerPanelClientLoginWindow*    mUserInterface;
+// Protected slots
+protected slots:
+    void AddServerButtonClick();
+    void CancelButtonClick();
+    void LoginButtonClick();
+    void RemoveServerButtonClick();
+    void SaveButtonClick();
 };
 
 #endif // SERVERPANELCLIENTLOGINWINDOW_H

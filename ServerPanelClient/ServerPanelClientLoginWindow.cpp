@@ -32,6 +32,12 @@ ServerPanelClientLoginWindow* ServerPanelClientLoginWindow::Instance(QWidget *cP
 ServerPanelClientLoginWindow::ServerPanelClientLoginWindow(QWidget *cParent) : QMainWindow(cParent), mUserInterface(new Ui::ServerPanelClientLoginWindow) {
     // Setup the user interface
     this->mUserInterface->setupUi(this);
+    // Setup the connector slots
+    connect(this->mUserInterface->btnAddServer,    SIGNAL(clicked()), SLOT(AddServerButtonClick()));    // Add Server
+    connect(this->mUserInterface->btnCancel,       SIGNAL(clicked()), SLOT(CancelButtonClick()));       // Cancel
+    connect(this->mUserInterface->btnLogin,        SIGNAL(clicked()), SLOT(LoginButtonClick()));        // Sign-In
+    connect(this->mUserInterface->btnRemoveServer, SIGNAL(clicked()), SLOT(RemoveServerButtonClick())); // Remove Server
+    connect(this->mUserInterface->btnSave,         SIGNAL(clicked()), SLOT(SaveButtonClick()));         // Save Server
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -43,4 +49,28 @@ ServerPanelClientLoginWindow::~ServerPanelClientLoginWindow() {
     delete this->mUserInterface;
     // Delete the instance
     delete this->mInstance;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// Protected Slots //////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+void ServerPanelClientLoginWindow::AddServerButtonClick() {
+
+}
+
+void ServerPanelClientLoginWindow::CancelButtonClick() {
+
+}
+
+void ServerPanelClientLoginWindow::LoginButtonClick() {
+
+}
+
+void ServerPanelClientLoginWindow::RemoveServerButtonClick() {
+
+}
+
+void ServerPanelClientLoginWindow::SaveButtonClick() {
+
 }
