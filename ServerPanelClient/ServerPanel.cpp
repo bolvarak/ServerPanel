@@ -45,6 +45,7 @@ ServerPanel::ServerPanel(QObject* cParent) : QObject(cParent), mOk(true) {
     }
     // Setup the connectors
     connect(&this->mClient, SIGNAL(connected()),                         this, SLOT(TransferData()));
+    connect(&this->mClient, SIGNAL(readyRead()),                         this, SLOT(ReadResponse()));
     connect(&this->mClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(SocketError(QAbstractSocket::SocketError)));
 }
 
@@ -74,18 +75,35 @@ ServerPanel::~ServerPanel() {
  * @return bool
  */
 bool ServerPanel::AuthenticateUser(SpAccount spAccount) {
-    // Make the call to the server
-    this->MakeRequest("LoadAccount", spAccount.toMap());
-    // Check for success
-    if (this->mResponse["bSuccess"].toBool()) {
-        // We're done
-        return true;
+    // Try to make the call to the server
+    if (this->MakeRequest("LoadAccount", spAccount.toMap())) {
+        // Check for success
+        if (!this->mResponse["bSuccess"].toBool()) {
+            // We're done
+            return false;
+        }
+        // Grab a map iterator
+        QVariantMap::ConstIterator itrProperty     = this->mResponse["oAccount"].toMap().constBegin();
+        QVariantMap::ConstIterator itrLastProperty = this->mResponse["oAccount"].toMap().constEnd();
+        // Set a string placeholder
+        // Loop through the properties
+        QString sMessage;
+        for (; itrProperty != itrLastProperty; ++itrProperty) {
+            // Append the property
+            sMessage.append("[");
+            sMessage.append(itrProperty.key());
+            sMessage.append("] = ");
+            sMessage.append(itrProperty.value().toString());
+            sMessage.append("<br>");
+        }
+        // Dispatch the message
+        this->DispatchMessageBox(sMessage, Notification);
     } else {
-        // Dispatch a message
-        this->DispatchMessageBox(this->mError, Error);
         // We're done
         return false;
     }
+    // We're done
+    return true;
 }
 
 /**
@@ -532,20 +550,21 @@ void ServerPanel::SocketError(QAbstractSocket::SocketError qseError) {
 }
 
 /**
- * @paragraph This slot method sends data to the server
- * @brief ServerPanel::TransferData
+ * @paragraph This method reads the socket response
+ * @brief ServerPanel::ReadResponse
  * @return void
  */
-void ServerPanel::TransferData() {
-    // Convert the map to JSON
-    QByteArray qbaRequest = QtJson::Json::serialize(this->mRequest);
-    // Write the data to the client
-    this->mClient.write(qbaRequest, qint64(qbaRequest.size()));
-    // Read the client data into the buffer
-    QByteArray qbaResponse  = this->mClient.readAll();
-    this->DispatchMessageBox(QString(qbaResponse), Success);
+void ServerPanel::ReadResponse() {
+    // Setup a placeholder for the response data
+    QByteArray qbaResponse;
     // Set a conversion boolean
     bool bDeserialized;
+    // Wait for the bytes to be written before reading
+    if () {
+        // Read the client data into the buffer
+        qbaResponse.append(this->mClient.readLine());
+        this->DispatchMessageBox(QString(qbaResponse), Notification);
+    }
     // Decode the response
     this->mResponse         = QtJson::Json::parse(QString(qbaResponse), bDeserialized).toMap();
     // Make sure the JSON was deserialized
@@ -554,12 +573,30 @@ void ServerPanel::TransferData() {
         this->DispatchMessageBox("Could not decode the server response.", Error);
     }
     // Check for an error
-    if (this->mResponse.contains("sError")) {
-        // Set the error
+    if (!this->mResponse["bSuccess"].toBool()) {
+        // Set the error into the system
         this->mError = this->mResponse["sError"].toString();
+        // Dispatch the message
+        this->DispatchMessageBox(this->mError, Error);
     }
     // Set the okay status
     this->mOk = this->mResponse["bSuccess"].toBool();
+    // Close the connection
+    this->mClient.close();
+    // We're done
+    return;
+}
+
+/**
+ * @paragraph This slot method sends data to the server
+ * @brief ServerPanel::TransferData
+ * @return void
+ */
+void ServerPanel::TransferData() {
+    // Convert the map to JSON
+    QByteArray qbaRequest = QtJson::Json::serialize(this->mRequest);
+    // Write the data to the client
+    this->mClient.write(qbaRequest);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

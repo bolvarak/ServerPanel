@@ -80,6 +80,7 @@ protected:
 // Protected Slots
 protected slots:
     void           SocketError       (QAbstractSocket::SocketError qseError);
+    void           ReadResponse      ();
     void           TransferData      ();
 };
 
