@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>644</width>
-    <height>371</height>
+    <height>304</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
       <x>20</x>
       <y>40</y>
       <width>161</width>
-      <height>231</height>
+      <height>171</height>
      </rect>
     </property>
    </widget>
@@ -122,7 +122,7 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="Line" name="line">
+   <widget class="Line" name="lineUsername">
     <property name="geometry">
      <rect>
       <x>210</x>
@@ -135,7 +135,7 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="Line" name="line_2">
+   <widget class="Line" name="linePassword">
     <property name="geometry">
      <rect>
       <x>430</x>
@@ -151,10 +151,10 @@
    <widget class="QToolButton" name="btnAddServer">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>280</y>
+      <x>120</x>
+      <y>220</y>
       <width>30</width>
-      <height>25</height>
+      <height>32</height>
      </rect>
     </property>
     <property name="text">
@@ -171,9 +171,9 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>280</y>
+      <y>220</y>
       <width>30</width>
-      <height>25</height>
+      <height>32</height>
      </rect>
     </property>
     <property name="text">
@@ -238,19 +238,6 @@
      <string>Cancel</string>
     </property>
    </widget>
-   <widget class="QLabel" name="lblErrors">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>255</y>
-      <width>381</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -258,7 +245,7 @@
      <x>0</x>
      <y>0</y>
      <width>644</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>
