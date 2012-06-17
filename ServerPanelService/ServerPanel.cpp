@@ -340,7 +340,7 @@ void ServerPanel::LogMessage(QByteArray qbaMessage) {
     // Create a stream for the file
     QTextStream qtsOutput(&qfsLogFile);
     // Stream the message
-    qtsOutput << QDateTime::currentDateTime().toString() << " : " << qbaMessage;
+    qtsOutput << QDateTime::currentDateTime().toString() << " : " << qbaMessage << "\n";
     // Close the log file
     qfsLogFile.close();
 }

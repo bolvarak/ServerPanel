@@ -94,6 +94,8 @@ void ServerPanelService::startRead() {
     QByteArray qbaClientData = this->mClient->readAll();
     // Handle the request
     QByteArray qbaClientResponse = ServerPanel::Instance()->HandleRequest(QString(qbaClientData));
+    // Append a new line
+    qbaClientResponse.append("\n");
     this->mClient->write(qbaClientResponse);
     // Close the client
     this->mClient->waitForDisconnected();
