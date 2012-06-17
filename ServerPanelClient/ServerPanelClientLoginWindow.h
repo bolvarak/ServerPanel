@@ -14,6 +14,7 @@
 #include <QMainWindow>
 #include <QtCrypto/QtCrypto>
 #include <ServerPanel.h>
+#include <ServerPanelClientMainWindow.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Namespace ////////////////////////////////////////////////////////////////
@@ -34,11 +35,11 @@ class ServerPanelClientLoginWindow : public QMainWindow {
 // Public
 public:
     // Singleton
-    static ServerPanelClientLoginWindow* Instance(QWidget* cParent = 0);
+    static   ServerPanelClientLoginWindow* Instance(QWidget* cParent = 0);
     // Constructor
-    explicit ServerPanelClientLoginWindow(QWidget* cParent = 0);
+    explicit ServerPanelClientLoginWindow          (QWidget* cParent = 0);
     // Destructor
-    ~ServerPanelClientLoginWindow();
+            ~ServerPanelClientLoginWindow          ();
 // Protected
 protected:
     // Singleton Instance
@@ -47,12 +48,12 @@ protected:
     Ui::ServerPanelClientLoginWindow*    mUserInterface;
 // Protected slots
 protected slots:
-    void AddServerButtonClick();
-    void CancelButtonClick();
-    void LoadLocalServerData(QListWidgetItem* qlwiServer);
-    void LoginButtonClick();
-    void RemoveServerButtonClick();
-    void SaveButtonClick();
+    void     AddServerButtonClick                  ();
+    void     CancelButtonClick                     ();
+    void     LoadLocalServerData                   (QListWidgetItem* qlwiServer);
+    void     LoginButtonClick                      ();
+    void     RemoveServerButtonClick               ();
+    void     SaveButtonClick                       ();
 };
 
 #endif // SERVERPANELCLIENTLOGINWINDOW_H

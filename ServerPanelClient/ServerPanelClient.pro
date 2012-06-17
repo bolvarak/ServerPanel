@@ -15,14 +15,17 @@ LIBS += -L$$quota(qca-2.0.3/lib) -lqca2
 SOURCES += main.cpp\
         ServerPanelClientLoginWindow.cpp \
     Json.cpp \
-    ServerPanel.cpp
+    ServerPanel.cpp \
+    ServerPanelClientMainWindow.cpp
 
 HEADERS  += ServerPanelClientLoginWindow.h \
     ServerPanelStructures.h \
     ServerPanel.h \
-    Json.h
+    Json.h \
+    ServerPanelClientMainWindow.h
 
-FORMS    += ServerPanelClientLoginWindow.ui
+FORMS    += ServerPanelClientLoginWindow.ui \
+    ServerPanelClientMainWindow.ui
 
 OTHER_FILES += \
     ServerPanelClient.sp \

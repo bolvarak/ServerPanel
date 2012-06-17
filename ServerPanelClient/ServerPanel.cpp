@@ -82,22 +82,6 @@ bool ServerPanel::AuthenticateUser(SpAccount spAccount) {
             // We're done
             return false;
         }
-        // Grab a map iterator
-        QVariantMap::ConstIterator itrProperty     = this->mResponse["oAccount"].toMap().constBegin();
-        QVariantMap::ConstIterator itrLastProperty = this->mResponse["oAccount"].toMap().constEnd();
-        // Set a string placeholder
-        // Loop through the properties
-        QString sMessage;
-        for (; itrProperty != itrLastProperty; ++itrProperty) {
-            // Append the property
-            sMessage.append("[");
-            sMessage.append(itrProperty.key());
-            sMessage.append("] = ");
-            sMessage.append(itrProperty.value().toString());
-            sMessage.append("<br>");
-        }
-        // Dispatch the message
-        this->DispatchMessageBox(sMessage, Notification);
     } else {
         // We're done
         return false;
@@ -560,29 +544,31 @@ void ServerPanel::ReadResponse() {
     // Set a conversion boolean
     bool bDeserialized;
     // Wait for the bytes to be written before reading
-    if () {
+    if (this->mClient.bytesAvailable()) {
         // Read the client data into the buffer
-        qbaResponse.append(this->mClient.readLine());
-        this->DispatchMessageBox(QString(qbaResponse), Notification);
+        qbaResponse.append(this->mClient.readAll());
     }
-    // Decode the response
-    this->mResponse         = QtJson::Json::parse(QString(qbaResponse), bDeserialized).toMap();
-    // Make sure the JSON was deserialized
-    if (!bDeserialized) {
-        // Dispatch the message
-        this->DispatchMessageBox("Could not decode the server response.", Error);
+    // Check to see if we have all of the data
+    if (!this->mClient.bytesAvailable()) {
+        // Decode the response
+        this->mResponse         = QtJson::Json::parse(QString(qbaResponse), bDeserialized).toMap();
+        // Make sure the JSON was deserialized
+        if (!bDeserialized) {
+            // Dispatch the message
+            this->DispatchMessageBox("Could not decode the server response.", Error);
+        }
+        // Check for an error
+        if (!this->mResponse["bSuccess"].toBool()) {
+            // Set the error into the system
+            this->mError = this->mResponse["sError"].toString();
+            // Dispatch the message
+            this->DispatchMessageBox(this->mError, Error);
+        }
+        // Set the okay status
+        this->mOk = this->mResponse["bSuccess"].toBool();
+        // Close the connection
+        this->mClient.close();
     }
-    // Check for an error
-    if (!this->mResponse["bSuccess"].toBool()) {
-        // Set the error into the system
-        this->mError = this->mResponse["sError"].toString();
-        // Dispatch the message
-        this->DispatchMessageBox(this->mError, Error);
-    }
-    // Set the okay status
-    this->mOk = this->mResponse["bSuccess"].toBool();
-    // Close the connection
-    this->mClient.close();
     // We're done
     return;
 }

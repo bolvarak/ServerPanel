@@ -73,7 +73,12 @@ ServerPanelClientLoginWindow::~ServerPanelClientLoginWindow() {
 /////////////////////////////////////////////////////////////////////////////
 
 void ServerPanelClientLoginWindow::AddServerButtonClick() {
-
+    // Add a new item
+    this->mUserInterface->listServers->addItem("New Server");
+    // Clear the text fields
+    this->mUserInterface->txtServerAddress->clear(); // Server Address
+    this->mUserInterface->txtUsername->clear();      // Username
+    this->mUserInterface->txtPassword->clear();      // Password
 }
 
 /**
@@ -101,7 +106,7 @@ void ServerPanelClientLoginWindow::LoadLocalServerData(QListWidgetItem* qlwiServ
         // Setup the form
         this->mUserInterface->txtServerAddress->setText(qlwiServer->text());                                                          // Server Address
         this->mUserInterface->txtUsername->setText(ServerPanel::Instance()->GetCurrentAccount().getProperty("sUsername").toString()); // Username
-        this->mUserInterface->txtPassword->insert(ServerPanel::Instance()->GetCurrentAccount().getProperty("sPassword").toString()); // Password
+        this->mUserInterface->txtPassword->setText(ServerPanel::Instance()->GetCurrentAccount().getProperty("sPassword").toString()); // Password
     }
 }
 
@@ -120,8 +125,10 @@ void ServerPanelClientLoginWindow::LoginButtonClick() {
     ServerPanel::Instance()->LoadLocalServer(slsServer);
     // Try to authenticate the user
     if (ServerPanel::Instance()->AuthenticateUser(spAccount)) {
-        // Dispatch a message
-        ServerPanel::Instance()->DispatchMessageBox("Account Authenticated!", Success);
+        // Hide this window
+        this->hide();
+        // Show the main window
+        ServerPanelClientMainWindow::Instance()->show();
     }
 }
 
