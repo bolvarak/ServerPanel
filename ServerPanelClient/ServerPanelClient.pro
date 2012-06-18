@@ -5,7 +5,6 @@
 #-------------------------------------------------
 
 QT       += core gui sql network
-
 TARGET = ServerPanelClient
 TEMPLATE = app
 CONFIG += crypto
@@ -30,3 +29,6 @@ FORMS    += ServerPanelClientLoginWindow.ui \
 OTHER_FILES += \
     ServerPanelClient.sp \
     ServerPanel.ini
+
+RESOURCES += \
+    ServerPanelClientResources.qrc

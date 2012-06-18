@@ -60,6 +60,7 @@ public:
     SpLocalServer  GetCurrentServer  ();
     QVariantList   GetLocalServers   ();
     QString        GetError          ();
+    SpAccount      GetAccount        ();
     QVariantMap    GetResponse       ();
 // Protected
 protected:
@@ -68,6 +69,7 @@ protected:
     QSettings*          mConfig;
     SpLocalAccount      mCurrentAccount;
     SpLocalServer       mCurrentServer;
+    SpAccount           mCurrentRemoteAccount;
     QSqlDatabase        mDbc;
     QString             mError;
     static ServerPanel* mInstance;

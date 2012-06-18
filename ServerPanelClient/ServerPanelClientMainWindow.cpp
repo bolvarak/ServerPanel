@@ -32,6 +32,10 @@ ServerPanelClientMainWindow* ServerPanelClientMainWindow::Instance(QWidget* cPar
 ServerPanelClientMainWindow::ServerPanelClientMainWindow(QWidget* cParent) : QMainWindow(cParent), mUserInterface(new Ui::ServerPanelClientMainWindow) {
     // Setup the user interface instance
     this->mUserInterface->setupUi(this);
+    // Set the default display settings
+    this->mUserInterface->btnAccountSettings->setText(ServerPanel::Instance()->GetAccount().getProperty("sUsername").toString());
+    // Setup the connectors
+    this->connect(this->mUserInterface->btnSignOut, SIGNAL(clicked()), this, SLOT(SignOutButtonClicked()));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -43,4 +47,21 @@ ServerPanelClientMainWindow::~ServerPanelClientMainWindow() {
     delete this->mUserInterface;
     // Delete the instance
     delete this->mInstance;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// Protected Slots //////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @paragraph This handles the logout routine
+ * @brief ServerPanelClientMainWindow::SignOutButtonClicked
+ * @param QString sLink
+ * @return void
+ */
+void ServerPanelClientMainWindow::SignOutButtonClicked() {
+    // Close this window
+    this->close();
+    // Show the login screen
+    ServerPanelClientLoginWindow::Instance()->show();
 }

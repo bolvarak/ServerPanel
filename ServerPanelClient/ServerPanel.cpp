@@ -30,11 +30,11 @@ ServerPanel* ServerPanel::Instance(QObject* cParent) {
 
 ServerPanel::ServerPanel(QObject* cParent) : QObject(cParent), mOk(true) {
     // Load the configuration
-    this->mConfig = new QSettings("/home/tbrown/Documents/ServerPanel/ServerPanelClient/ServerPanel.ini", QSettings::IniFormat);
+    this->mConfig = new QSettings(":/ServerPanel.ini", QSettings::IniFormat);
     // Setup the databae
-    this->mDbc    = QSqlDatabase::addDatabase(this->mConfig->value("databaseSettings/driver").toString());
+    this->mDbc    = QSqlDatabase::addDatabase("QSQLITE");
     // Set the database
-    this->mDbc.setDatabaseName(this->mConfig->value("databaseSettings/db").toString());
+    this->mDbc.setDatabaseName("/home/tbrown/Documents/ServerPanel/ServerPanelClient/ServerPanelClient.sp");
     // We're done with the database configuration
     // Try to open the database
     if (!this->mDbc.open()) {
@@ -86,6 +86,8 @@ bool ServerPanel::AuthenticateUser(SpAccount spAccount) {
         // We're done
         return false;
     }
+    // Set the account
+    this->mCurrentRemoteAccount = SpAccount(this->mResponse["oAccount"].toMap());
     // We're done
     return true;
 }
@@ -588,6 +590,16 @@ void ServerPanel::TransferData() {
 ///////////////////////////////////////////////////////////////////////////////
 /// Getters //////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @paragraph This method returns the current remote account
+ * @brief ServerPanel::GetAccount
+ * @return SpAccount
+ */
+SpAccount ServerPanel::GetAccount() {
+    // Return the current remote account
+    return this->mCurrentRemoteAccount;
+}
 
 /**
  * @paragraph This method returns the currently authenticated user

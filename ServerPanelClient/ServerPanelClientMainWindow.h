@@ -13,6 +13,7 @@
 #include <QMainWindow>
 #include <ServerPanel.h>
 #include <ServerPanelStructures.h>
+#include <ServerPanelClientLoginWindow.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Namespace ////////////////////////////////////////////////////////////////
@@ -43,6 +44,9 @@ protected:
     // Properties
     static ServerPanelClientMainWindow* mInstance;
     Ui::ServerPanelClientMainWindow*    mUserInterface;
+// Protected Slots
+protected slots:
+    void     SignOutButtonClicked                  ();
 };
 
 #endif
