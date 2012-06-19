@@ -44,6 +44,8 @@ protected:
     // Properties
     static ServerPanelClientMainWindow* mInstance;
     Ui::ServerPanelClientMainWindow*    mUserInterface;
+    // Methods
+    void     SetupGraphics                         ();
 // Protected Slots
 protected slots:
     void     SignOutButtonClicked                  ();

@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>ServerPanel.ini</file>
+    </qresource>
+</RCC>

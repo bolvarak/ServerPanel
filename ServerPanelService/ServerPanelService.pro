@@ -6,7 +6,7 @@
 
 QT          += core network sql
 TARGET       = ServerPanelService
-CONFIG      += console app_bundle
+CONFIG      += console app_bundle release
 TEMPLATE     = app
 SOURCES     += main.cpp \
     Json.cpp \
@@ -25,3 +25,6 @@ OTHER_FILES += \
     Access.log \
     ServerPanel.ini \
     Access.log
+
+RESOURCES += \
+    ServerPanelService.qrc

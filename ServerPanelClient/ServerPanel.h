@@ -11,7 +11,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <QObject>
-#include <QtCrypto>
+#include <QtCrypto/QtCrypto>
 #include <QSettings>
 #include <QtSql>
 #include <QtNetwork/QtNetwork>
@@ -45,12 +45,14 @@ public:
     // Destructor
     ~ServerPanel();
     // Methods
-    bool           AuthenticateUser  (SpAccount spAccount);
-    QVariantMap    DecryptEntity     (QByteArray qbaKey, QByteArray qbaVector, QByteArray qbaHash);
-    bool           DeleteLocalServer (QString sAddress);
-    int            DispatchMessageBox(QString sMessage, ServerPanelMessage spmType);
-    QVariantMap    EncryptEntity     (QString sData);
+    bool           AuthenticateUser  (SpAccount      spAccount);
+    QVariantMap    DecryptEntity     (QByteArray     qbaKey,   QByteArray         qbaVector, QByteArray qbaHash);
+    bool           DeleteLocalServer (QString        sAddress);
+    int            DispatchMessageBox(QString        sMessage, ServerPanelMessage spmType);
+    QVariantMap    EncryptEntity     (QString        sData);
     bool           IsOk              ();
+    QVariantList   LoadDnsRecords    (SpDnsRecord    spDnsRecord);
+    QVariantList   LoadDomains       (SpDomain       spDomain);
     bool           LoadLocalAccount  (SpLocalAccount slaAccount);
     bool           LoadLocalServer   (SpLocalServer  slsServer);
     bool           SaveLocalAccount  (SpLocalAccount slaAccount);
@@ -65,7 +67,8 @@ public:
 // Protected
 protected:
     // Properties
-    QTcpSocket          mClient;
+    quint16             mBlockSize;
+    QTcpSocket*         mClient;
     QSettings*          mConfig;
     SpLocalAccount      mCurrentAccount;
     SpLocalServer       mCurrentServer;
@@ -73,6 +76,7 @@ protected:
     QSqlDatabase        mDbc;
     QString             mError;
     static ServerPanel* mInstance;
+    QByteArray          mJsonResponse;
     QVariantList        mLocalServers;
     bool                mOk;
     QVariantMap         mRequest;
@@ -81,8 +85,9 @@ protected:
     bool           MakeRequest       (QString sMethod, QVariantMap qvmRequestData);
 // Protected Slots
 protected slots:
-    void           SocketError       (QAbstractSocket::SocketError qseError);
+    void           ProcessResponse   ();
     void           ReadResponse      ();
+    void           SocketError       (QAbstractSocket::SocketError qseError);
     void           TransferData      ();
 };
 

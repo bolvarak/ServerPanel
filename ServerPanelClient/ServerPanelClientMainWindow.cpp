@@ -34,6 +34,15 @@ ServerPanelClientMainWindow::ServerPanelClientMainWindow(QWidget* cParent) : QMa
     this->mUserInterface->setupUi(this);
     // Set the default display settings
     this->mUserInterface->btnAccountSettings->setText(ServerPanel::Instance()->GetAccount().getProperty("sUsername").toString());
+    // Setup the graphics
+    this->SetupGraphics();
+    // Create a domain structure
+    SpDnsRecord spDnsRecord;
+    // Set the account ID
+    spDnsRecord.saveProperty("iAccountId", ServerPanel::Instance()->GetAccount().getProperty("iAccountId").toInt());
+    QVariantList qvlDnsRecords = ServerPanel::Instance()->LoadDnsRecords(spDnsRecord);
+    // Dispatch a message
+    ServerPanel::Instance()->DispatchMessageBox(QString(qvlDnsRecords.size()), Notification);
     // Setup the connectors
     this->connect(this->mUserInterface->btnSignOut, SIGNAL(clicked()), this, SLOT(SignOutButtonClicked()));
 }
@@ -47,6 +56,14 @@ ServerPanelClientMainWindow::~ServerPanelClientMainWindow() {
     delete this->mUserInterface;
     // Delete the instance
     delete this->mInstance;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// Protected Methods ////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+void ServerPanelClientMainWindow::SetupGraphics() {
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////

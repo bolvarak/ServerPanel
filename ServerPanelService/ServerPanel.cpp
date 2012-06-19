@@ -32,7 +32,7 @@ ServerPanel* ServerPanel::Instance() {
 
 ServerPanel::ServerPanel(QObject* cParent) : QObject(cParent) {
     // Load the configuration
-    this->mConfig = new QSettings("/opt/serverpanel/ServerPanel/ServerPanelService/ServerPanel.ini", QSettings::IniFormat);
+    this->mConfig = new QSettings(":/ServerPanel.ini", QSettings::IniFormat);
     // Setup the databae
     this->mDbc    = QSqlDatabase::addDatabase(this->mConfig->value("databaseSettings/driver").toString());
     // Set the host

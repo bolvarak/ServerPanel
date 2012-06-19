@@ -34,19 +34,18 @@ ServerPanel::ServerPanel(QObject* cParent) : QObject(cParent), mOk(true) {
     // Setup the databae
     this->mDbc    = QSqlDatabase::addDatabase("QSQLITE");
     // Set the database
-    this->mDbc.setDatabaseName("/home/tbrown/Documents/ServerPanel/ServerPanelClient/ServerPanelClient.sp");
-    // We're done with the database configuration
+    this->mDbc.setDatabaseName("/Users/trbrown/Documents/ServerPanel/ServerPanelClient/ServerPanelClient.sp");
     // Try to open the database
     if (!this->mDbc.open()) {
-        // Setup the error placeholder
-        QByteArray qbaError;
-        // Add the error
-        qbaError.append(this->mDbc.lastError().text());
+        // Dispatch a message
+        this->DispatchMessageBox(this->mDbc.lastError().text(), Error);
     }
+    // Create the client
+    this->mClient = new QTcpSocket(this);
     // Setup the connectors
-    connect(&this->mClient, SIGNAL(connected()),                         this, SLOT(TransferData()));
-    connect(&this->mClient, SIGNAL(readyRead()),                         this, SLOT(ReadResponse()));
-    connect(&this->mClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(SocketError(QAbstractSocket::SocketError)));
+    connect(this->mClient, SIGNAL(connected()),                         this, SLOT(TransferData()));
+    connect(this->mClient, SIGNAL(readyRead()),                         this, SLOT(ReadResponse()));
+    connect(this->mClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(SocketError(QAbstractSocket::SocketError)));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -59,7 +58,7 @@ ServerPanel::~ServerPanel() {
     // Close the database connection
     this->mDbc.close();
     // Close the client
-    this->mClient.close();
+    this->mClient->close();
     // Delete the instance
     delete this->mInstance;
 }
@@ -252,6 +251,44 @@ QVariantMap ServerPanel::EncryptEntity(QString sData) {
 bool ServerPanel::IsOk() {
     // Return the ok status
     return this->mOk;
+}
+
+/**
+ * @paragraph This method makes the call to the server to load DNS records
+ * @brief ServerPanel::LoadDnsRecords
+ * @param SpDnsRecord spDnsRecord
+ * @return QVariantList
+ */
+QVariantList ServerPanel::LoadDnsRecords(SpDnsRecord spDnsRecord) {
+    // Try to make the call to the server
+    if (this->MakeRequest("LoadDnsRecords", spDnsRecord.toMap())) {
+        // Check for success
+        if (this->mResponse["bSuccess"].toBool()) {
+            // We're done
+            return this->mResponse["aDnsRecords"].toList();
+        }
+    }
+    // We're done
+    return QVariantList();
+}
+
+/**
+ * @paragraph This method makes the call to the server to load domains
+ * @brief ServerPanel::LoadDomains
+ * @param SpDomain spDomain
+ * @return QVariantList
+ */
+QVariantList ServerPanel::LoadDomains(SpDomain spDomain) {
+    // Try to make the call to the server
+    if (this->MakeRequest("LoadDomains", spDomain.toMap())) {
+        // Check for success
+        if (this->mResponse["bSuccess"].toBool()) {
+            // We're done
+            return this->mResponse["aDomains"].toList();
+        }
+    }
+    // We're done
+    return QVariantList();
 }
 
 /**
@@ -474,6 +511,8 @@ bool ServerPanel::SaveLocalServer(SpLocalServer slsServer) {
  * @return bool
  */
 bool ServerPanel::MakeRequest(QString sMethod, QVariantMap qvmRequestData) {
+    // Reset the block size
+    this->mBlockSize = 0;
     // Append the method to the map
     qvmRequestData.insert("sMethod", sMethod);
     // Set the request map
@@ -492,8 +531,13 @@ bool ServerPanel::MakeRequest(QString sMethod, QVariantMap qvmRequestData) {
         // We're done
         return false;
     }
-    // Connect to the server
-    this->mClient.connectToHost(this->mCurrentServer.getProperty("sAddress").toString(), this->mCurrentServer.getProperty("iPort").toInt());
+    // Abort the current connection
+    this->mClient->abort();
+    // Check for open connections
+    if (!this->mClient->isOpen()) {
+        // Create a new connection
+        this->mClient->connectToHost(this->mCurrentServer.getProperty("sAddress").toString(), this->mCurrentServer.getProperty("iPort").toInt());
+    }
     // We're done
     return true;
 }
@@ -501,6 +545,82 @@ bool ServerPanel::MakeRequest(QString sMethod, QVariantMap qvmRequestData) {
 ///////////////////////////////////////////////////////////////////////////////
 /// Protected Slots //////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @paragraph This method slot processes the response once all the data has been recieved
+ * @brief ServerPanel::ProcessResponse
+ * @return void
+ */
+void ServerPanel::ProcessResponse() {
+    // Set a conversion boolean
+    bool bDeserialized;
+    // Close the client
+    this->mClient->disconnectFromHost();
+    // Send the response to the debugger
+    qDebug() << this->mJsonResponse;
+    // Decode the response
+    this->mResponse = QtJson::Json::parse(QString(this->mJsonResponse), bDeserialized).toMap();
+    // Make sure the JSON was deserialized
+    if (!bDeserialized) {
+        // Dispatch the message
+        this->DispatchMessageBox("Could not decode the server response.", Error);
+    }
+    // Check for an error
+    if (!this->mResponse["bSuccess"].toBool()) {
+        // Set the error into the system
+        this->mError = this->mResponse["sError"].toString();
+        // Dispatch the message
+        this->DispatchMessageBox(this->mError, Error);
+    }
+    // Set the okay status
+    this->mOk = this->mResponse["bSuccess"].toBool();
+    // Clear the json
+    this->mJsonResponse.clear();
+}
+
+/**
+ * @paragraph This method reads the socket response
+ * @brief ServerPanel::ReadResponse
+ * @return void
+ */
+void ServerPanel::ReadResponse() {
+    // Create the data stream
+    QDataStream qdsServerPanel(this->mClient);
+    // Set the version
+    qdsServerPanel.setVersion(QDataStream::Qt_4_8);
+    // Check the block size
+    if (this->mBlockSize == 0) {
+        // Make sure we have a valid amount of daya
+        if (this->mClient->bytesAvailable() < (int) sizeof(quint16)) {
+            // We're done
+            return;
+        }
+        // Read the data
+        qdsServerPanel >> this->mBlockSize;
+    }
+    // See if we have read all of the data
+    if (this->mClient->bytesAvailable() < this->mBlockSize) {
+        this->DispatchMessageBox("All bytes read", Notification);
+        // We're done
+        return;
+    }
+    // Set a response placeholder
+    QString sJson;
+    // Read the stream
+    qdsServerPanel >> sJson;
+    // Check for data
+    if (sJson == this->mJsonResponse) {
+        this->DispatchMessageBox("Re-running ReadyRead()", Notification);
+        // Rerun the read
+        QTimer::singleShot(0, this, SLOT(ReadResponse()));
+        // We're done
+        return;
+    }
+    this->DispatchMessageBox(sJson, Notification);
+    // Append the response
+    this->mJsonResponse = sJson.toLatin1();
+    qDebug() << this->mJsonResponse;
+}
 
 /**
  * @paragraph This method hadnles the dispatching socket errors
@@ -531,48 +651,8 @@ void ServerPanel::SocketError(QAbstractSocket::SocketError qseError) {
         // Everything else
         default:
             // Dispatch the message
-            this->DispatchMessageBox(this->mClient.errorString(), Error);
+            this->DispatchMessageBox(this->mClient->errorString(), Error);
     }
-}
-
-/**
- * @paragraph This method reads the socket response
- * @brief ServerPanel::ReadResponse
- * @return void
- */
-void ServerPanel::ReadResponse() {
-    // Setup a placeholder for the response data
-    QByteArray qbaResponse;
-    // Set a conversion boolean
-    bool bDeserialized;
-    // Wait for the bytes to be written before reading
-    if (this->mClient.bytesAvailable()) {
-        // Read the client data into the buffer
-        qbaResponse.append(this->mClient.readAll());
-    }
-    // Check to see if we have all of the data
-    if (!this->mClient.bytesAvailable()) {
-        // Decode the response
-        this->mResponse         = QtJson::Json::parse(QString(qbaResponse), bDeserialized).toMap();
-        // Make sure the JSON was deserialized
-        if (!bDeserialized) {
-            // Dispatch the message
-            this->DispatchMessageBox("Could not decode the server response.", Error);
-        }
-        // Check for an error
-        if (!this->mResponse["bSuccess"].toBool()) {
-            // Set the error into the system
-            this->mError = this->mResponse["sError"].toString();
-            // Dispatch the message
-            this->DispatchMessageBox(this->mError, Error);
-        }
-        // Set the okay status
-        this->mOk = this->mResponse["bSuccess"].toBool();
-        // Close the connection
-        this->mClient.close();
-    }
-    // We're done
-    return;
 }
 
 /**
@@ -584,7 +664,7 @@ void ServerPanel::TransferData() {
     // Convert the map to JSON
     QByteArray qbaRequest = QtJson::Json::serialize(this->mRequest);
     // Write the data to the client
-    this->mClient.write(qbaRequest);
+    this->mClient->write(qbaRequest);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

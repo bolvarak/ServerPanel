@@ -82,6 +82,11 @@ QByteArray ServerPanelService::HandleRequest(QString sJson) {
 /// Slots ////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
+/**
+ * @paragraph This method slot accepts new connections
+ * @brief ServerPanel::acceptConnection()
+ * @return void
+ */
 void ServerPanelService::acceptConnection() {
     // Setup the client
     this->mClient = this->mServer.nextPendingConnection();
@@ -89,14 +94,32 @@ void ServerPanelService::acceptConnection() {
     connect(this->mClient, SIGNAL(readyRead()), this, SLOT(startRead()));
 }
 
+/**
+ * @paragraph This method slot handles the reading and responding of the server
+ * @brief ServerPanel::startRead()
+ * @return void
+ */
 void ServerPanelService::startRead() {
+    // Create an output block
+    QByteArray qbaOutput;
     // Read the client data into the buffer
     QByteArray qbaClientData = this->mClient->readAll();
     // Handle the request
     QByteArray qbaClientResponse = ServerPanel::Instance()->HandleRequest(QString(qbaClientData));
-    // Append a new line
-    qbaClientResponse.append('\n');
-    this->mClient->write(qbaClientResponse);
-    // Close the client
-    this->mClient->waitForDisconnected();
+    // Create a data stream
+    QDataStream qdsResponse(&qbaOutput, QIODevice::WriteOnly);
+    // Set the version
+    qdsResponse.setVersion(QDataStream::Qt_4_8);
+    // Send a 0 response
+    qdsResponse << (quint16) 0;
+    // Send the JSON response
+    qdsResponse << qbaClientResponse;
+    // Reset the response
+    qdsResponse.device()->seek(0);
+    // Send the block size
+    qdsResponse << (quint16) (qbaOutput.size() - sizeof(quint16));
+    // Write the response
+    this->mClient->write(qbaOutput);
+    // Disconnect
+    this->mClient->disconnectFromHost();
 }
