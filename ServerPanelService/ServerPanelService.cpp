@@ -108,8 +108,6 @@ void ServerPanelService::startRead() {
     QByteArray qbaClientResponse = ServerPanel::Instance()->HandleRequest(QString(qbaClientData));
     // Create a data stream
     QDataStream qdsResponse(&qbaOutput, QIODevice::WriteOnly);
-    // Set the version
-    qdsResponse.setVersion(QDataStream::Qt_4_8);
     // Send a 0 response
     qdsResponse << (quint16) 0;
     // Send the JSON response
