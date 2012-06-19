@@ -111,7 +111,7 @@ void ServerPanelService::startRead() {
     // Send a 0 response
     qdsResponse << (quint16) 0;
     // Send the JSON response
-    qdsResponse << qbaClientResponse;
+    qdsResponse << QString(qbaClientResponse);
     // Reset the response
     qdsResponse.device()->seek(0);
     // Send the block size
