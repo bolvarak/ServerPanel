@@ -542,24 +542,16 @@ bool ServerPanel::MakeRequest(QString sMethod, QVariantMap qvmRequestData) {
     return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/// Protected Slots //////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-
 /**
- * @paragraph This method slot processes the response once all the data has been recieved
- * @brief ServerPanel::ProcessResponse
+ * @paragraph This method processes the JSON response from the server
+ * @brief ServerPanel::ProcessResponse()
  * @return void
  */
 void ServerPanel::ProcessResponse() {
     // Set a conversion boolean
     bool bDeserialized;
-    // Close the client
-    this->mClient->disconnectFromHost();
-    // Send the response to the debugger
-    qDebug() << this->mJsonResponse;
     // Decode the response
-    this->mResponse = QtJson::Json::parse(QString(this->mJsonResponse), bDeserialized).toMap();
+    this->mResponse = QtJson::Json::parse(this->mJsonResponse, bDeserialized).toMap();
     // Make sure the JSON was deserialized
     if (!bDeserialized) {
         // Dispatch the message
@@ -574,9 +566,11 @@ void ServerPanel::ProcessResponse() {
     }
     // Set the okay status
     this->mOk = this->mResponse["bSuccess"].toBool();
-    // Clear the json
-    this->mJsonResponse.clear();
 }
+
+///////////////////////////////////////////////////////////////////////////////
+/// Protected Slots //////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
 /**
  * @paragraph This method reads the socket response
@@ -586,8 +580,6 @@ void ServerPanel::ProcessResponse() {
 void ServerPanel::ReadResponse() {
     // Create the data stream
     QDataStream qdsServerPanel(this->mClient);
-    // Set the version
-    qdsServerPanel.setVersion(QDataStream::Qt_4_8);
     // Check the block size
     if (this->mBlockSize == 0) {
         // Make sure we have a valid amount of daya
@@ -600,7 +592,6 @@ void ServerPanel::ReadResponse() {
     }
     // See if we have read all of the data
     if (this->mClient->bytesAvailable() < this->mBlockSize) {
-        this->DispatchMessageBox("All bytes read", Notification);
         // We're done
         return;
     }
@@ -616,10 +607,10 @@ void ServerPanel::ReadResponse() {
         // We're done
         return;
     }
-    this->DispatchMessageBox(sJson, Notification);
-    // Append the response
-    this->mJsonResponse = sJson.toLatin1();
-    qDebug() << this->mJsonResponse;
+    // Set the response
+    this->mJsonResponse = sJson;
+    // Process the response
+    this->ProcessResponse();
 }
 
 /**

@@ -76,16 +76,16 @@ protected:
     QSqlDatabase        mDbc;
     QString             mError;
     static ServerPanel* mInstance;
-    QByteArray          mJsonResponse;
+    QString             mJsonResponse;
     QVariantList        mLocalServers;
     bool                mOk;
     QVariantMap         mRequest;
     QVariantMap         mResponse;
     // Methods
     bool           MakeRequest       (QString sMethod, QVariantMap qvmRequestData);
+    void           ProcessResponse   ();
 // Protected Slots
 protected slots:
-    void           ProcessResponse   ();
     void           ReadResponse      ();
     void           SocketError       (QAbstractSocket::SocketError qseError);
     void           TransferData      ();
