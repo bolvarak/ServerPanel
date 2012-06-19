@@ -48,6 +48,7 @@ protected:
     void     SetupGraphics                         ();
 // Protected Slots
 protected slots:
+    void     GetDnsRecordsButtonClicked            ();
     void     SignOutButtonClicked                  ();
 };
 

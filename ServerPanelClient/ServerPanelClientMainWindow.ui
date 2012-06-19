@@ -102,9 +102,9 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>40</y>
+      <y>70</y>
       <width>981</width>
-      <height>651</height>
+      <height>621</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -125,7 +125,7 @@
        <x>0</x>
        <y>0</y>
        <width>981</width>
-       <height>447</height>
+       <height>417</height>
       </rect>
      </property>
      <attribute name="icon">
@@ -135,6 +135,19 @@
      <attribute name="label">
       <string>Dashboard</string>
      </attribute>
+     <widget class="QPushButton" name="btnGetDnsRecordCount">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>114</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>PushButton</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="pageDomains">
      <property name="geometry">
@@ -142,7 +155,7 @@
        <x>0</x>
        <y>0</y>
        <width>981</width>
-       <height>447</height>
+       <height>417</height>
       </rect>
      </property>
      <attribute name="icon">
@@ -154,6 +167,14 @@
      </attribute>
     </widget>
     <widget class="QWidget" name="pageWebsites">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>981</width>
+       <height>417</height>
+      </rect>
+     </property>
      <attribute name="icon">
       <iconset resource="ServerPanelClientResources.qrc">
        <normaloff>:/icons/apps/apache.jpg</normaloff>:/icons/apps/apache.jpg</iconset>
@@ -163,6 +184,14 @@
      </attribute>
     </widget>
     <widget class="QWidget" name="pageMySQL">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>981</width>
+       <height>417</height>
+      </rect>
+     </property>
      <attribute name="icon">
       <iconset resource="ServerPanelClientResources.qrc">
        <normaloff>:/icons/apps/mysql.jpg</normaloff>:/icons/apps/mysql.jpg</iconset>
@@ -172,6 +201,14 @@
      </attribute>
     </widget>
     <widget class="QWidget" name="pagePostgreSQL">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>981</width>
+       <height>417</height>
+      </rect>
+     </property>
      <attribute name="icon">
       <iconset resource="ServerPanelClientResources.qrc">
        <normaloff>:/icons/apps/postgresql.png</normaloff>:/icons/apps/postgresql.png</iconset>
@@ -181,6 +218,14 @@
      </attribute>
     </widget>
     <widget class="QWidget" name="pageEmail">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>981</width>
+       <height>417</height>
+      </rect>
+     </property>
      <attribute name="icon">
       <iconset resource="ServerPanelClientResources.qrc">
        <normaloff>:/icons/apps/thunderbird.png</normaloff>:/icons/apps/thunderbird.png</iconset>

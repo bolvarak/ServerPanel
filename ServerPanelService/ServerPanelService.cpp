@@ -119,5 +119,5 @@ void ServerPanelService::startRead() {
     // Write the response
     this->mClient->write(qbaOutput);
     // Disconnect
-    this->mClient->disconnectFromHost();
+    this->mClient->waitForDisconnected();
 }

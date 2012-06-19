@@ -548,6 +548,8 @@ bool ServerPanel::MakeRequest(QString sMethod, QVariantMap qvmRequestData) {
  * @return void
  */
 void ServerPanel::ProcessResponse() {
+    // Disconnect the client
+    this->mClient->disconnectFromHost();
     // Set a conversion boolean
     bool bDeserialized;
     // Decode the response

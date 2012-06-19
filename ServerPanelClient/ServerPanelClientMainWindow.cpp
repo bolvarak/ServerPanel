@@ -36,15 +36,9 @@ ServerPanelClientMainWindow::ServerPanelClientMainWindow(QWidget* cParent) : QMa
     this->mUserInterface->btnAccountSettings->setText(ServerPanel::Instance()->GetAccount().getProperty("sUsername").toString());
     // Setup the graphics
     this->SetupGraphics();
-    // Create a domain structure
-    SpDnsRecord spDnsRecord;
-    // Set the account ID
-    spDnsRecord.saveProperty("iAccountId", ServerPanel::Instance()->GetAccount().getProperty("iAccountId").toInt());
-    QVariantList qvlDnsRecords = ServerPanel::Instance()->LoadDnsRecords(spDnsRecord);
-    // Dispatch a message
-    ServerPanel::Instance()->DispatchMessageBox(QString(qvlDnsRecords.size()), Notification);
     // Setup the connectors
     this->connect(this->mUserInterface->btnSignOut, SIGNAL(clicked()), this, SLOT(SignOutButtonClicked()));
+    this->connect(this->mUserInterface->btnGetDnsRecordCount, SIGNAL(clicked()), this, SLOT(GetDnsRecordsButtonClicked()));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -69,6 +63,16 @@ void ServerPanelClientMainWindow::SetupGraphics() {
 ///////////////////////////////////////////////////////////////////////////////
 /// Protected Slots //////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
+
+void ServerPanelClientMainWindow::GetDnsRecordsButtonClicked() {
+    // Create a domain structure
+    SpDnsRecord spDnsRecord;
+    // Set the account ID
+    spDnsRecord.saveProperty("iAccountId", ServerPanel::Instance()->GetAccount().getProperty("iAccountId").toInt());
+    QVariantList qvlDnsRecords = ServerPanel::Instance()->LoadDnsRecords(spDnsRecord);
+    // Dispatch a message
+    ServerPanel::Instance()->DispatchMessageBox(QString(qvlDnsRecords.size()), Notification);
+}
 
 /**
  * @paragraph This handles the logout routine
