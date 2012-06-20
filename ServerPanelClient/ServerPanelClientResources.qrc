@@ -1189,8 +1189,8 @@
         <file>icons/status/weather-showers.png</file>
         <file>icons/status/weather-snow.png</file>
         <file>icons/status/weather-storm.png</file>
-        <file>icons/apps/apache.jpg</file>
-        <file>icons/apps/mysql.jpg</file>
+	<file>icons/apps/apache.png</file>
+	<file>icons/apps/mysql.png</file>
         <file>icons/apps/postgresql.png</file>
     </qresource>
 </RCC>

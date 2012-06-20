@@ -71,7 +71,7 @@ void ServerPanelClientMainWindow::GetDnsRecordsButtonClicked() {
     spDnsRecord.saveProperty("iAccountId", ServerPanel::Instance()->GetAccount().getProperty("iAccountId").toInt());
     QVariantList qvlDnsRecords = ServerPanel::Instance()->LoadDnsRecords(spDnsRecord);
     // Dispatch a message
-    ServerPanel::Instance()->DispatchMessageBox(QString(qvlDnsRecords.size()), Notification);
+    ServerPanel::Instance()->DispatchMessageBox(QString(qvlDnsRecords.count()), Notification);
 }
 
 /**

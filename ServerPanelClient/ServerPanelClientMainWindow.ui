@@ -117,15 +117,15 @@
      <number>3</number>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="pageDashboard">
      <property name="geometry">
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>981</width>
-       <height>417</height>
+       <width>971</width>
+       <height>443</height>
       </rect>
      </property>
      <attribute name="icon">
@@ -154,8 +154,8 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>981</width>
-       <height>417</height>
+       <width>971</width>
+       <height>443</height>
       </rect>
      </property>
      <attribute name="icon">
@@ -171,13 +171,13 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>981</width>
-       <height>417</height>
+       <width>971</width>
+       <height>443</height>
       </rect>
      </property>
      <attribute name="icon">
-      <iconset resource="ServerPanelClientResources.qrc">
-       <normaloff>:/icons/apps/apache.jpg</normaloff>:/icons/apps/apache.jpg</iconset>
+      <iconset>
+       <normaloff>:/icons/apps/apache.png</normaloff>:/icons/apps/apache.png</iconset>
      </attribute>
      <attribute name="label">
       <string>Websites</string>
@@ -188,13 +188,13 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>981</width>
-       <height>417</height>
+       <width>971</width>
+       <height>443</height>
       </rect>
      </property>
      <attribute name="icon">
-      <iconset resource="ServerPanelClientResources.qrc">
-       <normaloff>:/icons/apps/mysql.jpg</normaloff>:/icons/apps/mysql.jpg</iconset>
+      <iconset>
+       <normaloff>:/icons/apps/mysql.png</normaloff>:/icons/apps/mysql.png</iconset>
      </attribute>
      <attribute name="label">
       <string>MySQL Databases</string>
@@ -205,8 +205,8 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>981</width>
-       <height>417</height>
+       <width>971</width>
+       <height>443</height>
       </rect>
      </property>
      <attribute name="icon">
@@ -222,8 +222,8 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>981</width>
-       <height>417</height>
+       <width>971</width>
+       <height>443</height>
       </rect>
      </property>
      <attribute name="icon">
@@ -242,7 +242,7 @@
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

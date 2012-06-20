@@ -88,6 +88,8 @@ QByteArray ServerPanelService::HandleRequest(QString sJson) {
  * @return void
  */
 void ServerPanelService::acceptConnection() {
+    // Reset the block size
+    this->mBlockSize = 0;
     // Setup the client
     this->mClient = this->mServer.nextPendingConnection();
     // Setup the client readyRead() event handler
@@ -100,12 +102,38 @@ void ServerPanelService::acceptConnection() {
  * @return void
  */
 void ServerPanelService::startRead() {
-    // Create an output block
+    // Create the data stream
+    QDataStream qdsServerPanel(this->mClient);
+    // Check the block size
+    if (this->mBlockSize == 0) {
+        // Make sure we have a valid amount of daya
+        if (this->mClient->bytesAvailable() < (int) sizeof(quint16)) {
+            // We're done
+            return;
+        }
+        // Read the data
+        qdsServerPanel >> this->mBlockSize;
+    }
+    // See if we have read all of the data
+    if (this->mClient->bytesAvailable() < this->mBlockSize) {
+        // We're done
+        return;
+    }
+    // Set a response placeholder
+    QString sJson;
+    // Read the stream
+    qdsServerPanel >> sJson;
+    // Check for data
+    if (sJson.isEmpty()) {
+        // Rerun the read
+        QTimer::singleShot(0, this, SLOT(startRead()));
+        // We're done
+        return;
+    }
+    // Create an empty byte array
     QByteArray qbaOutput;
-    // Read the client data into the buffer
-    QByteArray qbaClientData = this->mClient->readAll();
     // Handle the request
-    QByteArray qbaClientResponse = ServerPanel::Instance()->HandleRequest(QString(qbaClientData));
+    QByteArray qbaClientResponse = ServerPanel::Instance()->HandleRequest(sJson);
     // Create a data stream
     QDataStream qdsResponse(&qbaOutput, QIODevice::WriteOnly);
     // Send a 0 response

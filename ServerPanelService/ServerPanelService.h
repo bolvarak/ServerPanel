@@ -34,9 +34,10 @@ public:
 // Protected
 protected :
     // Properties
-    QTcpSocket*                mClient;   // Client Socket
-    static ServerPanelService* mInstance; // Singleton Instance
-    QTcpServer                 mServer;   // Socket Server
+    quint16                    mBlockSize; // Block Size
+    QTcpSocket*                mClient;    // Client Socket
+    static ServerPanelService* mInstance;  // Singleton Instance
+    QTcpServer                 mServer;    // Socket Server
     // Constructor
     ServerPanelService      (QObject* cParent = 0);
     // Methods

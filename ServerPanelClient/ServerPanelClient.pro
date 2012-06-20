@@ -4,14 +4,24 @@
 #
 #-------------------------------------------------
 
-QT               += core gui sql network webkit
+QT               += core gui sql network
 TARGET            = ServerPanelClient
 TEMPLATE          = app
-CONFIG           += crypto
-unix:INCLUDEPATH += $$quota(qca-2.0.3/include/QtCrypto)
-unix:LIBS        += -L$$quota(qca-2.0.3/lib) -lqca2
-macx:INCLUDEPATH += /opt/local/include/
-macx:LIBS        += -L/opt/local/lib -lqca
+CONFIG           += crypto release
+INCLUDEPATH      += $$quote(qca-2.0.3/include/QtCrypto)
+
+unix {
+    LIBS += -L$$quote(qca-2.0.3/lib) -lqca
+}
+
+macx {
+    LIBS += -L$$quote(qca-2.0.3/lib -lqca
+}
+
+win32 {
+    LIBS += -L$$quote(qca-2.0.3/lib) -lqca2
+}
+
 SOURCES          += \
     main.cpp\
     ServerPanelClientLoginWindow.cpp \

@@ -34,7 +34,7 @@ ServerPanel::ServerPanel(QObject* cParent) : QObject(cParent), mOk(true) {
     // Setup the databae
     this->mDbc    = QSqlDatabase::addDatabase("QSQLITE");
     // Set the database
-    this->mDbc.setDatabaseName("/Users/trbrown/Documents/ServerPanel/ServerPanelClient/ServerPanelClient.sp");
+    this->mDbc.setDatabaseName("/home/tbrown/Documents/ServerPanel/ServerPanelClient/ServerPanelClient.sp");
     // Try to open the database
     if (!this->mDbc.open()) {
         // Dispatch a message
@@ -548,8 +548,7 @@ bool ServerPanel::MakeRequest(QString sMethod, QVariantMap qvmRequestData) {
  * @return void
  */
 void ServerPanel::ProcessResponse() {
-    // Disconnect the client
-    this->mClient->disconnectFromHost();
+    qDebug() << this->mJsonResponse;
     // Set a conversion boolean
     bool bDeserialized;
     // Decode the response
@@ -603,7 +602,6 @@ void ServerPanel::ReadResponse() {
     qdsServerPanel >> sJson;
     // Check for data
     if (sJson == this->mJsonResponse) {
-        this->DispatchMessageBox("Re-running ReadyRead()", Notification);
         // Rerun the read
         QTimer::singleShot(0, this, SLOT(ReadResponse()));
         // We're done
@@ -656,8 +654,20 @@ void ServerPanel::SocketError(QAbstractSocket::SocketError qseError) {
 void ServerPanel::TransferData() {
     // Convert the map to JSON
     QByteArray qbaRequest = QtJson::Json::serialize(this->mRequest);
-    // Write the data to the client
-    this->mClient->write(qbaRequest);
+    // Create an empty byte array
+    QByteArray qbaOutput;
+    // Create a data stream
+    QDataStream qdsResponse(&qbaOutput, QIODevice::WriteOnly);
+    // Send a 0 response
+    qdsResponse << (quint16) 0;
+    // Send the JSON response
+    qdsResponse << QString(qbaRequest);
+    // Reset the response
+    qdsResponse.device()->seek(0);
+    // Send the block size
+    qdsResponse << (quint16) (qbaOutput.size() - sizeof(quint16));
+    // Write the response
+    this->mClient->write(qbaOutput);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
