@@ -38,7 +38,7 @@ ServerPanelClientMainWindow::ServerPanelClientMainWindow(QWidget* cParent) : QMa
     this->SetupGraphics();
     // Setup the connectors
     this->connect(this->mUserInterface->btnSignOut, SIGNAL(clicked()), this, SLOT(SignOutButtonClicked()));
-    this->connect(this->mUserInterface->btnGetDnsRecordCount, SIGNAL(clicked()), this, SLOT(GetDnsRecordsButtonClicked()));
+    QMainWindow::connect(this->mUserInterface->btnGetDnsRecordCount, SIGNAL(clicked()), this, SLOT(GetDnsRecordsButtonClicked()));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -70,8 +70,8 @@ void ServerPanelClientMainWindow::GetDnsRecordsButtonClicked() {
     // Set the account ID
     spDnsRecord.saveProperty("iAccountId", ServerPanel::Instance()->GetAccount().getProperty("iAccountId").toInt());
     QVariantList qvlDnsRecords = ServerPanel::Instance()->LoadDnsRecords(spDnsRecord);
-    // Dispatch a message
-    ServerPanel::Instance()->DispatchMessageBox(QString(qvlDnsRecords.count()), Notification);
+    ServerPanel::Instance()->DispatchMessageBox(qvlDnsRecords.at(0).toMap()["sHostName"].toString(), Notification);
+
 }
 
 /**

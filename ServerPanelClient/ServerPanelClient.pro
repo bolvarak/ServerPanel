@@ -7,7 +7,7 @@
 QT               += core gui sql network
 TARGET            = ServerPanelClient
 TEMPLATE          = app
-CONFIG           += crypto release
+CONFIG           += crypto
 INCLUDEPATH      += $$quote(qca-2.0.3/include/QtCrypto)
 
 unix {
@@ -15,7 +15,7 @@ unix {
 }
 
 macx {
-    LIBS += -L$$quote(qca-2.0.3/lib -lqca
+    LIBS += -L$$quote(qca-2.0.3/lib) -lqca
 }
 
 win32 {

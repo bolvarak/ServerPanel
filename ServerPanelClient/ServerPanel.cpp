@@ -542,6 +542,10 @@ bool ServerPanel::MakeRequest(QString sMethod, QVariantMap qvmRequestData) {
     return true;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+/// Protected Slots //////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
 /**
  * @paragraph This method processes the JSON response from the server
  * @brief ServerPanel::ProcessResponse()
@@ -567,11 +571,9 @@ void ServerPanel::ProcessResponse() {
     }
     // Set the okay status
     this->mOk = this->mResponse["bSuccess"].toBool();
+    // We're done
+    return;
 }
-
-///////////////////////////////////////////////////////////////////////////////
-/// Protected Slots //////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
 
 /**
  * @paragraph This method reads the socket response
@@ -609,8 +611,8 @@ void ServerPanel::ReadResponse() {
     }
     // Set the response
     this->mJsonResponse = sJson;
-    // Process the response
-    this->ProcessResponse();
+    // Wait for 100 milliseconds
+    QTimer::singleShot(100, this, SLOT(ProcessResponse()));
 }
 
 /**

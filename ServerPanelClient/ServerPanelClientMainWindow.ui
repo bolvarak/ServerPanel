@@ -101,7 +101,7 @@
    <widget class="QToolBox" name="tbxDashboard">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>20</x>
       <y>70</y>
       <width>981</width>
       <height>621</height>
@@ -117,7 +117,7 @@
      <number>3</number>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="pageDashboard">
      <property name="geometry">
@@ -140,12 +140,12 @@
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>114</width>
+        <width>201</width>
         <height>32</height>
        </rect>
       </property>
       <property name="text">
-       <string>PushButton</string>
+       <string>Load Dns Records</string>
       </property>
      </widget>
     </widget>
@@ -176,7 +176,7 @@
       </rect>
      </property>
      <attribute name="icon">
-      <iconset>
+      <iconset resource="ServerPanelClientResources.qrc">
        <normaloff>:/icons/apps/apache.png</normaloff>:/icons/apps/apache.png</iconset>
      </attribute>
      <attribute name="label">
@@ -193,7 +193,7 @@
       </rect>
      </property>
      <attribute name="icon">
-      <iconset>
+      <iconset resource="ServerPanelClientResources.qrc">
        <normaloff>:/icons/apps/mysql.png</normaloff>:/icons/apps/mysql.png</iconset>
      </attribute>
      <attribute name="label">
