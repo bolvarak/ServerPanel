@@ -3,7 +3,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <ServerPanelClientLoginWindow.h>
-#include <ui_ServerPanelClientLoginWindow.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Globals //////////////////////////////////////////////////////////////////
@@ -29,32 +28,27 @@ ServerPanelClientLoginWindow* ServerPanelClientLoginWindow::Instance(QWidget *cP
 /// Constructor //////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-ServerPanelClientLoginWindow::ServerPanelClientLoginWindow(QWidget* cParent) : QMainWindow(cParent), mUserInterface(new Ui::ServerPanelClientLoginWindow) {
-    // Setup the user interface
-    this->mUserInterface->setupUi(this);
-    // Setup the connector slots
-    connect(this->mUserInterface->btnAddServer,    SIGNAL(clicked()),                       this, SLOT(AddServerButtonClick()));    // Add Server
-    connect(this->mUserInterface->btnCancel,       SIGNAL(clicked()),                       this, SLOT(CancelButtonClick()));       // Cancel
-    connect(this->mUserInterface->btnLogin,        SIGNAL(clicked()),                       this, SLOT(LoginButtonClick()));        // Sign-In
-    connect(this->mUserInterface->btnRemoveServer, SIGNAL(clicked()),                       this, SLOT(RemoveServerButtonClick())); // Remove Server
-    connect(this->mUserInterface->btnSave,         SIGNAL(clicked()),                       this, SLOT(SaveButtonClick()));         // Save Server
-    connect(this->mUserInterface->listServers,     SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(LoadLocalServerData(QListWidgetItem*)));     // Item Activated
-    // Load all of the local servers
-    QVariantList qvlLocalServers = ServerPanel::Instance()->GetLocalServers();
-    // Make sure the list view is clear
-    this->mUserInterface->listServers->clear();
-    // Check for servers
-    if (qvlLocalServers.size()) {
-        // Loop through the servers
-        for (int iServer = 0; iServer < qvlLocalServers.size(); ++iServer) {
-            // Create a new QListWidgetItem
-            QListWidgetItem* qlwiServer = new QListWidgetItem();
-            // Set the item data
-            qlwiServer->setText(qvlLocalServers[iServer].toMap()["sAddress"].toString());
-            // Add the item
-            this->mUserInterface->listServers->addItem(qlwiServer);
-        }
-    }
+ServerPanelClientLoginWindow::ServerPanelClientLoginWindow(QWidget* cParent) : QDialog(cParent), mGrid(new QGridLayout) {
+    // Set the size constraints
+    // this->setBaseSize   (1024, 768);
+    // this->setMaximumSize(1024, 768);
+    // this->setMinimumSize(1024, 768);
+    // Set the window title
+    this->setWindowTitle("ServerPanel - Login");
+    // Set the window icon
+    this->setWindowIcon(QIcon(":/icons/apps/gdmsetup.png"));
+    // Set the grid size
+    this->mGrid->geometry().setSize(QSize(500, 500));
+    // Setup the lists
+    this->SetupLists();
+    // Setup text boxes
+    this->SetupLineEdits();
+    // Setup buttons
+    this->SetupButtons();
+    // Set the layout
+    this->setLayout(this->mGrid);
+    // Show the window
+    this->show();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -62,151 +56,116 @@ ServerPanelClientLoginWindow::ServerPanelClientLoginWindow(QWidget* cParent) : Q
 /////////////////////////////////////////////////////////////////////////////
 
 ServerPanelClientLoginWindow::~ServerPanelClientLoginWindow() {
-    // Delete the user interface
-    delete this->mUserInterface;
     // Delete the instance
     delete this->mInstance;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// Protected Methods ////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @paragraph This method sets up all of the buttons needed for this window
+ * @brief ServerPanelClientLoginWindow::SetupButtons()
+ * @return void
+ */
+void ServerPanelClientLoginWindow::SetupButtons() {
+    // Create the add button
+    QPushButton* qpbAddServer = new QPushButton("");
+    // Add the icon
+    qpbAddServer->setIcon(QIcon(":/icons/actions/add.png"));
+    // Set the icon size
+    qpbAddServer->setIconSize(QSize(20, 20));
+    // Set the size
+    qpbAddServer->setBaseSize(25, 25);
+    qpbAddServer->setMaximumSize(25, 25);
+    qpbAddServer->setMinimumSize(25, 25);
+    // Create the remove button
+    QPushButton* qpbRemoveServer = new QPushButton("");
+    // Add the icon
+    qpbRemoveServer->setIcon(QIcon(":/icons/actions/remove.png"));
+    // Set the icon size
+    qpbRemoveServer->setIconSize(QSize(20, 20));
+    // Set the button size
+    qpbRemoveServer->setBaseSize(25, 25);
+    qpbRemoveServer->setMaximumSize(25, 25);
+    qpbRemoveServer->setMinimumSize(25, 25);
+    // Create the server list button boxes
+    QDialogButtonBox* qdbbServerList = new QDialogButtonBox();
+    // Add the buttons
+    qdbbServerList->addButton(qpbAddServer,    QDialogButtonBox::ActionRole);
+    qdbbServerList->addButton(qpbRemoveServer, QDialogButtonBox::ActionRole);
+    // Add the elements to the grid
+    this->mGrid->addWidget(qdbbServerList, 310, 0, 1, 1, Qt::AlignRight);
+}
+
+/**
+ * @paragraph This method sets up all of the QLineEdit boxes this window needs
+ * @brief ServerPanelClientLoginWindow::SetupLineEdits()
+ * @return void
+ */
+void ServerPanelClientLoginWindow::SetupLineEdits() {
+    // Create a widget for the server information
+    QWidget* qwServerInformation      = new QWidget();
+    // Create a grid for the server information
+    QGridLayout* qglServerInformation = new QGridLayout();
+    // Create the server name/address box
+    QLineEdit* qleServerAddress       = new QLineEdit();
+    // Create the server name/address label
+    QLabel* qlblServerAddress         = new QLabel(tr("Server Address"));
+    // Set the size
+    qleServerAddress->setBaseSize   (250, 25);
+    qleServerAddress->setMaximumSize(250, 25);
+    qleServerAddress->setMinimumSize(250, 25);
+    // Assign the line edit with the label
+    qlblServerAddress->setBuddy(qleServerAddress);
+    // Create the server port box
+    QLineEdit* qleServerPort          = new QLineEdit(tr("1597"));
+    // Create a server port label
+    QLabel* qlblServerPort            = new QLabel(tr("Port"));
+    // Set the size
+    qleServerPort->setBaseSize   (50, 25);
+    qleServerPort->setMaximumSize(50, 25);
+    qleServerPort->setMinimumSize(50, 25);
+    // Assign the line edit with the label
+    qlblServerPort->setBuddy(qleServerPort);
+    // Add the labels to the grid
+    qglServerInformation->addWidget(qlblServerAddress, 0, 0, 1, 1);
+    qglServerInformation->addWidget(qlblServerPort,    0, 1, 1, 1);
+    // Add the textboxes to the grid
+    qglServerInformation->addWidget(qleServerAddress,  1, 0, 1, 1);
+    qglServerInformation->addWidget(qleServerPort,     1, 1, 1, 1);
+    // Add the grid to the widget
+    qwServerInformation->setLayout(qglServerInformation);
+    // Add the text boxes to the grid
+    this->mGrid->addWidget(qwServerInformation, 0, 160, 1, 1, Qt::AlignTop);
+}
+
+/**
+ * @paragraph This method sets up the lists for this window
+ * @brief ServerPanelClientLoginWindow::SetupLists()
+ * @return void
+ */
+void ServerPanelClientLoginWindow::SetupLists() {
+    // Create the list widget
+    QListWidget* qlwServers = new QListWidget();
+    // Set the list widget size
+    qlwServers->setBaseSize   (150, 300);
+    qlwServers->setMaximumSize(150, 300);
+    qlwServers->setMinimumSize(150, 300);
+    // Grab the servers from the local database
+    QVariantList qvlLocalServers = ServerPanel::Instance()->GetLocalServers();
+    // Loop through the servers
+    foreach (QVariant qvServer, qvlLocalServers) {
+        // Set the server name
+        qlwServers->addItem(qvServer.toMap()["sAddress"].toString());
+    }
+    // Add the widget to the grid
+    this->mGrid->addWidget(qlwServers, 0, 0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Protected Slots //////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-void ServerPanelClientLoginWindow::AddServerButtonClick() {
-    // Add a new item
-    this->mUserInterface->listServers->addItem("New Server");
-    // Clear the text fields
-    this->mUserInterface->txtServerAddress->clear(); // Server Address
-    this->mUserInterface->txtUsername->clear();      // Username
-    this->mUserInterface->txtPassword->clear();      // Password
-}
 
-/**
- * @paragraph This method causes the application to exit once the cancel button is clicked
- * @brief ServerPanelClientLoginWindow::CancelButtonClick
- * @return void;
- */
-void ServerPanelClientLoginWindow::CancelButtonClick() {
-    // Close the application
-    this->close();
-}
-
-/**
- * @paragraph This method loads the account associated with the currently selected server
- * @brief ServerPanelClientLoginWindow::LoadLocalServerData
- * @return void
- */
-void ServerPanelClientLoginWindow::LoadLocalServerData(QListWidgetItem* qlwiServer) {
-    // Setup the local account structure
-    SpLocalAccount slaAccount;
-    // Set the address
-    slaAccount.saveProperty("sAddress", qlwiServer->text());
-    // Try to load the server data
-    if (ServerPanel::Instance()->LoadLocalAccount(slaAccount)) {
-        // Setup the form
-        this->mUserInterface->txtServerAddress->setText(qlwiServer->text());                                                          // Server Address
-        this->mUserInterface->txtUsername->setText(ServerPanel::Instance()->GetCurrentAccount().getProperty("sUsername").toString()); // Username
-        this->mUserInterface->txtPassword->setText(ServerPanel::Instance()->GetCurrentAccount().getProperty("sPassword").toString()); // Password
-    }
-}
-
-void ServerPanelClientLoginWindow::LoginButtonClick() {
-    // Setup the account structure
-    SpAccount spAccount;
-    // Set the username
-    spAccount.saveProperty("sUsername", this->mUserInterface->txtUsername->text());
-    // Set the password
-    spAccount.saveProperty("sPassword", this->mUserInterface->txtPassword->text());
-    // Setup the server
-    SpLocalServer slsServer;
-    // Set the server address
-    slsServer.saveProperty("sAddress", this->mUserInterface->txtServerAddress->text());
-    // Load the server
-    ServerPanel::Instance()->LoadLocalServer(slsServer);
-    // Try to authenticate the user
-    if (ServerPanel::Instance()->AuthenticateUser(spAccount)) {
-        // Hide this window
-        this->hide();
-        // Show the main window
-        ServerPanelClientMainWindow::Instance()->show();
-    }
-}
-
-/**
- * @paragraph This method deletes a server from the local database when the minus button is clicked
- * @brief ServerPanelClientLoginWindow::RemoveServerButtonClick
- */
-void ServerPanelClientLoginWindow::RemoveServerButtonClick() {
-    // Remove the server
-    ServerPanel::Instance()->DeleteLocalServer(this->mUserInterface->listServers->currentItem()->text());
-    // Load all of the local servers
-    QVariantList qvlLocalServers = ServerPanel::Instance()->GetLocalServers();
-    // Make sure the list view is clear
-    this->mUserInterface->listServers->clear();
-    // Check for servers
-    if (qvlLocalServers.size()) {
-        // Loop through the servers
-        for (int iServer = 0; iServer < qvlLocalServers.size(); ++iServer) {
-            // Create a new QListWidgetItem
-            QListWidgetItem* qlwiServer = new QListWidgetItem();
-            // Set the item data
-            qlwiServer->setText(qvlLocalServers[iServer].toMap()["sAddress"].toString());
-            // Add the item
-            this->mUserInterface->listServers->addItem(qlwiServer);
-        }
-    }
-}
-
-/**
- * @paragraph This method saves a local server and account when the "Save" button is clicked
- * @brief ServerPanelClientLoginWindow::SaveButtonClick
- * @return void
- */
-void ServerPanelClientLoginWindow::SaveButtonClick() {
-    // Create a local server structure
-    SpLocalServer slsLocalServer;
-    // Set the server address
-    slsLocalServer.saveProperty("sAddress", this->mUserInterface->txtServerAddress->text());
-    // Set the server name
-    slsLocalServer.saveProperty("sName",    this->mUserInterface->txtServerAddress->text());
-    // Check to see if the server exists
-    if (ServerPanel::Instance()->LoadLocalServer(slsLocalServer)) {
-        // Set the server id
-        slsLocalServer.saveProperty("iServerId", ServerPanel::Instance()->GetCurrentServer().getProperty("iServerId").toInt());
-    }
-    // Save the server
-    ServerPanel::Instance()->SaveLocalServer(slsLocalServer);
-    // Set the local server id
-    slsLocalServer.saveProperty("iServerId", ServerPanel::Instance()->GetCurrentServer().getProperty("iServerId").toInt());
-    // Create a local account structure
-    SpLocalAccount slaLocalAccount;
-    // Set the username
-    slaLocalAccount.saveProperty("sUsername", this->mUserInterface->txtUsername->text());
-    // Set the password
-    slaLocalAccount.saveProperty("sPassword", this->mUserInterface->txtPassword->text().toLatin1());
-    // Set the server id
-    slaLocalAccount.saveProperty("iServerId", slsLocalServer.getProperty("iServerId").toInt());
-    // Check to see if the account exists
-    if (ServerPanel::Instance()->LoadLocalAccount(slaLocalAccount)) {
-        // Set the account id
-        slaLocalAccount.saveProperty("iAccountId", ServerPanel::Instance()->GetCurrentAccount().getProperty("iAccountId").toInt());
-    }
-    // Save the account
-    ServerPanel::Instance()->SaveLocalAccount(slaLocalAccount);
-    // Load all of the local servers
-    QVariantList qvlLocalServers = ServerPanel::Instance()->GetLocalServers();
-    // Make sure the list view is clear
-    this->mUserInterface->listServers->clear();
-    // Check for servers
-    if (qvlLocalServers.size()) {
-        // Loop through the servers
-        for (int iServer = 0; iServer < qvlLocalServers.size(); ++iServer) {
-            // Create a new QListWidgetItem
-            QListWidgetItem* qlwiServer = new QListWidgetItem();
-            // Set the item data
-            qlwiServer->setText(qvlLocalServers[iServer].toMap()["sAddress"].toString());
-            // Add the item
-            this->mUserInterface->listServers->addItem(qlwiServer);
-        }
-    }
-}

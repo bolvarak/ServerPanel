@@ -10,8 +10,8 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <QObject>
-#include <QtSql>
-#include <Json.h>
+#include <parser.h>
+#include <serializer.h>
 #include <stdlib.h>
 #include <iostream>
 
@@ -56,8 +56,10 @@ struct SpAccount {
      * @return SpAccount
      */
     SpAccount(QString sJson) {
+        // Create a parser
+        QJson::Parser cJsonParser;
         // Decode and return the structure
-        SpAccount(QtJson::Json::parse(sJson).toMap());
+        SpAccount(cJsonParser.parse(sJson.toLatin1()).toMap());
     }
     /**
      * @paragraph This routine creates a structure out of a QSqlRecord object
@@ -134,8 +136,10 @@ struct SpAccount {
      * @return QByteArray
      */
     QByteArray toJson() {
-        // Convert and return this structure as JSON
-        return QtJson::Json::serialize(this->toMap());
+        // Create a serializer
+        QJson::Serializer cJsonSerializer;
+        // Serialize and return the json
+        return cJsonSerializer.serialize(this->toMap());
     }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
@@ -211,8 +215,10 @@ struct SpAliasDomain {
      * @return SpAliasDomain
      */
     SpAliasDomain(QString sJson) {
+        // Create a parser
+        QJson::Parser cJsonParser;
         // Decode and return the structure
-        SpAliasDomain(QtJson::Json::parse(sJson).toMap());
+        SpAliasDomain(cJsonParser.parse(sJson.toLatin1()).toMap());
     }
     /**
      * @paragraph This constructor creates a structure out of a QSqlRecord object
@@ -277,8 +283,10 @@ struct SpAliasDomain {
      * @return QByteArray
      */
     QByteArray toJson() {
-        // Convert and return this structure as JSON
-        return QtJson::Json::serialize(this->toMap());
+        // Create a serializer
+        QJson::Serializer cJsonSerializer;
+        // Serialize and return the json
+        return cJsonSerializer.serialize(this->toMap());
     }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
@@ -360,8 +368,10 @@ struct SpAlias {
      * @return SpAlias
      */
     SpAlias(QString sJson) {
+        // Create a parser
+        QJson::Parser cJsonParser;
         // Decode and return the structure
-        SpAlias(QtJson::Json::parse(sJson).toMap());
+        SpAlias(cJsonParser.parse(sJson.toLatin1()).toMap());
     }
     /**
      * @paragraph This constructor creates a structure out of a QSqlRecord object
@@ -432,8 +442,10 @@ struct SpAlias {
      * @return QByteArray
      */
     QByteArray toJson() {
-        // Convert and return this structure as JSON
-        return QtJson::Json::serialize(this->toMap());
+        // Create a serializer
+        QJson::Serializer cJsonSerializer;
+        // Serialize and return the json
+        return cJsonSerializer.serialize(this->toMap());
     }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
@@ -513,8 +525,10 @@ struct SpDnsRecord {
      * @return SpDnsRecord
      */
     SpDnsRecord(QString sJson) {
+        // Create a parser
+        QJson::Parser cJsonParser;
         // Decode and return the structure
-        SpDnsRecord(QtJson::Json::parse(sJson).toMap());
+        SpDnsRecord(cJsonParser.parse(sJson.toLatin1()).toMap());
     }
     /**
      * @paragraph This constructor creates a structure out of a QSqlRecord object
@@ -583,8 +597,10 @@ struct SpDnsRecord {
      * @return QByteArray
      */
     QByteArray toJson() {
-        // Convert and return this structure as JSON
-        return QtJson::Json::serialize(this->toMap());
+        // Create a serializer
+        QJson::Serializer cJsonSerializer;
+        // Serialize and return the json
+        return cJsonSerializer.serialize(this->toMap());
     }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
@@ -668,8 +684,10 @@ struct SpDomain {
      * @return SpDomain
      */
     SpDomain(QString sJson) {
+        // Create a parser
+        QJson::Parser cJsonParser;
         // Decode and return the structure
-        SpDomain(QtJson::Json::parse(sJson).toMap());
+        SpDomain(cJsonParser.parse(sJson.toLatin1()).toMap());
     }
     /**
      * @paragraph This constrcutor creates a structure out of a QSqlRecord
@@ -742,8 +760,10 @@ struct SpDomain {
      * @return QByteArray
      */
     QByteArray toJson() {
-        // Convert and return this structure as JSON
-        return QtJson::Json::serialize(this->toMap());
+        // Create a serializer
+        QJson::Serializer cJsonSerializer;
+        // Serialize and return the json
+        return cJsonSerializer.serialize(this->toMap());
     }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
@@ -818,8 +838,10 @@ struct SpLocalAccount {
      * @return SpLocalAccount
      */
     SpLocalAccount(QString sJson) {
+        // Create a parser
+        QJson::Parser cJsonParser;
         // Decode and return the structure
-        SpLocalAccount(QtJson::Json::parse(sJson).toMap());
+        SpLocalAccount(cJsonParser.parse(sJson.toLatin1()).toMap());
     }
     /**
      * @paragraph This constrcutor creates a structure out of a QSqlRecord
@@ -883,8 +905,10 @@ struct SpLocalAccount {
      * @return QByteArray
      */
     QByteArray toJson() {
-        // Convert and return this structure as JSON
-        return QtJson::Json::serialize(this->toMap());
+        // Create a serializer
+        QJson::Serializer cJsonSerializer;
+        // Serialize and return the json
+        return cJsonSerializer.serialize(this->toMap());
     }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
@@ -959,8 +983,10 @@ struct SpLocalServer {
      * @return SpLocalServer
      */
     SpLocalServer(QString sJson) {
+        // Create a parser
+        QJson::Parser cJsonParser;
         // Decode and return the structure
-        SpLocalServer(QtJson::Json::parse(sJson).toMap());
+        SpLocalServer(cJsonParser.parse(sJson.toLatin1()).toMap());
     }
     /**
      * @paragraph This constrcutor creates a structure out of a QSqlRecord
@@ -1024,8 +1050,10 @@ struct SpLocalServer {
      * @return QByteArray
      */
     QByteArray toJson() {
-        // Convert and return this structure as JSON
-        return QtJson::Json::serialize(this->toMap());
+        // Create a serializer
+        QJson::Serializer cJsonSerializer;
+        // Serialize and return the json
+        return cJsonSerializer.serialize(this->toMap());
     }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
@@ -1131,8 +1159,10 @@ struct SpMailBox {
      * @return SpMailBox
      */
     SpMailBox(QString sJson) {
+        // Create a parser
+        QJson::Parser cJsonParser;
         // Decode and return the structure
-        SpMailBox(QtJson::Json::parse(sJson).toMap());
+        SpMailBox(cJsonParser.parse(sJson.toLatin1()).toMap());
     }
     /**
      * @paragraph This constructor creates a structure out of a QSqlRecord
@@ -1227,8 +1257,10 @@ struct SpMailBox {
      * @return QByteArray
      */
     QByteArray toJson() {
-        // Convert and return this structure as JSON
-        return QtJson::Json::serialize(this->toMap());
+        // Create a serializer
+        QJson::Serializer cJsonSerializer;
+        // Serialize and return the json
+        return cJsonSerializer.serialize(this->toMap());
     }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
@@ -1313,8 +1345,10 @@ struct SpMailDomain {
      * @return SpMailDomain
      */
     SpMailDomain(QString sJson) {
+        // Create a parser
+        QJson::Parser cJsonParser;
         // Decode and return the structure
-        SpMailDomain(QtJson::Json::parse(sJson).toMap());
+        SpMailDomain(cJsonParser.parse(sJson.toLatin1()).toMap());
     }
     /**
      * @paragraph This structure creates a structure out of a QSqlRecord
@@ -1388,8 +1422,10 @@ struct SpMailDomain {
      * @return QByteArray
      */
     QByteArray toJson() {
-        // Convert and return this structure as JSON
-        return QtJson::Json::serialize(this->toMap());
+        // Create a serializer
+        QJson::Serializer cJsonSerializer;
+        // Serialize and return the json
+        return cJsonSerializer.serialize(this->toMap());
     }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
@@ -1467,8 +1503,10 @@ struct SpRecipientBccDomain {
      * @return SpRecipientBccDomain
      */
     SpRecipientBccDomain(QString sJson) {
+        // Create a parser
+        QJson::Parser cJsonParser;
         // Decode and return the structure
-        SpRecipientBccDomain(QtJson::Json::parse(sJson).toMap());
+        SpRecipientBccDomain(cJsonParser.parse(sJson.toLatin1()).toMap());
     }
     /**
      * @paragraph This constructor creates a structure out of a QSqlRecord object
@@ -1535,8 +1573,10 @@ struct SpRecipientBccDomain {
      * @return QByteArray
      */
     QByteArray toJson() {
-        // Convert and return this structure as JSON
-        return QtJson::Json::serialize(this->toMap());
+        // Create a serializer
+        QJson::Serializer cJsonSerializer;
+        // Serialize and return the json
+        return cJsonSerializer.serialize(this->toMap());
     }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
@@ -1615,8 +1655,10 @@ struct SpRecipientBccUser {
      * @return SpRecipientBccUser
      */
     SpRecipientBccUser(QString sJson) {
+        // Create a parser
+        QJson::Parser cJsonParser;
         // Decode and return the structure
-        SpRecipientBccUser(QtJson::Json::parse(sJson).toMap());
+        SpRecipientBccUser(cJsonParser.parse(sJson.toLatin1()).toMap());
     }
     /**
      * @paragraph This constructor creates a structure out of a QSqlRecord object
@@ -1684,8 +1726,10 @@ struct SpRecipientBccUser {
      * @return QByteArray
      */
     QByteArray toJson() {
-        // Convert and return this structure as JSON
-        return QtJson::Json::serialize(this->toMap());
+        // Create a serializer
+        QJson::Serializer cJsonSerializer;
+        // Serialize and return the json
+        return cJsonSerializer.serialize(this->toMap());
     }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
@@ -1763,8 +1807,10 @@ struct SpSenderBccDomain {
      * @return SpSenderBccDomain
      */
     SpSenderBccDomain(QString sJson) {
+        // Create a parser
+        QJson::Parser cJsonParser;
         // Decode and return the structure
-        SpSenderBccDomain(QtJson::Json::parse(sJson).toMap());
+        SpSenderBccDomain(cJsonParser.parse(sJson.toLatin1()).toMap());
     }
     /**
      * @paragraph This constructor creates a structure out of a QSqlRecord object
@@ -1831,8 +1877,10 @@ struct SpSenderBccDomain {
      * @return QByteArray
      */
     QByteArray toJson() {
-        // Convert and return this structure as JSON
-        return QtJson::Json::serialize(this->toMap());
+        // Create a serializer
+        QJson::Serializer cJsonSerializer;
+        // Serialize and return the json
+        return cJsonSerializer.serialize(this->toMap());
     }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
@@ -1911,8 +1959,10 @@ struct SpSenderBccUser {
      * @return SpSenderBccUser
      */
     SpSenderBccUser(QString sJson) {
+        // Create a parser
+        QJson::Parser cJsonParser;
         // Decode and return the structure
-        SpSenderBccUser(QtJson::Json::parse(sJson).toMap());
+        SpSenderBccUser(cJsonParser.parse(sJson.toLatin1()).toMap());
     }
     /**
      * @paragraph This constructor creates a structure out of a QSqlRecord object
@@ -1980,8 +2030,10 @@ struct SpSenderBccUser {
      * @return QByteArray
      */
     QByteArray toJson() {
-        // Convert and return this structure as JSON
-        return QtJson::Json::serialize(this->toMap());
+        // Create a serializer
+        QJson::Serializer cJsonSerializer;
+        // Serialize and return the json
+        return cJsonSerializer.serialize(this->toMap());
     }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
@@ -2056,8 +2108,10 @@ struct SpSharedFolder {
      * @return SpSharedFolder
      */
     SpSharedFolder(QString sJson) {
+        // Create a parser
+        QJson::Parser cJsonParser;
         // Decode and return the structure
-        SpSharedFolder(QtJson::Json::parse(sJson).toMap());
+        SpSharedFolder(cJsonParser.parse(sJson.toLatin1()).toMap());
     }
     /**
      * @paragraph This constructor creates a structure out of a QSqlRecord object
@@ -2121,8 +2175,10 @@ struct SpSharedFolder {
      * @return QByteArray
      */
     QByteArray toJson() {
-        // Convert and return this structure as JSON
-        return QtJson::Json::serialize(this->toMap());
+        // Create a serializer
+        QJson::Serializer cJsonSerializer;
+        // Serialize and return the json
+        return cJsonSerializer.serialize(this->toMap());
     }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
@@ -2203,8 +2259,10 @@ struct SpVacationMessage {
      * @return SpVacationMessage
      */
     SpVacationMessage(QString sJson) {
+        // Create a parser
+        QJson::Parser cJsonParser;
         // Decode and return the structure
-        SpVacationMessage(QtJson::Json::parse(sJson).toMap());
+        SpVacationMessage(cJsonParser.parse(sJson.toLatin1()).toMap());
     }
     /**
      * @paragraph This constructor creates a structure out of a QSqlRecord object
@@ -2274,8 +2332,10 @@ struct SpVacationMessage {
      * @return QByteArray
      */
     QByteArray toJson() {
-        // Convert and return this structure as JSON
-        return QtJson::Json::serialize(this->toMap());
+        // Create a serializer
+        QJson::Serializer cJsonSerializer;
+        // Serialize and return the json
+        return cJsonSerializer.serialize(this->toMap());
     }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map
@@ -2351,8 +2411,10 @@ struct SpVacationNotification {
      * @return SpVacationNotification
      */
     SpVacationNotification(QString sJson) {
+        // Create a parser
+        QJson::Parser cJsonParser;
         // Decode and return the structure
-        SpVacationNotification(QtJson::Json::parse(sJson).toMap());
+        SpVacationNotification(cJsonParser.parse(sJson.toLatin1()).toMap());
     }
     /**
      * @paragraph This constructor creates a structure out of a QSqlRecord object
@@ -2417,8 +2479,10 @@ struct SpVacationNotification {
      * @return QByteArray
      */
     QByteArray toJson() {
-        // Convert and return this structure as JSON
-        return QtJson::Json::serialize(this->toMap());
+        // Create a serializer
+        QJson::Serializer cJsonSerializer;
+        // Serialize and return the json
+        return cJsonSerializer.serialize(this->toMap());
     }
     /**
      * @paragraph This function simply converts the properties in the a quick loopable QSqlQuery property map

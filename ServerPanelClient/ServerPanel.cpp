@@ -34,7 +34,7 @@ ServerPanel::ServerPanel(QObject* cParent) : QObject(cParent), mOk(true) {
     // Setup the databae
     this->mDbc    = QSqlDatabase::addDatabase("QSQLITE");
     // Set the database
-    this->mDbc.setDatabaseName("/home/tbrown/Documents/ServerPanel/ServerPanelClient/ServerPanelClient.sp");
+    this->mDbc.setDatabaseName("/Users/trbrown/Documents/ServerPanel/ServerPanelClient/ServerPanelClient.sp");
     // Try to open the database
     if (!this->mDbc.open()) {
         // Dispatch a message
@@ -85,8 +85,6 @@ bool ServerPanel::AuthenticateUser(SpAccount spAccount) {
         // We're done
         return false;
     }
-    // Set the account
-    this->mCurrentRemoteAccount = SpAccount(this->mResponse["oAccount"].toMap());
     // We're done
     return true;
 }
@@ -542,38 +540,18 @@ bool ServerPanel::MakeRequest(QString sMethod, QVariantMap qvmRequestData) {
     return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/// Protected Slots //////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-
 /**
  * @paragraph This method processes the JSON response from the server
  * @brief ServerPanel::ProcessResponse()
  * @return void
  */
 void ServerPanel::ProcessResponse() {
-    qDebug() << this->mJsonResponse;
-    // Set a conversion boolean
-    bool bDeserialized;
-    // Decode the response
-    this->mResponse = QtJson::Json::parse(this->mJsonResponse, bDeserialized).toMap();
-    // Make sure the JSON was deserialized
-    if (!bDeserialized) {
-        // Dispatch the message
-        this->DispatchMessageBox("Could not decode the server response.", Error);
-    }
-    // Check for an error
-    if (!this->mResponse["bSuccess"].toBool()) {
-        // Set the error into the system
-        this->mError = this->mResponse["sError"].toString();
-        // Dispatch the message
-        this->DispatchMessageBox(this->mError, Error);
-    }
-    // Set the okay status
-    this->mOk = this->mResponse["bSuccess"].toBool();
-    // We're done
-    return;
+
 }
+
+///////////////////////////////////////////////////////////////////////////////
+/// Protected Slots //////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
 /**
  * @paragraph This method reads the socket response
@@ -603,16 +581,30 @@ void ServerPanel::ReadResponse() {
     // Read the stream
     qdsServerPanel >> sJson;
     // Check for data
-    if (sJson == this->mJsonResponse) {
+    if (sJson.isEmpty()) {
         // Rerun the read
         QTimer::singleShot(0, this, SLOT(ReadResponse()));
         // We're done
         return;
     }
-    // Set the response
-    this->mJsonResponse = sJson;
-    // Wait for 100 milliseconds
-    QTimer::singleShot(100, this, SLOT(ProcessResponse()));
+    // Set a conversion boolean
+    bool bDeserialized;
+    // Create a parser
+    QJson::Parser cJsonParser;
+    // Decode the response
+    this->mResponse = cJsonParser.parse(sJson.toLatin1(), &bDeserialized).toMap();
+    // Make sure the JSON was deserialized
+    if (!bDeserialized) {
+        // Dispatch the message
+        this->DispatchMessageBox(QString("Could not decode the server response."), Error);
+    }
+    // Check for an error
+    if (!this->mResponse["bSuccess"].toBool()) {
+        // Set the error into the system
+        this->mError = (this->mResponse["sError"].toString().isEmpty() ? QString("An unknown error occurred") : this->mResponse["sError"].toString());
+        // Dispatch the message
+        this->DispatchMessageBox(this->mError, Error);
+    }
 }
 
 /**
@@ -654,8 +646,10 @@ void ServerPanel::SocketError(QAbstractSocket::SocketError qseError) {
  * @return void
  */
 void ServerPanel::TransferData() {
+    // Create a JSON serializer
+    QJson::Serializer cJsonSerializer;
     // Convert the map to JSON
-    QByteArray qbaRequest = QtJson::Json::serialize(this->mRequest);
+    QByteArray qbaRequest = cJsonSerializer.serialize(this->mRequest);
     // Create an empty byte array
     QByteArray qbaOutput;
     // Create a data stream
@@ -675,16 +669,6 @@ void ServerPanel::TransferData() {
 ///////////////////////////////////////////////////////////////////////////////
 /// Getters //////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
-
-/**
- * @paragraph This method returns the current remote account
- * @brief ServerPanel::GetAccount
- * @return SpAccount
- */
-SpAccount ServerPanel::GetAccount() {
-    // Return the current remote account
-    return this->mCurrentRemoteAccount;
-}
 
 /**
  * @paragraph This method returns the currently authenticated user
@@ -747,6 +731,16 @@ QVariantList ServerPanel::GetLocalServers() {
 }
 
 /**
+ * @paragraph This method returns the current remote account
+ * @brief ServerPanel::GetRemoteAccount
+ * @return SpAccount
+ */
+SpAccount ServerPanel::GetRemoteAccount() {
+    // Return the current remote account
+    return this->mRemoteAccount;
+}
+
+/**
  * @paragraph This method returns the last response from the server
  * @brief ServerPanel::GetResponse
  * @return QVariantMap
@@ -754,4 +748,18 @@ QVariantList ServerPanel::GetLocalServers() {
 QVariantMap ServerPanel::GetResponse() {
     // Return the last response
     return this->mResponse;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// Setters //////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @paragraph This method sets the current remote account into the system
+ * @brief ServerPanel::SetRemoteAccount()
+ * @return void
+ */
+void ServerPanel::SetRemoteAccount(QVariantMap qvmAccount) {
+    // Set the account into the system
+    this->mRemoteAccount = SpAccount(qvmAccount);
 }

@@ -10,9 +10,15 @@
 /// Headers //////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QLabel>
+#include <QLineEdit>
 #include <QListWidget>
-#include <QMainWindow>
-#include <QtCrypto/QtCrypto>
+#include <QPushButton>
+#include <QToolButton>
+#include <QGridLayout>
+#include <QtCrypto>
 #include <ServerPanel.h>
 #include <ServerPanelClientMainWindow.h>
 
@@ -20,16 +26,13 @@
 /// Namespace ////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-namespace Ui {
-    // Set the window class into the namespace
-    class ServerPanelClientLoginWindow;
-}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 /// ServerPanelClientLoginWindow Class Definition ////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-class ServerPanelClientLoginWindow : public QMainWindow {
+class ServerPanelClientLoginWindow : public QDialog {
     // Make sure this is an instance of a QObject
     Q_OBJECT
 // Public
@@ -42,18 +45,16 @@ public:
             ~ServerPanelClientLoginWindow          ();
 // Protected
 protected:
-    // Singleton Instance
+    // Properties
     static ServerPanelClientLoginWindow* mInstance;
-    // User Interface Instance
-    Ui::ServerPanelClientLoginWindow*    mUserInterface;
+    QGridLayout*                         mGrid;
+    // Methods
+    void SetupButtons                              ();
+    void SetupLineEdits                            ();
+    void SetupLists                                ();
 // Protected slots
 protected slots:
-    void     AddServerButtonClick                  ();
-    void     CancelButtonClick                     ();
-    void     LoadLocalServerData                   (QListWidgetItem* qlwiServer);
-    void     LoginButtonClick                      ();
-    void     RemoveServerButtonClick               ();
-    void     SaveButtonClick                       ();
+
 };
 
 #endif // SERVERPANELCLIENTLOGINWINDOW_H

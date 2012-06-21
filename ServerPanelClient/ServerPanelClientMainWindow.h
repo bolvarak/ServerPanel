@@ -28,7 +28,7 @@ namespace Ui {
 /// ServerPanelClientMainWindow Class Definition /////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-class ServerPanelClientMainWindow : public QMainWindow {
+class ServerPanelClientMainWindow : public QObject {
     // Make sure this class is recognized as a QObject
     Q_OBJECT
 // Public
@@ -43,13 +43,10 @@ public:
 protected:
     // Properties
     static ServerPanelClientMainWindow* mInstance;
-    Ui::ServerPanelClientMainWindow*    mUserInterface;
-    // Methods
-    void     SetupGraphics                         ();
+    QMainWindow*                        mWindow;
 // Protected Slots
 protected slots:
-    void     GetDnsRecordsButtonClicked            ();
-    void     SignOutButtonClicked                  ();
+
 };
 
 #endif

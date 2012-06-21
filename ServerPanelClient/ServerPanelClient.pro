@@ -8,18 +8,21 @@ QT               += core gui sql network
 TARGET            = ServerPanelClient
 TEMPLATE          = app
 CONFIG           += crypto
-INCLUDEPATH      += $$quote(qca-2.0.3/include/QtCrypto)
 
 unix {
-    LIBS += -L$$quote(qca-2.0.3/lib) -lqca
+    INCLUDEPATH += $$quote(qca-2.0.3/include/QtCrypto)
+    LIBS        += -L$$quote(qca-2.0.3/lib) -lqca
 }
 
 macx {
-    LIBS += -L$$quote(qca-2.0.3/lib) -lqca
+    INCLUDEPATH += $$quote(/opt/local/include/QtCrypto)
+    INCLUDEPATH += $$quote(/opt/local/include/qjson)
+    LIBS        += -L$$quote(/opt/local/lib) -lqca -lqjson
 }
 
 win32 {
-    LIBS += -L$$quote(qca-2.0.3/lib) -lqca2
+    INCLUDEPATH += $$quote(qca-2.0.3/include/QtCrypto)
+    LIBS        += -L$$quote(qca-2.0.3/lib) -lqca2
 }
 
 SOURCES          += \
@@ -36,9 +39,7 @@ HEADERS          += \
     Json.h \
     ServerPanelClientMainWindow.h
 
-FORMS            += \
-    ServerPanelClientLoginWindow.ui \
-    ServerPanelClientMainWindow.ui
+FORMS            +=
 
 OTHER_FILES      += \
     ServerPanelClient.sp \

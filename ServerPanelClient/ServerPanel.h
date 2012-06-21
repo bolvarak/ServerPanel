@@ -11,11 +11,14 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <QObject>
-#include <QtCrypto/QtCrypto>
+#include <QtCrypto>
 #include <QSettings>
+#include <QtDebug>
 #include <QtSql>
 #include <QtNetwork/QtNetwork>
 #include <QMessageBox>
+#include <parser.h>
+#include <serializer.h>
 #include <ServerPanelStructures.h>
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -62,8 +65,10 @@ public:
     SpLocalServer  GetCurrentServer  ();
     QVariantList   GetLocalServers   ();
     QString        GetError          ();
-    SpAccount      GetAccount        ();
+    SpAccount      GetRemoteAccount  ();
     QVariantMap    GetResponse       ();
+    // Setters
+    void           SetRemoteAccount  (QVariantMap qvmAccount);
 // Protected
 protected:
     // Properties
@@ -72,20 +77,20 @@ protected:
     QSettings*          mConfig;
     SpLocalAccount      mCurrentAccount;
     SpLocalServer       mCurrentServer;
-    SpAccount           mCurrentRemoteAccount;
     QSqlDatabase        mDbc;
     QString             mError;
     static ServerPanel* mInstance;
     QString             mJsonResponse;
     QVariantList        mLocalServers;
     bool                mOk;
+    SpAccount           mRemoteAccount;
     QVariantMap         mRequest;
     QVariantMap         mResponse;
     // Methods
     bool           MakeRequest       (QString sMethod, QVariantMap qvmRequestData);
+    void           ProcessResponse   ();
 // Protected Slots
 protected slots:
-    void           ProcessResponse   ();
     void           ReadResponse      ();
     void           SocketError       (QAbstractSocket::SocketError qseError);
     void           TransferData      ();

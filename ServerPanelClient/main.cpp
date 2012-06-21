@@ -13,7 +13,7 @@ int main(int iArguments, char* aArguments[]) {
     // Setup the application
     QApplication qaApplication(iArguments, aArguments);
     // Show the login window
-    ServerPanelClientLoginWindow::Instance()->show();
+    ServerPanelClientLoginWindow::Instance();
     // Return the application execution status
     return qaApplication.exec();
 }
