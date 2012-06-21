@@ -28,7 +28,6 @@ win32 {
 SOURCES          += \
     main.cpp\
     ServerPanelClientLoginWindow.cpp \
-    Json.cpp \
     ServerPanel.cpp \
     ServerPanelClientMainWindow.cpp
 
@@ -36,7 +35,6 @@ HEADERS          += \
     ServerPanelClientLoginWindow.h \
     ServerPanelStructures.h \
     ServerPanel.h \
-    Json.h \
     ServerPanelClientMainWindow.h
 
 FORMS            +=

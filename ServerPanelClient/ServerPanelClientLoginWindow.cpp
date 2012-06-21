@@ -14,7 +14,13 @@ ServerPanelClientLoginWindow* ServerPanelClientLoginWindow::mInstance = NULL;
 /// Singleton ////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-ServerPanelClientLoginWindow* ServerPanelClientLoginWindow::Instance(QWidget *cParent) {
+/**
+ * @paragraph This is our singleton constructor, it ensures that the same instance of this window is always utilized
+ * @brief ServerPanelClientLoginWindow::Instance()
+ * @param QWidget cParent
+ * @return ServerPanelClientLoginWindow
+ */
+ServerPanelClientLoginWindow* ServerPanelClientLoginWindow::Instance(QWidget* cParent) {
     // Check for an existing instance
     if (!mInstance) {
         // Create a new instance
@@ -28,11 +34,13 @@ ServerPanelClientLoginWindow* ServerPanelClientLoginWindow::Instance(QWidget *cP
 /// Constructor //////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
+/**
+ * @paragraph This is our base constructor, it makes all the method calls to setup the GUI
+ * @brief ServerPanelClientWindow::ServerPanelClientLoginWindow()
+ * @param QWidget cParent
+ * @return void
+ */
 ServerPanelClientLoginWindow::ServerPanelClientLoginWindow(QWidget* cParent) : QDialog(cParent), mGrid(new QGridLayout) {
-    // Set the size constraints
-    // this->setBaseSize   (1024, 768);
-    // this->setMaximumSize(1024, 768);
-    // this->setMinimumSize(1024, 768);
     // Set the window title
     this->setWindowTitle("ServerPanel - Login");
     // Set the window icon
@@ -55,6 +63,11 @@ ServerPanelClientLoginWindow::ServerPanelClientLoginWindow(QWidget* cParent) : Q
 /// Destructor ///////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
+/**
+ * @paragraph This is our base destructor, it deletes all of the setup objects from memory if need be.
+ * @brief ServerPanelClientLoginWindow::~ServerPanelClientLoginWindow()
+ * @return void
+ */
 ServerPanelClientLoginWindow::~ServerPanelClientLoginWindow() {
     // Delete the instance
     delete this->mInstance;
