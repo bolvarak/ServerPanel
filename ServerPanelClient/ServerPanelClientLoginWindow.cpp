@@ -41,10 +41,6 @@ ServerPanelClientLoginWindow* ServerPanelClientLoginWindow::Instance(QWidget* cP
  * @return void
  */
 ServerPanelClientLoginWindow::ServerPanelClientLoginWindow(QWidget* cParent) : QDialog(cParent), mGrid(new QGridLayout) {
-    // Set the size
-    this->setBaseSize   (500, 200);
-    this->setMaximumSize(500, 200);
-    this->setMinimumSize(500, 200);
     // Set the window title
     this->setWindowTitle("ServerPanel - Login");
     // Set the window icon
@@ -405,10 +401,8 @@ void ServerPanelClientLoginWindow::SignInButtonClicked() {
     if (ServerPanel::Instance()->AuthenticateUser(spAccount)) {
         // Save the remote account
         ServerPanel::Instance()->SetRemoteAccount(ServerPanel::Instance()->GetResponse()["oAccount"].toMap());
-        // Grab the username
-        QString sUsername = ServerPanel::Instance()->GetRemoteAccount().getProperty("sUsername").toString();
-        // Dispatch the message
-        ServerPanel::Instance()->DispatchMessageBox(sUsername, Success);
+        // Log the json
+        qDebug() << ServerPanel::Instance()->GetJsonResponse().toLatin1();
     }
     // We're done
     return;

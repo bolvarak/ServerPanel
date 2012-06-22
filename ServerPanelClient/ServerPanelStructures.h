@@ -10,8 +10,8 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <QObject>
-#include <qjson/parser.h>
-#include <qjson/serializer.h>
+#include <parser.h>
+#include <serializer.h>
 #include <stdlib.h>
 #include <iostream>
 

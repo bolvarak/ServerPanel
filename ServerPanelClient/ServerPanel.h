@@ -17,8 +17,8 @@
 #include <QtSql>
 #include <QtNetwork/QtNetwork>
 #include <QMessageBox>
-#include <qjson/parser.h>
-#include <qjson/serializer.h>
+#include <parser.h>
+#include <serializer.h>
 #include <ServerPanelStructures.h>
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -42,31 +42,33 @@ class ServerPanel : public QObject {
 // Public
 public:
     // Singleton
-    static ServerPanel* Instance(QObject* cParent = 0);
+    static ServerPanel* Instance             (QObject* cParent = 0);
     // Constructor
-    explicit ServerPanel(QObject* cParent = 0);
+    explicit       ServerPanel               (QObject* cParent = 0);
     // Destructor
-    ~ServerPanel();
+                   ~ServerPanel              ();
     // Methods
-    bool           AuthenticateUser  (SpAccount      spAccount);
-    QVariantMap    DecryptEntity     (QByteArray     qbaKey,   QByteArray         qbaVector, QByteArray qbaHash);
-    bool           DeleteLocalServer (QString        sAddress);
-    int            DispatchMessageBox(QString        sMessage, ServerPanelMessage spmType);
-    QVariantMap    EncryptEntity     (QString        sData);
-    bool           IsOk              ();
-    QVariantList   LoadDnsRecords    (SpDnsRecord    spDnsRecord);
-    QVariantList   LoadDomains       (SpDomain       spDomain);
-    bool           LoadLocalAccount  (SpLocalAccount slaAccount);
-    bool           LoadLocalServer   (SpLocalServer  slsServer);
-    bool           SaveLocalAccount  (SpLocalAccount slaAccount);
-    bool           SaveLocalServer   (SpLocalServer  slsServer);
+    bool           AuthenticateUser          (SpAccount      spAccount);
+    QVariantMap    DecryptEntity             (QByteArray     qbaKey,   QByteArray         qbaVector, QByteArray qbaHash);
+    bool           DeleteLocalServer         (QString        sAddress);
+    int            DispatchMessageBox        (QString        sMessage, ServerPanelMessage spmType);
+    QVariantMap    EncryptEntity             (QString        sData);
+    bool           IsOk                      ();
+    QVariantList   LoadDnsRecords            (SpDnsRecord    spDnsRecord);
+    QVariantList   LoadDomains               (SpDomain       spDomain);
+    bool           LoadLocalAccount          (SpLocalAccount slaAccount);
+    bool           LoadLocalServer           (SpLocalServer  slsServer);
+    bool           SaveLocalAccount          (SpLocalAccount slaAccount);
+    bool           SaveLocalServer           (SpLocalServer  slsServer);
     // Getters
-    SpLocalAccount GetCurrentAccount ();
-    SpLocalServer  GetCurrentServer  ();
-    QVariantList   GetLocalServers   ();
-    QString        GetError          ();
-    SpAccount      GetRemoteAccount  ();
-    QVariantMap    GetResponse       ();
+    QTcpSocket*    GetClient                 ();
+    SpLocalAccount GetCurrentAccount         ();
+    SpLocalServer  GetCurrentServer          ();
+    QString        GetError                  ();
+    QString        GetJsonResponse           ();
+    QVariantList   GetLocalServers           ();
+    SpAccount      GetRemoteAccount          ();
+    QVariantMap    GetResponse               ();
     // Setters
     void           SetRemoteAccount  (QVariantMap qvmAccount);
 // Protected
@@ -87,13 +89,14 @@ protected:
     QVariantMap         mRequest;
     QVariantMap         mResponse;
     // Methods
-    bool           MakeRequest       (QString sMethod, QVariantMap qvmRequestData);
-    void           ProcessResponse   ();
+    void           LoopUntilClientDisconnects();
+    bool           MakeRequest               (QString sMethod, QVariantMap qvmRequestData);
 // Protected Slots
 protected slots:
-    void           ReadResponse      ();
-    void           SocketError       (QAbstractSocket::SocketError qseError);
-    void           TransferData      ();
+    void           ProcessResponse           ();
+    void           ReadResponse              ();
+    void           SocketError               (QAbstractSocket::SocketError qseError);
+    void           TransferData              ();
 };
 
 #endif // SERVERPANEL_H

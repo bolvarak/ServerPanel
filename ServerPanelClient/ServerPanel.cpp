@@ -34,7 +34,7 @@ ServerPanel::ServerPanel(QObject* cParent) : QObject(cParent), mOk(true) {
     // Setup the databae
     this->mDbc    = QSqlDatabase::addDatabase("QSQLITE");
     // Set the database
-    this->mDbc.setDatabaseName("/home/tbrown/Documents/ServerPanel/ServerPanelClient/ServerPanelClient.sp");
+    this->mDbc.setDatabaseName("/Users/trbrown/Documents/ServerPanel/ServerPanelClient/ServerPanelClient.sp");
     // Try to open the database
     if (!this->mDbc.open()) {
         // Dispatch a message
@@ -43,9 +43,10 @@ ServerPanel::ServerPanel(QObject* cParent) : QObject(cParent), mOk(true) {
     // Create the client
     this->mClient = new QTcpSocket(this);
     // Setup the connectors
-    connect(this->mClient, SIGNAL(connected()),                         this, SLOT(TransferData()));
-    connect(this->mClient, SIGNAL(readyRead()),                         this, SLOT(ReadResponse()));
-    connect(this->mClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(SocketError(QAbstractSocket::SocketError)));
+    this->connect(this->mClient, SIGNAL(connected()),                         this, SLOT(TransferData()));
+    this->connect(this->mClient, SIGNAL(disconnected()),                      this, SLOT(ProcessResponse()));
+    this->connect(this->mClient, SIGNAL(readyRead()),                         this, SLOT(ReadResponse()));
+    this->connect(this->mClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(SocketError(QAbstractSocket::SocketError)));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -76,6 +77,8 @@ ServerPanel::~ServerPanel() {
 bool ServerPanel::AuthenticateUser(SpAccount spAccount) {
     // Try to make the call to the server
     if (this->MakeRequest("LoadAccount", spAccount.toMap())) {
+        // Wait for disconnection
+        this->LoopUntilClientDisconnects();
         // Check for success
         if (!this->mResponse["bSuccess"].toBool()) {
             // We're done
@@ -502,6 +505,21 @@ bool ServerPanel::SaveLocalServer(SpLocalServer slsServer) {
 /////////////////////////////////////////////////////////////////////////////
 
 /**
+ * @paragraph This is a helper method that aids in asynchronous calls to the server
+ * @brief ServerPanel::LoopUntilClientDisconnects()
+ * @return void
+ */
+void ServerPanel::LoopUntilClientDisconnects() {
+    // Wait for the client to disconnect
+    while(!this->mClient->waitForDisconnected()) {
+        // Loop
+        continue;
+    }
+    // We're done
+    return;
+}
+
+/**
  * @paragraph This method handles the connection to the server
  * @brief ServerPanel::MakeRequest
  * @param QString sMethod
@@ -540,18 +558,35 @@ bool ServerPanel::MakeRequest(QString sMethod, QVariantMap qvmRequestData) {
     return true;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+/// Protected Slots //////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
 /**
- * @paragraph This method processes the JSON response from the server
+ * @paragraph This method processes the JSON response once it has been read
  * @brief ServerPanel::ProcessResponse()
  * @return void
  */
 void ServerPanel::ProcessResponse() {
-
+    // Set a conversion boolean
+    bool bDeserialized;
+    // Create a parser
+    QJson::Parser cJsonParser;
+    // Decode the response
+    this->mResponse = cJsonParser.parse(this->mJsonResponse.toLatin1(), &bDeserialized).toMap();
+    // Make sure the JSON was deserialized
+    if (!bDeserialized) {
+        // Dispatch the message
+        this->DispatchMessageBox(QString("Could not decode the server response."), Error);
+    }
+    // Check for an error
+    if (!this->mResponse["bSuccess"].toBool()) {
+        // Set the error into the system
+        this->mError = (this->mResponse["sError"].toString().isEmpty() ? QString("An unknown error occurred") : this->mResponse["sError"].toString());
+        // Dispatch the message
+        this->DispatchMessageBox(this->mError, Error);
+    }
 }
-
-///////////////////////////////////////////////////////////////////////////////
-/// Protected Slots //////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
 
 /**
  * @paragraph This method reads the socket response
@@ -587,24 +622,10 @@ void ServerPanel::ReadResponse() {
         // We're done
         return;
     }
-    // Set a conversion boolean
-    bool bDeserialized;
-    // Create a parser
-    QJson::Parser cJsonParser;
-    // Decode the response
-    this->mResponse = cJsonParser.parse(sJson.toLatin1(), &bDeserialized).toMap();
-    // Make sure the JSON was deserialized
-    if (!bDeserialized) {
-        // Dispatch the message
-        this->DispatchMessageBox(QString("Could not decode the server response."), Error);
-    }
-    // Check for an error
-    if (!this->mResponse["bSuccess"].toBool()) {
-        // Set the error into the system
-        this->mError = (this->mResponse["sError"].toString().isEmpty() ? QString("An unknown error occurred") : this->mResponse["sError"].toString());
-        // Dispatch the message
-        this->DispatchMessageBox(this->mError, Error);
-    }
+    // Store the json into the system
+    this->mJsonResponse = sJson;
+    // Disconnect from the host
+    this->mClient->disconnectFromHost();
 }
 
 /**
@@ -671,6 +692,16 @@ void ServerPanel::TransferData() {
 /////////////////////////////////////////////////////////////////////////////
 
 /**
+ * @paragraph This method returns the current client in the system
+ * @brief ServerPanel::GetClient()
+ * @return QTcpSocket
+ */
+QTcpSocket* ServerPanel::GetClient() {
+    // Return the client
+    return this->mClient;
+}
+
+/**
  * @paragraph This method returns the currently authenticated user
  * @brief ServerPanel::GetCurrentAccount
  * @return SpLocalAccount
@@ -698,6 +729,16 @@ SpLocalServer ServerPanel::GetCurrentServer() {
 QString ServerPanel::GetError() {
     // Return the error
     return this->mError;
+}
+
+/**
+ * @paragraph This returns the last raw response to the server
+ * @brief ServerPanel::GetJsonResponse()
+ * @return QString
+ */
+QString ServerPanel::GetJsonResponse() {
+    // Return the last JSON response
+    return this->mJsonResponse;
 }
 
 /**
