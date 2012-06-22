@@ -34,7 +34,7 @@ ServerPanel::ServerPanel(QObject* cParent) : QObject(cParent), mOk(true) {
     // Setup the databae
     this->mDbc    = QSqlDatabase::addDatabase("QSQLITE");
     // Set the database
-    this->mDbc.setDatabaseName("/Users/trbrown/Documents/ServerPanel/ServerPanelClient/ServerPanelClient.sp");
+    this->mDbc.setDatabaseName("/home/tbrown/Documents/ServerPanel/ServerPanelClient/ServerPanelClient.sp");
     // Try to open the database
     if (!this->mDbc.open()) {
         // Dispatch a message

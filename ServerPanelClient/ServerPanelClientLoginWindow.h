@@ -49,12 +49,31 @@ protected:
     static ServerPanelClientLoginWindow* mInstance;
     QGridLayout*                         mGrid;
     // Methods
-    void SetupButtons                              ();
-    void SetupLineEdits                            ();
-    void SetupLists                                ();
+    void SetupUserInterface                        ();
+    // QPushButton
+    QPushButton*                         mBtnAddServer;
+    QPushButton*                         mBtnCancel;
+    QPushButton*                         mBtnRemoveServer;
+    QPushButton*                         mBtnSaveServer;
+    QPushButton*                         mBtnSignIn;
+    // QLineEdit
+    QLineEdit*                           mTxtPassword;
+    QLineEdit*                           mTxtServerAddress;
+    QLineEdit*                           mTxtServerPort;
+    QLineEdit*                           mTxtUsername;
+    // QListWidget
+    QListWidget*                         mQlwServerList;
+    // Methods
+    void ReloadServerList         ();
 // Protected slots
 protected slots:
-
+    // Button Clicks
+    void AddServerButtonClicked   ();
+    void CancelButtonClicked      ();
+    void RemoveServerButtonClicked();
+    void SaveServerButtonClicked  ();
+    void ServerSelected           (QListWidgetItem* qlwiSelected);
+    void SignInButtonClicked      ();
 };
 
 #endif // SERVERPANELCLIENTLOGINWINDOW_H

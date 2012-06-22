@@ -8,10 +8,11 @@ QT               += core gui sql network
 TARGET            = ServerPanelClient
 TEMPLATE          = app
 CONFIG           += crypto
+INCLUDEPATH      += $$quote(qca-2.0.3/include/QtCrypto)
+INCLUDEPATH      += $$quote(qjson)
 
 unix {
-    INCLUDEPATH += $$quote(qca-2.0.3/include/QtCrypto)
-    LIBS        += -L$$quote(qca-2.0.3/lib) -lqca
+    LIBS += -lqca -lqjson
 }
 
 macx {

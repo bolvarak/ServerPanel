@@ -11,14 +11,14 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <QObject>
-#include <QtCrypto>
 #include <QSettings>
+#include <QtCrypto>
 #include <QtDebug>
 #include <QtSql>
 #include <QtNetwork/QtNetwork>
 #include <QMessageBox>
-#include <parser.h>
-#include <serializer.h>
+#include <qjson/parser.h>
+#include <qjson/serializer.h>
 #include <ServerPanelStructures.h>
 
 ///////////////////////////////////////////////////////////////////////////////
