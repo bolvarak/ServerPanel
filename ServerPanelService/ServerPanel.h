@@ -21,6 +21,7 @@
 #include <Json.h>
 #include <stdlib.h>
 #include <iostream>
+#include <ServerPanelConfig.h>
 #include <ServerPanelStructures.h>
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -58,7 +59,6 @@ public:
 // Protected
 protected :
     // Properties
-    QSettings*           mConfig;   // System Configuration
     QSqlDatabase         mDbc;      // Database Connection
     static ServerPanel*  mInstance; // Singleton Instane
     // Constructor

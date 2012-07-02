@@ -46,20 +46,19 @@ ServerPanel* ServerPanel::Instance() {
 /////////////////////////////////////////////////////////////////////////////
 
 ServerPanel::ServerPanel(QObject* cParent) : QObject(cParent) {
-    // Load the configuration
-    this->mConfig = new QSettings(":/ServerPanel.ini", QSettings::IniFormat);
+    std::cout << ServerPanelConfig::Get("databaseSettings.driver").toString().toStdString() << std::endl << std::endl;
     // Setup the databae
-    this->mDbc    = QSqlDatabase::addDatabase(this->mConfig->value("databaseSettings/driver").toString());
+    this->mDbc    = QSqlDatabase::addDatabase(ServerPanelConfig::Get("databaseSettings.driver").toString());
     // Set the host
-    this->mDbc.setHostName(this->mConfig->value("databaseSettings/host").toString());
+    this->mDbc.setHostName(ServerPanelConfig::Get("databaseSettings.host").toString());
     // Set the port
-    this->mDbc.setPort(this->mConfig->value("databaseSettings/port").toInt());
+    this->mDbc.setPort(ServerPanelConfig::Get("databaseSettings.port").toInt());
     // Set the database
-    this->mDbc.setDatabaseName(this->mConfig->value("databaseSettings/db").toString());
+    this->mDbc.setDatabaseName(ServerPanelConfig::Get("databaseSettings.db").toString());
     // Set the username
-    this->mDbc.setUserName(this->mConfig->value("databaseSettings/user").toString());
+    this->mDbc.setUserName(ServerPanelConfig::Get("databaseSettings.user").toString());
     // Set the password
-    this->mDbc.setPassword(this->mConfig->value("databaseSettings/pass").toString());
+    this->mDbc.setPassword(ServerPanelConfig::Get("databaseSettings.pass").toString());
     // We're done with the database configuration
     // Try to open the database
     if (!this->mDbc.open()) {
@@ -83,8 +82,6 @@ ServerPanel::ServerPanel(QObject* cParent) : QObject(cParent) {
 ServerPanel::~ServerPanel() {
     // Close the database
     this->mDbc.close();
-    // Close the configuration file
-    delete this->mConfig;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -102,7 +99,7 @@ QVariantMap ServerPanel::AuthenticateUser(SpAccount spAccount) {
     // Set the return map
     QVariantMap qvmReturn;
     // Grab the query object
-    QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, this->mConfig->value("sqlQueries/accountAuthentication").toString());
+    QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.accountAuthentication").toString());
     // Try to execute the query
     if (!qsqAccount.exec()) {
         // Setup the error
@@ -371,7 +368,7 @@ QVariantMap ServerPanel::LoadAccount(SpAccount spAccount) {
     // Check for an account id
     if (spAccount.getProperty("iAccountId").toInt() > 0) {
         // Grab the query object
-        QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectAccountByAccountId").toString());
+        QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.selectAccountByAccountId").toString());
         // Try to execute the query
         if (!qsqAccount.exec()) {
             // Set the error
@@ -405,7 +402,7 @@ QVariantMap ServerPanel::LoadAccount(SpAccount spAccount) {
     // Check for a username and password
     if (!spAccount.getProperty("sUsername").toString().isEmpty() && !spAccount.getProperty("sPassword").toString().isEmpty()) {
         // Grab the query object
-        QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectAccountByUsernameAndPassword").toString());
+        QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.selectAccountByUsernameAndPassword").toString());
         // Try to execute the query
         if (!qsqAccount.exec()) {
             // Set the error
@@ -439,7 +436,7 @@ QVariantMap ServerPanel::LoadAccount(SpAccount spAccount) {
     // Check for a username
     if (!spAccount.getProperty("sUsername").toString().isEmpty()) {
         // Grab the query object
-        QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectAccountByUsername").toString());
+        QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.selectAccountByUsername").toString());
         // Try to execute the query
         if (!qsqAccount.exec()) {
             // Set the error
@@ -484,7 +481,7 @@ QVariantMap ServerPanel::LoadDnsRecord(SpDnsRecord spDnsRecord) {
     // Check for a record id
     if (spDnsRecord.getProperty("iRecordId").toInt() > 0) {
         // Grab the query object
-        QSqlQuery qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, this->mConfig->value("sqlQuery/selectDnsRecord").toString());
+        QSqlQuery qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQuery.selectDnsRecord").toString());
         // Try to execute the query
         if (!qsqDnsRecord.exec()) {
             // Set the error
@@ -531,7 +528,7 @@ QVariantMap ServerPanel::LoadDnsRecords(SpDnsRecord spDnsRecord) {
     // Check for a domain id
     if (spDnsRecord.getProperty("iDomainId").toInt() > 0) {
         // Grab the query object
-        QSqlQuery qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectDnsRecordsByDomainId").toString());
+        QSqlQuery qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.selectDnsRecordsByDomainId").toString());
         // Try to execute the query
         if (!qsqDnsRecord.exec()) {
             // Set the error
@@ -568,7 +565,7 @@ QVariantMap ServerPanel::LoadDnsRecords(SpDnsRecord spDnsRecord) {
     // Check for an account id
     if (spDnsRecord.getProperty("iAccountId").toInt() > 0) {
         // Grab the query object
-        QSqlQuery qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectDnsRecordsByAccountId").toString());
+        QSqlQuery qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.selectDnsRecordsByAccountId").toString());
         // Try to execute the query
         if (!qsqDnsRecord.exec()) {
             // Set the error
@@ -615,7 +612,7 @@ QVariantMap ServerPanel::LoadDomain(SpDomain spDomain) {
     // Check for a domain id
     if (spDomain.getProperty("iDomainId").toInt() > 0) {
         // Grab a query object
-        QSqlQuery qsqDomain = spDomain.toQuery(this->mDbc, this->mConfig->value("sqlQuery/selectDomain").toString());
+        QSqlQuery qsqDomain = spDomain.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQuery.selectDomain").toString());
         // Try to execute the query
         if (!qsqDomain.exec()) {
             // Set the error
@@ -662,7 +659,7 @@ QVariantMap ServerPanel::LoadDomains(SpDomain spDomain) {
     // Check for an account id
     if (spDomain.getProperty("iAccountId").toInt() > 0) {
         // Grab the query object
-        QSqlQuery qsqDomains = spDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectDomains").toString());
+        QSqlQuery qsqDomains = spDomain.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.selectDomains").toString());
         // Try to execute the query
         if (!qsqDomains.exec()) {
             // Set the error
@@ -709,7 +706,7 @@ QVariantMap ServerPanel::LoadMailBox(SpMailBox spMailBox) {
     // Check for a mailbox id
     if (spMailBox.getProperty("iMailBoxId").toInt() > 0) {
         // Grab the query object
-        QSqlQuery qsqMailBox = spMailBox.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectMailBoxByMailBoxId").toString());
+        QSqlQuery qsqMailBox = spMailBox.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.selectMailBoxByMailBoxId").toString());
         // Try to execute the query
         if (!qsqMailBox.exec()) {
             // Set the error
@@ -743,7 +740,7 @@ QVariantMap ServerPanel::LoadMailBox(SpMailBox spMailBox) {
     // Check for a username and password
     if (!spMailBox.getProperty("sUsername").toString().isEmpty() && !spMailBox.getProperty("sPassword").toString().isEmpty()) {
         // Grab the query object
-        QSqlQuery qsqMailBox = spMailBox.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectMailBoxByUsernameAndPassword").toString());
+        QSqlQuery qsqMailBox = spMailBox.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.selectMailBoxByUsernameAndPassword").toString());
         // Try to execute the query
         if (!qsqMailBox.exec()) {
             // Set the error
@@ -777,7 +774,7 @@ QVariantMap ServerPanel::LoadMailBox(SpMailBox spMailBox) {
     // Check for a password
     if (!spMailBox.getProperty("sUsername").toString().isEmpty()) {
         // Load the query object
-        QSqlQuery qsqMailBox = spMailBox.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectMailBoxByUsername").toString());
+        QSqlQuery qsqMailBox = spMailBox.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.selectMailBoxByUsername").toString());
         // Try to execute the query
         if (!qsqMailBox.exec()) {
             // Set the error
@@ -824,7 +821,7 @@ QVariantMap ServerPanel::LoadMailBoxes(SpMailBox spMailBox) {
     // Check for a domain id
     if (spMailBox.getProperty("iDomainId").toInt() > 0) {
         // Grab the query object
-        QSqlQuery qsqMailBoxes = spMailBox.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectMailBoxesByDomainId").toString());
+        QSqlQuery qsqMailBoxes = spMailBox.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.selectMailBoxesByDomainId").toString());
         // Try to execute the query
         if (!qsqMailBoxes.exec()) {
             // Set the error
@@ -860,7 +857,7 @@ QVariantMap ServerPanel::LoadMailBoxes(SpMailBox spMailBox) {
     // Check for an account id
     if (spMailBox.getProperty("iAccountId").toInt() > 0) {
         // Grab the query object
-        QSqlQuery qsqMailBoxes = spMailBox.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectMailBoxesByAccountId").toString());
+        QSqlQuery qsqMailBoxes = spMailBox.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.selectMailBoxesByAccountId").toString());
         // Try to execute the query
         if (!qsqMailBoxes.exec()) {
             // Set the error
@@ -907,7 +904,7 @@ QVariantMap ServerPanel::LoadMailDomain(SpMailDomain spMailDomain) {
     // Check for a mail domain id
     if (spMailDomain.getProperty("iMailDomainId").toInt() > 0) {
         // Grab the query object
-        QSqlQuery qsqMailDomain = spMailDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectMailDomainByMailDomainId").toString());
+        QSqlQuery qsqMailDomain = spMailDomain.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.selectMailDomainByMailDomainId").toString());
         // Try to execute the query
         if (!qsqMailDomain.exec()) {
             // Set the error
@@ -941,7 +938,7 @@ QVariantMap ServerPanel::LoadMailDomain(SpMailDomain spMailDomain) {
     // Check for a domain id
     if (spMailDomain.getProperty("iDomainId").toInt() > 0) {
         // Load the query object
-        QSqlQuery qsqMailDomain = spMailDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectMailDomainByDomainId").toString());
+        QSqlQuery qsqMailDomain = spMailDomain.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.selectMailDomainByDomainId").toString());
         // Try to execute the query
         if (!qsqMailDomain.exec()) {
             // Set the error
@@ -988,7 +985,7 @@ QVariantMap ServerPanel::LoadMailDomains(SpMailDomain spMailDomain) {
     // Check for an account id
     if (spMailDomain.getProperty("iAccountId").toInt() > 0) {
         // Grab the query object
-        QSqlQuery qsqMailDomains = spMailDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/selectMailDomainsByAccountId").toString());
+        QSqlQuery qsqMailDomains = spMailDomain.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.selectMailDomainsByAccountId").toString());
         // Try to execute the query
         if (!qsqMailDomains.exec()) {
             // Set the error
@@ -1035,7 +1032,7 @@ QVariantMap ServerPanel::SaveAccount(SpAccount spAccount) {
     // Check for an ID
     if (spAccount.getProperty("iAccountId").toInt() > 0) {
         // Grab the query object
-        QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, this->mConfig->value("sqlQueries/checkForExistingUsername").toString());
+        QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.checkForExistingUsername").toString());
         // Try to execute the query
         if (!qsqAccount.exec()) {
             // Set the error
@@ -1055,7 +1052,7 @@ QVariantMap ServerPanel::SaveAccount(SpAccount spAccount) {
             return qvmReturn;
         }
         // Reset the query
-        qsqAccount = spAccount.toQuery(this->mDbc, this->mConfig->value("sqlQueries/insertAccount").toString());
+        qsqAccount = spAccount.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.insertAccount").toString());
         // Try to execute the query
         if (!qsqAccount.exec()) {
             // Set the error
@@ -1089,7 +1086,7 @@ QVariantMap ServerPanel::SaveAccount(SpAccount spAccount) {
         return qvmReturn;
     }
     // We are creating an account, so grab the query object
-    QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, this->mConfig->value("sqlQueries/insertAccount").toString());
+    QSqlQuery qsqAccount = spAccount.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.insertAccount").toString());
     // Try to execute the query
     if (!qsqAccount.exec()) {
         // Set the error
@@ -1133,7 +1130,7 @@ QVariantMap ServerPanel::SaveDnsRecord(SpDnsRecord spDnsRecord) {
     // Check for a record id
     if (spDnsRecord.getProperty("iRecordId").toInt() > 0) {
         // Grab the SQL query
-        QSqlQuery qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, this->mConfig->value("sqlQueries/updateDnsRecord").toString());
+        QSqlQuery qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.updateDnsRecord").toString());
         // Try to execute the query
         if (!qsqDnsRecord.exec()) {
             // Set the error
@@ -1149,7 +1146,7 @@ QVariantMap ServerPanel::SaveDnsRecord(SpDnsRecord spDnsRecord) {
         qvmReturn.insert("bSuccess", true);
     }
     // We are adding a new record, so grab the query
-    QSqlQuery qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, this->mConfig->value("sqlQueries/checkForExistingDnsRecord").toString());
+    QSqlQuery qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.checkForExistingDnsRecord").toString());
     // Try to execute the query
     if (!qsqDnsRecord.exec()) {
         // Set the error
@@ -1160,7 +1157,7 @@ QVariantMap ServerPanel::SaveDnsRecord(SpDnsRecord spDnsRecord) {
         return qvmReturn;
     }
     // Grab the insert query
-    qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, this->mConfig->value("sqlQueries/insertDnsRecord").toString());
+    qsqDnsRecord = spDnsRecord.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.insertDnsRecord").toString());
     // Try to execute the query
     if (!qsqDnsRecord.exec()) {
         // Set the error
@@ -1184,7 +1181,7 @@ QVariantMap ServerPanel::SaveDomain(SpDomain spDomain) {
     // Check for a domain id
     if (spDomain.getProperty("iDomainId").toInt() > 0) {
         // Grab the query
-        QSqlQuery qsqDomain = spDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/updateDomain").toString());
+        QSqlQuery qsqDomain = spDomain.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.updateDomain").toString());
         // Try to execute the query
         if (!qsqDomain.exec()) {
             // Set the error
@@ -1202,7 +1199,7 @@ QVariantMap ServerPanel::SaveDomain(SpDomain spDomain) {
         return qvmReturn;
     }
     // Grab the query
-    QSqlQuery qsqDomain = spDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/checkForExistingDomain").toString());
+    QSqlQuery qsqDomain = spDomain.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.checkForExistingDomain").toString());
     // Try to execute the query
     if (!qsqDomain.exec()) {
         // Set the error
@@ -1222,7 +1219,7 @@ QVariantMap ServerPanel::SaveDomain(SpDomain spDomain) {
         return qvmReturn;
     }
     // Reset the query
-    qsqDomain = spDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/insertDomain").toString());
+    qsqDomain = spDomain.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.insertDomain").toString());
     // Try to execute the query
     if (!qsqDomain.exec()) {
         // Set the error
@@ -1246,7 +1243,7 @@ QVariantMap ServerPanel::SaveMailBox(SpMailBox spMailBox) {
     // Check for a mailbox id
     if (spMailBox.getProperty("iMailBoxId").toInt() > 0) {
         // Grab the query object
-        QSqlQuery qsqMailBox = spMailBox.toQuery(this->mDbc, this->mConfig->value("sqlQueries/updateMailBox").toString());
+        QSqlQuery qsqMailBox = spMailBox.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.updateMailBox").toString());
         // Try to execute the statement
         if (!qsqMailBox.exec()) {
             // Set the error
@@ -1264,7 +1261,7 @@ QVariantMap ServerPanel::SaveMailBox(SpMailBox spMailBox) {
         return qvmReturn;
     }
     // Grab the query
-    QSqlQuery qsqMailBox = spMailBox.toQuery(this->mDbc, this->mConfig->value("sqlQueries/checkForExistingMailBox").toString());
+    QSqlQuery qsqMailBox = spMailBox.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.checkForExistingMailBox").toString());
     // Try to execute the query
     if (!qsqMailBox.exec()) {
         // Set the error
@@ -1284,7 +1281,7 @@ QVariantMap ServerPanel::SaveMailBox(SpMailBox spMailBox) {
         return qvmReturn;
     }
     // Grab the query
-    qsqMailBox = spMailBox.toQuery(this->mDbc, this->mConfig->value("sqlQueries/insertMailBox").toString());
+    qsqMailBox = spMailBox.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.insertMailBox").toString());
     // Try to execute the query
     if (!qsqMailBox.exec()) {
         // Set the error
@@ -1308,7 +1305,7 @@ QVariantMap ServerPanel::SaveMailDomain(SpMailDomain spMailDomain) {
     // Check for a mail domain id
     if (spMailDomain.getProperty("iMailDomainId").toInt() > 0) {
         // Grab the query
-        QSqlQuery qsqMailDomain = spMailDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/updateMailDomain").toString());
+        QSqlQuery qsqMailDomain = spMailDomain.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.updateMailDomain").toString());
         // Try to execute the query
         if (!qsqMailDomain.exec()) {
             // Set the error
@@ -1326,7 +1323,7 @@ QVariantMap ServerPanel::SaveMailDomain(SpMailDomain spMailDomain) {
         return qvmReturn;
     }
     // We're adding a new mail domain so grab the query
-    QSqlQuery qsqMailDomain = spMailDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/checkForExistingMailDomain").toString());
+    QSqlQuery qsqMailDomain = spMailDomain.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.checkForExistingMailDomain").toString());
     // Try to execute the query
     if (!qsqMailDomain.exec()) {
         // Set the error
@@ -1346,7 +1343,7 @@ QVariantMap ServerPanel::SaveMailDomain(SpMailDomain spMailDomain) {
         return qvmReturn;
     }
     // Reset the query
-    qsqMailDomain = spMailDomain.toQuery(this->mDbc, this->mConfig->value("sqlQueries/insertMailDomain").toString());
+    qsqMailDomain = spMailDomain.toQuery(this->mDbc, ServerPanelConfig::Get("sqlQueries.insertMailDomain").toString());
     // Try to execute the query
     if (!qsqMailDomain.exec()) {
         // Set the error

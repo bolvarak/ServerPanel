@@ -11,14 +11,16 @@ TEMPLATE     = app
 SOURCES     += main.cpp \
     Json.cpp \
     ServerPanelService.cpp \
-    ServerPanel.cpp
+    ServerPanel.cpp \
+    ServerPanelConfig.cpp
 
 HEADERS     += \
     Json.h \
     ServerPanelService.h \
     ServerPanel.h \
     ServerPanelStructures.h \
-    ServerPanelStructures.h
+    ServerPanelStructures.h \
+    ServerPanelConfig.h
 
 OTHER_FILES += \
     ServerPanel.ini \
