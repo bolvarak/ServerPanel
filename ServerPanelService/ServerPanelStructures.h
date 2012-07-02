@@ -10,6 +10,8 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <QObject>
+#include <QVariant>
+#include <QVariantMap>
 #include <QtSql>
 #include <Json.h>
 #include <stdlib.h>

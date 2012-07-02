@@ -30,19 +30,16 @@ SOURCES          += \
     main.cpp\
     ServerPanelClientLoginWindow.cpp \
     ServerPanel.cpp \
-    ServerPanelClientMainWindow.cpp \
-    QJsonView.cpp \
-    QJson.cpp
+    ServerPanelClientMainWindow.cpp
 
 HEADERS          += \
     ServerPanelClientLoginWindow.h \
     ServerPanelStructures.h \
     ServerPanel.h \
-    ServerPanelClientMainWindow.h \
-    QJsonView.h \
-    QJson.h
+    ServerPanelClientMainWindow.h
 
-FORMS            +=
+FORMS            += \
+    ServerPanelClientMainWindow.ui
 
 OTHER_FILES      += \
     ServerPanelClient.sp \

@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>ServerPanel.ini</file>
+        <file>Access.log</file>
     </qresource>
 </RCC>

@@ -144,6 +144,8 @@ void ServerPanelClientLoginWindow::SetupUserInterface() {
     this->mBtnSignIn->setBaseSize       (100, 25); // Sign-In
     this->mBtnSignIn->setMaximumSize    (100, 25); // Sign-In
     this->mBtnSignIn->setMinimumSize    (100, 25); // Sign-In
+    // Set the shortcut
+    this->mBtnSignIn->setShortcut(QKeySequence("Return"));
     // Add the buttons
     qdbbServerInformation->addButton(this->mBtnSaveServer, QDialogButtonBox::ActionRole); // Save
     qdbbServerInformation->addButton(this->mBtnCancel,     QDialogButtonBox::ActionRole); // Cancel
@@ -401,8 +403,10 @@ void ServerPanelClientLoginWindow::SignInButtonClicked() {
     if (ServerPanel::Instance()->AuthenticateUser(spAccount)) {
         // Save the remote account
         ServerPanel::Instance()->SetRemoteAccount(ServerPanel::Instance()->GetResponse()["oAccount"].toMap());
-        // Log the json
-        qDebug() << ServerPanel::Instance()->GetJsonResponse().toLatin1();
+        // Close the window
+        this->hide();
+        // Open the dashboard
+        ServerPanelClientMainWindow::Instance()->show();
     }
     // We're done
     return;

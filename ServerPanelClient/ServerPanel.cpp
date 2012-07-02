@@ -8,7 +8,22 @@
 /// Globals //////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-ServerPanel* ServerPanel::mInstance = NULL;
+ServerPanel* ServerPanel::mInstance             = NULL;
+QString      ServerPanel::MethodLoadAccount     = "LOADACCOUNT";
+QString      ServerPanel::MethodLoadDnsRecord   = "LOADDNSRECORD";
+QString      ServerPanel::MethodLoadDnsRecords  = "LOADDNSRECORDS";
+QString      ServerPanel::MethodLoadDomain      = "LOADDOMAIN";
+QString      ServerPanel::MethodLoadDomains     = "LOADDOMAINS";
+QString      ServerPanel::MethodLoadMailBox     = "LOADMAILBOX";
+QString      ServerPanel::MethodLoadMailBoxes   = "LOADMAILBOXES";
+QString      ServerPanel::MethodLoadMailDomain  = "LOADMAILDOMAIN";
+QString      ServerPanel::MethodLoadMailDomains = "LOADMAILDOMAINS";
+QString      ServerPanel::MethodPing            = "PING";
+QString      ServerPanel::MethodSaveAccount     = "SAVEACCOUNT";
+QString      ServerPanel::MethodSaveDnsRecord   = "SAVEDNSRECORD";
+QString      ServerPanel::MethodSaveDomain      = "SAVEDOMAIN";
+QString      ServerPanel::MethodSaveMailBox     = "SAVEMAILBOX";
+QString      ServerPanel::MethodSaveMailDomain  = "SAVEMAILDOMAIN";
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Singleton ////////////////////////////////////////////////////////////////
@@ -76,7 +91,7 @@ ServerPanel::~ServerPanel() {
  */
 bool ServerPanel::AuthenticateUser(SpAccount spAccount) {
     // Try to make the call to the server
-    if (this->MakeRequest("LoadAccount", spAccount.toMap())) {
+    if (this->MakeRequest(ServerPanel::MethodLoadAccount, spAccount.toMap())) {
         // Wait for disconnection
         this->LoopUntilClientDisconnects();
         // Check for success
@@ -262,7 +277,9 @@ bool ServerPanel::IsOk() {
  */
 QVariantList ServerPanel::LoadDnsRecords(SpDnsRecord spDnsRecord) {
     // Try to make the call to the server
-    if (this->MakeRequest("LoadDnsRecords", spDnsRecord.toMap())) {
+    if (this->MakeRequest(ServerPanel::MethodLoadDnsRecords, spDnsRecord.toMap())) {
+        // Wait for disconnect
+        this->LoopUntilClientDisconnects();
         // Check for success
         if (this->mResponse["bSuccess"].toBool()) {
             // We're done
@@ -281,7 +298,7 @@ QVariantList ServerPanel::LoadDnsRecords(SpDnsRecord spDnsRecord) {
  */
 QVariantList ServerPanel::LoadDomains(SpDomain spDomain) {
     // Try to make the call to the server
-    if (this->MakeRequest("LoadDomains", spDomain.toMap())) {
+    if (this->MakeRequest(ServerPanel::MethodLoadDomains, spDomain.toMap())) {
         // Check for success
         if (this->mResponse["bSuccess"].toBool()) {
             // We're done
@@ -510,10 +527,13 @@ bool ServerPanel::SaveLocalServer(SpLocalServer slsServer) {
  * @return void
  */
 void ServerPanel::LoopUntilClientDisconnects() {
-    // Wait for the client to disconnect
-    while(!this->mClient->waitForDisconnected()) {
-        // Loop
-        continue;
+    // Make sure the client is connected
+    if (this->mClient->state() != QAbstractSocket::UnconnectedState) {
+        // Wait for the client to disconnect
+        while(!this->mClient->waitForDisconnected()) {
+            // Loop
+            continue;
+        }
     }
     // We're done
     return;
@@ -550,7 +570,7 @@ bool ServerPanel::MakeRequest(QString sMethod, QVariantMap qvmRequestData) {
     // Abort the current connection
     this->mClient->abort();
     // Check for open connections
-    if (!this->mClient->isOpen()) {
+    if (this->mClient->state() != QAbstractSocket::ConnectedState) {
         // Create a new connection
         this->mClient->connectToHost(this->mCurrentServer.getProperty("sAddress").toString(), this->mCurrentServer.getProperty("iPort").toInt());
     }

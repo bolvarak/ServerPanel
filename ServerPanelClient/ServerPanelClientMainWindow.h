@@ -1,7 +1,7 @@
 #ifndef SERVERPANELCLIENTMAINWINDOW_H
 
 ///////////////////////////////////////////////////////////////////////////////
-/// Headers //////////////////////////////////////////////////////////////////
+/// Definitions //////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
 #define SERVERPANELCLIENTMAINWINDOW_H
@@ -12,15 +12,13 @@
 
 #include <QMainWindow>
 #include <ServerPanel.h>
-#include <ServerPanelStructures.h>
-#include <ServerPanelClientLoginWindow.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Namespace ////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
 namespace Ui {
-    // Set our class into the namespace
+    // Load our UI class into the namespace
     class ServerPanelClientMainWindow;
 }
 
@@ -28,25 +26,28 @@ namespace Ui {
 /// ServerPanelClientMainWindow Class Definition /////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-class ServerPanelClientMainWindow : public QObject {
+class ServerPanelClientMainWindow : public QMainWindow {
     // Make sure this class is recognized as a QObject
     Q_OBJECT
 // Public
 public:
     // Singleton
-    static   ServerPanelClientMainWindow* Instance(QWidget* cParent = 0);
+    static ServerPanelClientMainWindow* Instance(QWidget* cParent = 0);
     // Constructor
-    explicit ServerPanelClientMainWindow          (QWidget* cParent = 0);
+    explicit ServerPanelClientMainWindow        (QWidget* cParent = 0);
     // Destructor
-            ~ServerPanelClientMainWindow          ();
+    ~ServerPanelClientMainWindow                ();
 // Protected
 protected:
     // Properties
     static ServerPanelClientMainWindow* mInstance;
-    QMainWindow*                        mWindow;
+    Ui::ServerPanelClientMainWindow*    mUserInterface;
+    // Methods
+    void LoadDomains                            ();
 // Protected Slots
 protected slots:
-
+    void DomainDeleteButtonClicked              (int iDomainId);
+    void DomainEditButtonClicked                (int iDomainId);
 };
 
-#endif
+#endif // SERVERPANELCLIENTMAINWINDOW_H

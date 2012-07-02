@@ -10,7 +10,22 @@
 /// Globals //////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-ServerPanel* ServerPanel::mInstance = NULL;
+ServerPanel* ServerPanel::mInstance             = NULL;
+QString      ServerPanel::MethodLoadAccount     = "LOADACCOUNT";
+QString      ServerPanel::MethodLoadDnsRecord   = "LOADDNSRECORD";
+QString      ServerPanel::MethodLoadDnsRecords  = "LOADDNSRECORDS";
+QString      ServerPanel::MethodLoadDomain      = "LOADDOMAIN";
+QString      ServerPanel::MethodLoadDomains     = "LOADDOMAINS";
+QString      ServerPanel::MethodLoadMailBox     = "LOADMAILBOX";
+QString      ServerPanel::MethodLoadMailBoxes   = "LOADMAILBOXES";
+QString      ServerPanel::MethodLoadMailDomain  = "LOADMAILDOMAIN";
+QString      ServerPanel::MethodLoadMailDomains = "LOADMAILDOMAINS";
+QString      ServerPanel::MethodPing            = "PING";
+QString      ServerPanel::MethodSaveAccount     = "SAVEACCOUNT";
+QString      ServerPanel::MethodSaveDnsRecord   = "SAVEDNSRECORD";
+QString      ServerPanel::MethodSaveDomain      = "SAVEDOMAIN";
+QString      ServerPanel::MethodSaveMailBox     = "SAVEMAILBOX";
+QString      ServerPanel::MethodSaveMailDomain  = "SAVEMAILDOMAIN";
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Singleton ////////////////////////////////////////////////////////////////
@@ -49,9 +64,15 @@ ServerPanel::ServerPanel(QObject* cParent) : QObject(cParent) {
     // Try to open the database
     if (!this->mDbc.open()) {
         // Setup the error placeholder
-        QByteArray qbaError;
+        QVariantMap qvmReturn;
         // Add the error
-        qbaError.append(this->mDbc.lastError().text());
+        qvmReturn.insert("sError",   this->mDbc.lastError().text());
+        // Set the success status
+        qvmReturn.insert("bSuccess", false);
+        // Encode and return the response
+        std::cout << QString(QtJson::Json::serialize(qvmReturn)).toStdString() << std::endl;
+        // Terminate
+        exit(1);
     }
 }
 
@@ -187,6 +208,8 @@ QVariantMap ServerPanel::HandleCliRequest(QStringList qslArguments) {
  * @return QByteArray sResponse
  */
 QByteArray ServerPanel::HandleRequest(QString sRequest) {
+    // Log the request to the socket
+    std::cout << "REQUEST [" << QDateTime::currentDateTime().toString().toStdString() << "] => " << sRequest.toStdString() << std::endl;
     // Create a byte array of the request
     QByteArray qbaRequest;
     // Create a response placeholder
@@ -202,57 +225,52 @@ QByteArray ServerPanel::HandleRequest(QString sRequest) {
         // Set the method
         QString sMethod = qvmRequest[SERVERPANEL_METHOD_NOTATION_KEY].toString();
         // Determine the method to execute
-        if (sMethod == "AuthenticateUser") {       // User authentication
-            // Setup the structure
-            SpAccount spAccount = SpAccount(qvmRequest);
-            // Grab the response
-            qbaResponse = this->EncodeResponse(this->AuthenticateUser(spAccount));
-        } else if (sMethod == "LoadAccount") {     // Load Account
+        if (sMethod.toUpper() == ServerPanel::MethodLoadAccount) {            // Load Account
             // Setup the structure
             SpAccount spAccount = SpAccount(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->LoadAccount(spAccount));
-        } else if (sMethod == "LoadDnsRecord") {   // Load DNS Record
+        } else if (sMethod.toUpper() == ServerPanel::MethodLoadDnsRecord) {   // Load DNS Record
             // Setup the structure
             SpDnsRecord spDnsRecord = SpDnsRecord(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->LoadDnsRecord(spDnsRecord));
-        } else if (sMethod == "LoadDnsRecords") {  // Load DNS Records
+        } else if (sMethod.toUpper() == ServerPanel::MethodLoadDnsRecords) {  // Load DNS Records
             // Setup the structure
             SpDnsRecord spDnsRecord = SpDnsRecord(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->LoadDnsRecords(spDnsRecord));
-        } else if (sMethod == "LoadDomain") {      // Load Domain
+        } else if (sMethod.toUpper() == ServerPanel::MethodLoadDomain) {      // Load Domain
             // Setup the structure
             SpDomain spDomain = SpDomain(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->LoadDomain(spDomain));
-        } else if (sMethod == "LoadDomains") {     // Load Domains
+        } else if (sMethod.toUpper() == ServerPanel::MethodLoadDomains) {     // Load Domains
             // Setup the structure
             SpDomain spDomain = SpDomain(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->LoadDomains(spDomain));
-        } else if (sMethod == "LoadMailBox") {     // Load Mailbox
+        } else if (sMethod.toUpper() == ServerPanel::MethodLoadMailBox) {     // Load Mailbox
             // Setup the structure
             SpMailBox spMailBox = SpMailBox(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->LoadMailBox(spMailBox));
-        } else if (sMethod == "LoadMailBoxes") {   // Load Mailboxes
+        } else if (sMethod.toUpper() == ServerPanel::MethodLoadMailBoxes) {   // Load Mailboxes
             // Setup the structure
             SpMailBox spMailBox = SpMailBox(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->LoadMailBoxes(spMailBox));
-        } else if (sMethod == "LoadMailDomain") {  // Load Mail Domain
+        } else if (sMethod.toUpper() == ServerPanel::MethodLoadMailDomain) {  // Load Mail Domain
             // Setup the structure
             SpMailDomain spMailDomain = SpMailDomain(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->LoadMailDomain(spMailDomain));
-        } else if (sMethod == "LoadMailDomains") { // Load Mail Domains
+        } else if (sMethod.toUpper() == ServerPanel::MethodLoadMailDomains) { // Load Mail Domains
             // Setup the structure
             SpMailDomain spMailDomain = SpMailDomain(qvmRequest);
             // Set the response
             qbaResponse = this->EncodeResponse(this->LoadMailDomains(spMailDomain));
-        } else if (sMethod == "Ping") {            // Ping
+        } else if (sMethod.toUpper() == ServerPanel::MethodPing) {            // Ping
             // Create a map with the time stamps
             QVariantMap qvmPing;
             // Add the human readable time stamp
@@ -263,27 +281,27 @@ QByteArray ServerPanel::HandleRequest(QString sRequest) {
             qvmPing.insert("sEpochTimestamp", QDateTime::currentMSecsSinceEpoch());
             // Grab the response
             qbaResponse = this->EncodeResponse(qvmPing);
-        } else if (sMethod.contains("SaveAccount", Qt::CaseInsensitive)) {     // Save Account
+        } else if (sMethod.toUpper() == ServerPanel::MethodSaveAccount) {     // Save Account
             // Setup the structure
             SpAccount spAccount = SpAccount(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->SaveAccount(spAccount));
-        } else if (sMethod.contains("SaveDnsRecord", Qt::CaseInsensitive)) {   // Save DNS Record
+        } else if (sMethod.toUpper() == ServerPanel::MethodSaveDnsRecord) {   // Save DNS Record
             // Setup the structure
             SpDnsRecord spDnsRecord = SpDnsRecord(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->SaveDnsRecord(spDnsRecord));
-        } else if (sMethod.contains("SaveDomain", Qt::CaseInsensitive)) {      // Save Domain
+        } else if (sMethod.toUpper() == ServerPanel::MethodSaveDomain) {      // Save Domain
             // Setup the structure
             SpDomain spDomain = SpDomain(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->SaveDomain(spDomain));
-        } else if (sMethod.contains("SaveMailBox", Qt::CaseInsensitive)) {     // Save Mailbox
+        } else if (sMethod.toUpper() == ServerPanel::MethodSaveMailBox) {     // Save Mailbox
             // Setup the structure
             SpMailBox spMailBox = SpMailBox(qvmRequest);
             // Grab the response
             qbaResponse = this->EncodeResponse(this->SaveMailBox(spMailBox));
-        } else if (sMethod.contains("SaveMailDomain", Qt::CaseInsensitive)) {  // Save Mail Domain
+        } else if (sMethod.toUpper() == ServerPanel::MethodSaveMailDomain) {  // Save Mail Domain
             // Setup the structure
             SpMailDomain spMailDomain = SpMailDomain(qvmRequest);
             // Grab the response
@@ -300,6 +318,8 @@ QByteArray ServerPanel::HandleRequest(QString sRequest) {
         }
         // Log the response
         this->LogMessage(qbaResponse);
+        // Log the response to the socket
+        std::cout << "RESPONSE [" << QDateTime::currentDateTime().toString().toStdString() << "] => " << QString(qbaResponse).toStdString() << std::endl;
         // Return the response
         return qbaResponse;
     }
@@ -329,7 +349,7 @@ QByteArray ServerPanel::HandleRequest(QString sRequest) {
  */
 void ServerPanel::LogMessage(QByteArray qbaMessage) {
     // Load the log file
-    QFile qfsLogFile(this->mConfig->value("systemPaths/logFile").toString());
+    QFile qfsLogFile(":/Access.log");
     // Make sure we can open the file
     if (!qfsLogFile.open(QIODevice::Append | QIODevice::Text)) {
         // Send the error to the socket

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ServerPanelClientMainWindow</class>
+ <widget class="QMainWindow" name="ServerPanelClientMainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>ServerPanel - Dashboard</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="ServerPanelClientResources.qrc">
+    <normaloff>:/icons/apps/application-x-remote-connection.png</normaloff>:/icons/apps/application-x-remote-connection.png</iconset>
+  </property>
+  <widget class="QWidget" name="qwtMain">
+   <widget class="QToolBox" name="tbxDasboard">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>60</y>
+      <width>741</width>
+      <height>461</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>1</number>
+    </property>
+    <widget class="QWidget" name="pgDashboard">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>741</width>
+       <height>291</height>
+      </rect>
+     </property>
+     <attribute name="icon">
+      <iconset resource="ServerPanelClientResources.qrc">
+       <normaloff>:/icons/apps/gstreamer-properties.png</normaloff>:/icons/apps/gstreamer-properties.png</iconset>
+     </attribute>
+     <attribute name="label">
+      <string>Dashboard</string>
+     </attribute>
+    </widget>
+    <widget class="QWidget" name="pgDomains">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>741</width>
+       <height>291</height>
+      </rect>
+     </property>
+     <attribute name="icon">
+      <iconset resource="ServerPanelClientResources.qrc">
+       <normaloff>:/icons/devices/network-wired.png</normaloff>:/icons/devices/network-wired.png</iconset>
+     </attribute>
+     <attribute name="label">
+      <string>Domains</string>
+     </attribute>
+     <widget class="QTableWidget" name="tblDomains">
+      <property name="geometry">
+       <rect>
+        <x>340</x>
+        <y>0</y>
+        <width>311</width>
+        <height>281</height>
+       </rect>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
+      <property name="tabKeyNavigation">
+       <bool>false</bool>
+      </property>
+      <property name="showDropIndicator" stdset="0">
+       <bool>false</bool>
+      </property>
+      <property name="dragDropOverwriteMode">
+       <bool>false</bool>
+      </property>
+      <property name="gridStyle">
+       <enum>Qt::DotLine</enum>
+      </property>
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>150</number>
+      </attribute>
+      <attribute name="horizontalHeaderMinimumSectionSize">
+       <number>150</number>
+      </attribute>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>Domain</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Actions</string>
+       </property>
+      </column>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="pgWebsites">
+     <attribute name="icon">
+      <iconset resource="ServerPanelClientResources.qrc">
+       <normaloff>:/icons/apps/apache.png</normaloff>:/icons/apps/apache.png</iconset>
+     </attribute>
+     <attribute name="label">
+      <string>Websites</string>
+     </attribute>
+    </widget>
+    <widget class="QWidget" name="pgMail">
+     <attribute name="icon">
+      <iconset resource="ServerPanelClientResources.qrc">
+       <normaloff>:/icons/apps/mozilla-thunderbird.png</normaloff>:/icons/apps/mozilla-thunderbird.png</iconset>
+     </attribute>
+     <attribute name="label">
+      <string>Mail</string>
+     </attribute>
+    </widget>
+    <widget class="QWidget" name="pgDatabases">
+     <attribute name="icon">
+      <iconset resource="ServerPanelClientResources.qrc">
+       <normaloff>:/icons/devices/harddrive.png</normaloff>:/icons/devices/harddrive.png</iconset>
+     </attribute>
+     <attribute name="label">
+      <string>Databases</string>
+     </attribute>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="btnAccount">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>10</y>
+      <width>125</width>
+      <height>45</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>{sUsername}</string>
+    </property>
+    <property name="icon">
+     <iconset resource="ServerPanelClientResources.qrc">
+      <normaloff>:/icons/actions/gtk-execute.png</normaloff>:/icons/actions/gtk-execute.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>20</width>
+      <height>20</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnSignOut">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>10</y>
+      <width>125</width>
+      <height>45</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Sign-Out</string>
+    </property>
+    <property name="icon">
+     <iconset resource="ServerPanelClientResources.qrc">
+      <normaloff>:/icons/actions/system-shutdown.png</normaloff>:/icons/actions/system-shutdown.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>20</width>
+      <height>20</height>
+     </size>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="mbrMain">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="sbrMain"/>
+ </widget>
+ <resources>
+  <include location="ServerPanelClientResources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

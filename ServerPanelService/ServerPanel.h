@@ -32,6 +32,22 @@ class ServerPanel : public QObject {
     Q_OBJECT
 // Public
 public:
+    // Properties
+    static QString MethodLoadAccount;
+    static QString MethodLoadDnsRecord;
+    static QString MethodLoadDnsRecords;
+    static QString MethodLoadDomain;
+    static QString MethodLoadDomains;
+    static QString MethodLoadMailBox;
+    static QString MethodLoadMailBoxes;
+    static QString MethodLoadMailDomain;
+    static QString MethodLoadMailDomains;
+    static QString MethodPing;
+    static QString MethodSaveAccount;
+    static QString MethodSaveDnsRecord;
+    static QString MethodSaveDomain;
+    static QString MethodSaveMailBox;
+    static QString MethodSaveMailDomain;
     // Singleton
     static ServerPanel* Instance();
     // Destructor

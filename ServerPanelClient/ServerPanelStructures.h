@@ -10,6 +10,8 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <QObject>
+#include <QVariant>
+#include <QVariantMap>
 #include <parser.h>
 #include <serializer.h>
 #include <stdlib.h>

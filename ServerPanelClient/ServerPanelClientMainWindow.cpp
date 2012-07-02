@@ -3,6 +3,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <ServerPanelClientMainWindow.h>
+#include <ui_ServerPanelClientMainWindow.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Globals //////////////////////////////////////////////////////////////////
@@ -28,8 +29,13 @@ ServerPanelClientMainWindow* ServerPanelClientMainWindow::Instance(QWidget* cPar
 /// Constructor //////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-ServerPanelClientMainWindow::ServerPanelClientMainWindow(QWidget* cParent) : QObject(cParent), mWindow(new QMainWindow) {
-
+ServerPanelClientMainWindow::ServerPanelClientMainWindow(QWidget* cParent) : QMainWindow(cParent), mUserInterface(new Ui::ServerPanelClientMainWindow) {
+    // Setup the user interface
+    this->mUserInterface->setupUi(this);
+    // Display the username
+    this->mUserInterface->btnAccount->setText(ServerPanel::Instance()->GetRemoteAccount().getProperty("sUsername").toString());
+    // Load the account domains
+    this->LoadDomains();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -37,19 +43,49 @@ ServerPanelClientMainWindow::ServerPanelClientMainWindow(QWidget* cParent) : QOb
 /////////////////////////////////////////////////////////////////////////////
 
 ServerPanelClientMainWindow::~ServerPanelClientMainWindow() {
-    // Delete the window
-    delete this->mWindow;
+    // Delete the user interface
+    delete this->mUserInterface;
     // Delete the instance
     delete this->mInstance;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-/// Protected Methods ////////////////////////////////////////////////////////
+/// Public Methods ///////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
 
+///////////////////////////////////////////////////////////////////////////////
+/// Protected Methods ////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+void ServerPanelClientMainWindow::LoadDomains() {
+    // Setup the domain structure
+    SpDomain spDomain;
+    // Set the account ID
+    spDomain.saveProperty("iAccountId", ServerPanel::Instance()->GetRemoteAccount().getProperty("iAccountId").toInt());
+    // Load the domains
+    QVariantList qvlDomains = ServerPanel::Instance()->LoadDomains(spDomain);
+    // Loop through the domains
+    for (int iDomain = 0; iDomain < qvlDomains.length(); ++iDomain) {
+        // Set the domain ID
+        int iDomainId   = qvlDomains[iDomain].toMap()["iDomainId"].toInt();
+        // Set the domain name
+        QString sDomain = qvlDomains[iDomain].toMap()["sDomain"].toString();
+        // Set the table row count
+        this->mUserInterface->tblDomains->setRowCount(iDomain + 1);
+        // Add the item
+        this->mUserInterface->tblDomains->setItem(iDomain, 0, new QTableWidgetItem(sDomain));
+    }
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Protected Slots //////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
+void ServerPanelClientMainWindow::DomainDeleteButtonClicked(int iDomainId) {
+
+}
+
+void ServerPanelClientMainWindow::DomainEditButtonClicked(int iDomainId) {
+
+}
